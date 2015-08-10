@@ -1,0 +1,10 @@
+#Git ignore configure file
+
+#Ignore build folder
+# Cordova platform build files
+build/*
+# Cordova platform build asset files
+asset/*
+# Cordova plugins directory
+/plugins/*
+
