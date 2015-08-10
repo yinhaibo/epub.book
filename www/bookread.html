@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html>
+    <head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; media-src *">
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+		<link rel="stylesheet" href="libs/jquerymobile/jquery.mobile-1.4.5.min.css" />
+		<link rel="stylesheet" href="basic.css">
+		
+		<script type="text/javascript" src="cordova.js"></script>
+		
+		<script src="libs/jquery/jquery-2.1.4.min.js"></script>
+		<script>
+            $(document).on('mobileinit', function () {
+                $.mobile.ignoreContentEnabled = true;
+            });
+			
+			//获取url中的参数
+			function getUrlParam(name) {
+				var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+				var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+				if (r != null) return unescape(r[2]); return null; //返回参数值
+			}
+
+        </script>
+		<script src="libs/jquerymobile/jquery.mobile-1.4.5.min.js"></script>
+		<!-- public
+		<script src="./epub/epub.js"></script> -->
+		<script src="libs/epub/libs/underscore/underscore.js"></script>
+        <script src="libs/epub/libs/rsvp/rsvp.js"></script>
+        <script src="libs/epub/libs/fileStorage/fileStorage.min.js"></script>
+
+        <script src="libs/epub/src/base.js"></script>
+        <script src="libs/epub/src/core.js"></script>
+        <script src="libs/epub/src/unarchiver.js"></script>
+        <script src="libs/epub/src/parser.js"></script>
+        <script src="libs/epub/src/hooks.js"></script>
+		<script src="libs/epub/src/locations.js"></script>
+        <script src="libs/epub/src/book.js"></script>
+        <script src="libs/epub/src/chapter.js"></script>
+        <script src="libs/epub/src/renderer.js"></script>
+        <script src="libs/epub/src/replace.js"></script>
+        <script src="libs/epub/src/epubcfi.js"></script>
+        <script src="libs/epub/src/render_iframe.js"></script>
+        <script src="libs/epub/src/layout.js"></script>
+        <script src="libs/epub/src/pagination.js"></script>
+
+		<!-- zip -->
+		<script src="libs/zip/zip.js"></script>
+		<script src="libs/zip/zip-fs.js"></script>
+		<script src="libs/zip/zip-ext.js"></script>
+		<script src="libs/zip/inflate.js"></script>
+		<script src="libs/zip/mime-types.js"></script>
+		
+		<!-- jszip -->
+		<script src="libs/jszip/jszip.js"></script>
+		<script src="libs/jszip/mime-types.js"></script>
+		<!-- EPUB.js Hook -->
+        <script src="libs/epub/hooks/default/smartimages.js"></script>
+		<script src="libs/epub/hooks/default/smartmedia.js"></script>
+		<script src="libs/epub/hooks/extensions/swipeDetection.js"></script>
+	
+		<!-- PhotoSwipe Core CSS file -->
+		<link rel="stylesheet" href="libs/photoswipe/photoswipe.css"> 
+
+		<!-- PhotoSwipe Skin CSS file (styling of UI - buttons, caption, etc.)
+			 In the folder of skin CSS file there are also:
+			 - .png and .svg icons sprite, 
+			 - preloader.gif (for browsers that do not support CSS animations) -->
+		<link rel="stylesheet" href="libs/photoswipe/default-skin/default-skin.css"> 
+
+		<!-- PhotoSwipe Core JS file -->
+		<script src="libs/photoswipe/photoswipe.js"></script> 
+
+		<!-- PhotoSwipe UI JS file -->
+		<script src="libs/photoswipe/photoswipe-ui-default.js"></script> 
+	
+        <title>VBook</title>
+		
+		<style>
+			.ui-icon-back:after {background-image: url("img/reader_toolbar_top_back_new.png"); background-size: 18px 18px;}
+			.ui-icon-search:after {background-image: url("img/reader_toolbar_top_search_new.png"); background-size: 18px 18px;}
+			.ui-icon-comment:after {background-image: url("img/reader_toolbar_top_comments_new.png"); background-size: 18px 18px;}
+			.ui-icon-bookmark-empty:after {background-image: url("img/reader_toolbar_top_bookmark_new.png"); background-size: 18px 18px;}
+			.ui-icon-bookmark:after {background-image: url("img/reader_toolbar_top_bookmark_s.png"); background-size: 18px 18px;}
+			.ui-icon-share:after {background-image: url("img/reader_toolbar_top_share_new.png"); background-size: 18px 18px;}
+			.ui-icon-toc_toc:after {background-image: url("img/reader_dwn_dir.png"); background-size: 18px 18px;} 
+			.ui-icon-toc_bookmark:after {background-image: url("img/reader_dwn_bookmark.png"); background-size: 18px 18px;} 
+			.ui-icon-toc_note:after {background-image: url("img/reader_dwn_notes.png"); background-size: 18px 18px;} 
+			.navbar-footer .ui-btn { padding-top: 40px !important; }
+			.navbar-footer .ui-btn:after { width: 30px!important; height: 30px!important; margin-left: -15px !important; box-shadow: none!important; -moz-box-shadow: none!important; -webkit-box-shadow: none!important; -webkit-border-radius: 0 !important; border-radius: 0 !important; }
+			#reader_toolbar_bottom_content:after { background:  url("img/reader_toolbar_bottom_content.png") 50% 50% no-repeat; background-size: 24px 22px; }
+			#reader_toolbar_bottom_foot:after { background:  url("img/reader_toolbar_bottom_foot.png") 50% 50% no-repeat; background-size: 24px 22px; }
+			#reader_toolbar_bottom_fontsize:after { background:  url("img/reader_toolbar_bottom_fontsize.png") 50% 50% no-repeat; background-size: 24px 22px; }
+			#reader_toolbar_bottom_moon:after { background:  url("img/reader_toolbar_bottom_moon.png") 50% 50% no-repeat; background-size: 24px 22px; }
+			
+			#reader_toc_bottom_share:after { background:  url("img/personal_note_share.png") 50% 50% no-repeat; background-size: 24px 22px; }
+			
+			#header_top_back, #header_top_search, #header_top_share, #header_top_comment, #header_top_bookmark, #reader_toc_bottom_share {background-color: transparent;}
+			
+			#main{overflow-y:hidden;}
+			
+			#bookName{position:fixed; height:20px; top:5px; left:20px; color:#CCCCCC;}
+			#chapterName{position:fixed; height:20px; top:5px; right:20px; color:#CCCCCC;}
+			#CurrentTime{position:fixed; height:20px; bottom:5px; left:20px; color:#CCCCCC;}
+			#CurrentPagination{position:fixed; height:20px; bottom:5px; right:20px; color:#CCCCCC;}
+		</style>
+		
+		<script>
+			$(function() {
+				$( ".reader-navbar" ).navbar();
+				$( ".reader-header, reader-footer" ).toolbar();
+			});
+			
+			$( "#header_top_back" ).click(function (e) {
+				e.stopImmediatePropagation();
+				e.preventDefault();
+				alert("Test back button click event.");
+			});
+						
+			function locateBookUrl(url){
+				Book.goto(url);
+				return false;
+			}	
+						
+			//
+			//For image zoom
+			//
+			// All images information for PhotoSwipe in current chapter
+			var curChImageItems = [];
+			var curChAllImages = [];
+			
+			function hasImageInCurrentGallery(img){
+				for (var i = 0; i < curChAllImages.length; i++) {
+					if(curChAllImages[i] == img) {
+						return true;
+					}
+				}
+				return false;
+			}
+			function updateGalleryImage(items){
+				curChImageItems.splice(0);
+				curChAllImages.splice(0);
+				var index = 0;
+				items.forEach(function(imgobj){
+					// create slide object
+					item = {
+						index:index,
+						src: imgobj.src,
+						title:imgobj.alt||'',
+						w: imgobj.naturalWidth,
+						h: imgobj.naturalHeight,
+					};
+					curChAllImages.push(imgobj);
+					curChImageItems.push(item);
+					index++;
+				});
+			}
+			
+			// call from smartimages.js while image was clicked
+			function imgZoomViewInChapter(target, closeHandler){
+				//alert("You are click img object");
+				// Check current is in current gallery 
+				if (!hasImageInCurrentGallery(target)){
+					// Load all images
+					var images = Book.renderer.contents.querySelectorAll("img"),
+					    items = Array.prototype.slice.call(images);
+					updateGalleryImage(items);
+				}
+				var index = 0;
+				for (var i = 0; i < curChAllImages.length; i++) {
+					if(curChAllImages[i] == target) {
+						break;
+					}
+					index++;
+				}
+				
+				var pswpElement = document.querySelectorAll('.pswp')[0];
+				
+				// define options (if needed)
+				var options = {
+					index: index,
+					bgOpacity:0.7,
+					 // history & focus options are disabled on CodePen        
+					history: false,
+					focus: false,
+
+					showAnimationDuration: 0,
+					hideAnimationDuration: 0
+					
+				};
+				
+				var gallery = new PhotoSwipe( pswpElement, PhotoSwipeUI_Default, curChImageItems, options);
+				gallery.init();
+				
+				if (closeHandler != null){
+					gallery.listen("close", closeHandler);
+				}
+			}
+			
+			
+		</script>
+    </head>
+    <body>
+        <div data-role="page" id="book">
+			<div data-role="header" id="reader-header" data-position="fixed" data-tap-toggle="false" data-fullscreen="true" data-theme="b">		
+				<a href="./index.html" id="header_top_back" class="ui-nodisc-icon ui-btn ui-corner-all ui-btn-b ui-btn-icon-left ui-icon-back ui-btn-icon-notext" data-ajax="false">Back</a>
+				<h1></h1>
+				<div id="header_top_right_grp" data-type="horizontal" data-role="controlgroup" class="ui-btn-right"> 
+					<a href="#" id="header_top_search" data-role="button" class="ui-nodisc-icon ui-btn ui-corner-all ui-btn-b ui-btn-icon-left ui-icon-search ui-btn-icon-notext">Search</a>
+					<a href="#" id="header_top_share" data-role="button" class="ui-nodisc-icon ui-btn ui-corner-all ui-btn-b ui-btn-icon-left ui-icon-share ui-btn-icon-notext">Share</a>
+					<a href="#" id="header_top_comment" data-role="button" class="ui-nodisc-icon ui-btn ui-corner-all ui-btn-b ui-btn-icon-left ui-icon-comment ui-btn-icon-notext">Comment</a>
+					<a href="#" id="header_top_bookmark" data-role="button" class="ui-nodisc-icon ui-btn ui-corner-all ui-btn-b ui-btn-icon-left ui-icon-bookmark-empty ui-btn-icon-notext">Bookmark</a>
+				</div>
+			</div>
+		
+			<div role="main" class="ui-content" id="main">
+				<div id="bookName"><span id="bookTitle">Book Title</span></div>
+				<div id="chapterName"><span id="chapterLabel">Chapter Name</span></div>
+				  <div id="area"></div>
+				<div id="CurrentTime"><span id="Clock">Time</span></div>
+				<div id="CurrentPagination"><span id="Pagination">Time</span></div>
+				<div id="loader"><img src="img/loader.gif"></div>
+				<!-- Root element of PhotoSwipe. Must have class pswp. -->
+				<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true" data-enhance="false" data-ajax="false">
+
+					<!-- Background of PhotoSwipe. 
+						 It's a separate element, as animating opacity is faster than rgba(). -->
+					<div class="pswp__bg"></div>
+
+					<!-- Slides wrapper with overflow:hidden. -->
+					<div class="pswp__scroll-wrap">
+						<!-- Container that holds slides. PhotoSwipe keeps only 3 slides in DOM to save memory. -->
+						<div class="pswp__container">
+							<!-- don't modify these 3 pswp__item elements, data is added later on -->
+							<div class="pswp__item"></div>
+							<div class="pswp__item"></div>
+							<div class="pswp__item"></div>
+						</div>
+
+						<!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+						<div class="pswp__ui pswp__ui--hidden">
+							<div class="pswp__top-bar">
+								<!--  Controls are self-explanatory. Order can be changed. -->
+								<div class="pswp__counter"></div>
+								<button class="pswp__button pswp__button--close" title="Close (Esc)" data-enhance="false" data-ajax="false"></button>
+								<button class="pswp__button pswp__button--share" title="Share" data-enhance="false" data-ajax="false"></button>
+								<button class="pswp__button pswp__button--fs" title="Toggle fullscreen" data-enhance="false" data-ajax="false"></button>
+								<button class="pswp__button pswp__button--zoom" title="Zoom in/out" data-enhance="false" data-ajax="false"></button>
+
+								<!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+								<!-- element will get class pswp__preloader--active when preloader is running -->
+								<div class="pswp__preloader">
+									<div class="pswp__preloader__icn">
+									  <div class="pswp__preloader__cut">
+										<div class="pswp__preloader__donut"></div>
+									  </div>
+									</div>
+								</div>
+							</div>
+
+							<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+								<div class="pswp__share-tooltip"></div> 
+							</div>
+
+							<button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+							</button>
+
+							<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+							</button>
+
+							<div class="pswp__caption">
+								<div class="pswp__caption__center"></div>
+							</div>
+						  </div>
+						</div>
+				</div>
+				
+			</div>
+			<div data-role="footer" class="navbar-footer" id="reader-footer" data-position="fixed" data-tap-toggle="false" data-fullscreen="true">
+				<div data-role="navbar" class="navbar-footer" id="reader-nvabar">
+					<ul>
+						<li><a href="#tocPage" id="reader_toolbar_bottom_content" data-transition="slide" data-icon="custom" data-theme="b">目录</a></li>
+						<li><a href="#" id="reader_toolbar_bottom_fontsize" data-transition="slide" data-icon="custom" data-theme="b">字体</a></li>
+						<li><a href="#" id="reader_toolbar_bottom_moon" data-transition="slide" data-icon="custom" data-theme="b" data-ajax="false">夜间</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div data-role="page" id="tocPage">
+			<div data-role="header">
+				<a href="#book" id="header_top_back" class="ui-nodisc-icon ui-btn ui-btn-icon-left ui-icon-back ui-btn-icon-notext">Back</a>
+				<a href="#" id="toc_top_share" class="ui-nodisc-icon ui-btn ui-corner-all ui-btn-right ui-btn-icon-left ui-icon-share" data-theme="b">分享本书</a>
+				<h1></h1>
+			</div>
+			<div data-role="main" id="toc">
+			<div data-role="content" >
+				<ul data-role="listview" data-filter="true" id="tocListView">  
+				</ul>
+		   </div><!-- /content -->
+		</div><div data-role="footer" data-position="fixed">
+		   <div data-role="navbar">
+			<ul>
+				<li><a href="#tocPage" id="toc_toolbar_toc" data-role="button" class="ui-nodisc-icon ui-btn ui-corner-all ui-btn-icon-left ui-icon-toc_toc ui-btn-active ui-state-persist">目录</a></li>
+				<li><a href="#bookmarkPage" id="toc_toolbar_bookmark" data-role="button" class="ui-nodisc-icon ui-btn ui-corner-all ui-btn-icon-left ui-icon-toc_bookmark">书签</a></li>
+				<li><a href="#commentsPage" id="toc_toolbar_comments" data-role="button" class="ui-nodisc-icon ui-btn ui-corner-all ui-btn-icon-left ui-icon-toc_note">笔记</a></li>
+			</ul>
+		   </div><!-- /navbar -->
+		</div><!-- /footer -->
+		
+		</div><!-- /page -->
+		
+		<div data-role="page" id="bookmarkPage">
+			<div data-role="header" data-position="fixed">
+				<a href="#book" id="header_top_back" class="ui-nodisc-icon ui-btn ui-btn-icon-left ui-icon-back ui-btn-icon-notext">Back</a>
+				<a href="#sharePanel" id="toc_top_share" class="ui-nodisc-icon ui-btn ui-corner-all ui-btn-right ui-btn-icon-left ui-icon-share" data-theme="b">分享本书</a>
+				<h1></h1>
+			</div>
+			<div data-role="main" id="bookmarkList">
+			<div data-role="content" >
+			  <h2>书签列表</h2>
+		   </div><!-- /content -->
+		</div><div data-role="footer" data-position="fixed">
+		   <div data-role="navbar">
+			<ul>
+				<li><a href="#tocPage" id="toc_toolbar_toc" data-role="button" class="ui-nodisc-icon ui-btn ui-corner-all ui-btn-icon-left ui-icon-toc_toc">目录</a></li>
+				<li><a href="#bookmarkPage" id="toc_toolbar_bookmark" data-role="button" class="ui-nodisc-icon ui-btn ui-corner-all ui-btn-icon-left ui-icon-toc_bookmark ui-btn-active ui-state-persist">书签</a></li>
+				<li><a href="#commentsPage" id="toc_toolbar_comments" data-role="button" class="ui-nodisc-icon ui-btn ui-corner-all ui-btn-icon-left ui-icon-toc_note">笔记</a></li>
+			</ul>
+		   </div><!-- /navbar -->
+		</div><!-- /footer -->
+		</div><!-- /page -->
+		
+		<div data-role="page" id="commentsPage">
+			<div data-role="header" data-position="fixed">
+				<a href="#book" id="header_top_back" class="ui-nodisc-icon ui-btn ui-btn-icon-left ui-icon-back ui-btn-icon-notext">Back</a>
+				<a href="#sharePanel" id="toc_top_share" class="ui-nodisc-icon ui-btn ui-corner-all ui-btn-right ui-btn-icon-left ui-icon-share" data-theme="b">分享本书</a>
+				<h1></h1>
+			</div>
+			<div data-role="main" id="bookmark">
+			<div data-role="content" >
+			  <h2>VBook Developer</h2>
+			  <h3>页面开发中，敬请期待...<h3>
+			  <h6>笔记页面将呈现读者本书的笔记，通过笔记可以定位</h6>
+			  <h6>更多想法或建议请发送至yhb_yinhaibo@163.com邮箱</h6>
+		   </div><!-- /content -->
+		</div><div data-role="footer" data-position="fixed">
+		   <div data-role="navbar">
+			<ul>
+				<li><a href="#tocPage" id="toc_toolbar_toc" data-role="button" class="ui-nodisc-icon ui-btn ui-corner-all ui-btn-icon-left ui-icon-toc_toc">目录</a></li>
+				<li><a href="#bookmarkPage" id="toc_toolbar_bookmark" data-role="button" class="ui-nodisc-icon ui-btn ui-corner-all ui-btn-icon-left ui-icon-toc_bookmark ">书签</a></li>
+				<li><a href="#commentsPage" id="toc_toolbar_comments" data-role="button" class="ui-nodisc-icon ui-btn ui-corner-all ui-btn-icon-left ui-icon-toc_note ui-btn-active ui-state-persist">笔记</a></li>
+			</ul>
+		   </div><!-- /navbar -->
+		</div><!-- /footer -->
+		</div><!-- /page -->
+		
+		<div data-role="page" id="commentPage">
+			<div id="toc">Comments</div>
+		</div>
+		<div data-role="page" id="settingPage">
+			<div id="toc">Setting</div>
+		</div>
+		
+		<script> 
+			"use strict";
+			var Book = ePub(getUrlParam("book"));
+			
+			// proxy, call from iframe(in book)
+			function swipeLeftHandler(){
+				Book.nextPage();
+			}
+			function swipeRightHandler(){
+				Book.prevPage();
+			}
+			
+			function actionBookHeaderAndFooter(action){
+				$("#reader-header").toolbar( action );
+				$("#reader-footer").toolbar( action );
+			}
+			
+			 // Audio player
+			//
+			var my_media = null;
+			
+			// onSuccess Callback
+			//
+			function onSuccess() {
+				console.log("playAudio():Audio Success");
+			}
+
+			// onError Callback 
+			//
+			function onError(error) {
+				alert('code: '    + error.code    + '\n' + 
+					  'message: ' + error.message + '\n');
+			}
+		
+			function initAllAudioElement(){
+				var audios = Book.renderer.contents.querySelectorAll("audio"),
+					items = Array.prototype.slice.call(audios);
+				items.forEach(function(item){
+					function audioPlayHandler() {
+						//my_media = new Media(item.src, onSuccess, onError);
+						//my_media.play();
+						alert(item.src);
+					}
+					item.onplay = audioPlayHandler;
+				});
+			}
+			
+			/*EPUBJS.Hooks.register("beforeChapterDisplay").swipeDetection = function(callback, renderer){
+				alert('beforeChapterDisplay swipe detection');
+				if(callback) callback();        
+			};*/
+			Book.getMetadata().then(function(meta){
+				$('#bookTitle').text(meta.bookTitle);
+				document.title = meta.bookTitle+" – "+meta.creator;
+			});
+
+			var chapterHref2Name = [];
+			Book.getToc().then(function(toc){
+			  toc.forEach(function(chapter) {
+				$('#tocListView').append('<li><a href="#book" onclick="locateBookUrl(\'' + chapter.href + '\');" data-ajax="false">' + chapter.label + '</a></li>');
+				// add chapter href 2 name
+			    chapterHref2Name[chapter.spinePos] = chapter.label.trim();
+			  });
+			  $('#tocPage').page();
+			  $('#tocListView').listview('refresh');
+			});
+			Book.ready.all.then(function(){
+			  document.getElementById("loader").style.display = "none";
+			  actionBookHeaderAndFooter("hide");
+			  //
+			  setInterval('updateClock()', 1000);
+			  $('#CurrentPagination').text('分页准备中...');
+			  //Pagination
+			  Book.generatePagination();
+			});
+			Book.renderTo("area");
+			// Load in stored pageList from json or local storage
+            ///*
+            // EPUBJS.core.request("page_list.json").then(function(storedPageList){
+            //     pageList = storedPageList;
+            //     console.log(storedPageList)
+            //     book.loadPagination(pageList);
+            // });
+
+			var paginationReady = false;
+            // Wait for the pageList to be ready and then show slider
+            Book.pageListReady.then(function(pageList){
+				paginationReady = true;
+				var currentPage = Book.pagination.pageFromCfi(Book.getCurrentLocationCfi());
+				$('#CurrentPagination').text(currentPage + '/' + Book.pagination.lastPage);
+                //controls.style.display = "block";
+                console.log(JSON.stringify(pageList)); // Save the result
+                /*slider.setAttribute("type", "range");
+                slider.setAttribute("min", book.pagination.firstPage);
+                slider.setAttribute("max", book.pagination.lastPage);
+                slider.setAttribute("step", 1);
+                slider.setAttribute("value", 0);
+
+                slider.addEventListener("change", throttledSlide, false);
+                slider.addEventListener("mousedown", function(){
+                    mouseDown = true;
+                }, false);
+                slider.addEventListener("mouseup", function(){
+                    mouseDown = false;
+                }, false);
+
+                // Wait for book to be rendered to get current page
+                rendered.then(function(){
+                    var currentLocation = book.getCurrentLocationCfi();
+                    var currentPage = book.pagination.pageFromCfi(currentLocation);
+                    slider.value = currentPage;
+                    currentPage.value = currentPage;
+                });
+
+                controls.appendChild(slider);
+
+                totalPages.innerText = book.pagination.totalPages;
+                currentPage.addEventListener("change", function(){
+                    book.gotoPage(currentPage.value);
+                }, false);*/
+            });
+
+            Book.on('book:pageChanged', function(location){
+                /*if(!mouseDown) {
+                    slider.value = location.anchorPage;
+                }
+                currentPage.value = location.anchorPage;*/
+				$('#CurrentPagination').text(location.anchorPage + '/' + Book.pagination.lastPage);
+                console.log(location.pageRange)
+            });
+			
+			////////////////////////////////////////////////
+			// Page Show
+			// Time
+			function updateClock ( )
+			{
+				var currentTime = new Date ( );
+				var currentHours = currentTime.getHours ( );
+				var currentMinutes = currentTime.getMinutes ( );
+
+				// Pad the minutes and seconds with leading zeros, if required
+				currentMinutes = ( currentMinutes < 10 ? "0" : "" ) + currentMinutes;
+				currentHours = ( currentHours < 10 ? "0" : "" ) + currentHours;
+
+				// Compose the string for display
+				var currentTimeString = currentHours + ":" + currentMinutes;
+				
+				
+				$("#Clock").html(currentTimeString);
+					
+			 }
+			Book.on('renderer:chapterDisplayed', chapterChange);
+			function chapterChange(e){
+				var chapterIdx = null;
+				for (var idx in chapterHref2Name){
+					if (chapterIdx == null){ chapterIdx = idx;}
+					if (idx > e.spinePos) break;
+					if (idx <= e.spinePos){chapterIdx = idx;}
+				}
+				if (chapterIdx != null){
+					$('#chapterLabel').text(chapterHref2Name[chapterIdx]);
+				}
+				// set audio event listener
+				//initAllAudioElement();
+			}
+			
+			var readMode = 'daytime'; //daytime, night
+			
+			$('#reader_toolbar_bottom_moon').on('click', function(){
+				if (readMode == 'daytime'){
+					readMode = 'night';
+					Book.setStyle('color', '#666666');
+					Book.setStyle('background-color', '#000000');
+					this.text = ('黑夜');
+					//$('#reader_toolbar_bottom_moon:after').background = 'url("img/reader_toolbar_bottom_moon.png") 50% 50% no-repeat';
+				}else{
+					readMode = 'daytime';
+					Book.setStyle('color', '#000000');
+					Book.setStyle('background-color', '#FFFFFF');
+					this.text = ('白天');
+					//$('#reader_toolbar_bottom_moon:after').background = 'url("img/reader_toolbar_bottom_sun.png") 50% 50% no-repeat';
+				}
+			});
+		</script>
+		<script>
+		
+			// Setting
+			var settings = {
+				bookmarks : null,
+				annotations : null,
+				contained : null,
+				bookKey : null,
+				styles : null,
+				sidebarReflow: false,
+				generatePagination: false,
+				history: true
+			};
+			
+			var counter = 0;
+	
+			var createBookmarkItem = function(cfi) {
+				//var listitem = document.createElement("li");
+						//link = document.createElement("a");
+				
+				//listitem.id = "bookmark-"+counter;
+				//listitem.classList.add('list_item');
+				
+				//-- TODO: Parse Cfi
+				//link.textContent = cfi;
+				//link.href = '#book';
+
+				//link.classList.add('bookmark_link');
+				
+				/*link.addEventListener("click", function(event){
+						var cfi = this.getAttribute('href');
+						$('#book').page();
+						Book.gotoCfi(cfi);						
+						event.preventDefault();
+				}, false);*/
+				//link.onclick = "Book.gotoCfi(" + cfi + ");";
+				//link.data-ajax = "false";
+				
+				
+				//$.appendChild('<a id="#book" onclick="Book.gotoCfi(' + cfi + '); data-ajax="false">' + cfi + '</a>');
+				
+				var itemStr = '<li id="' + "bookmark-" + counter + '"><a href="#book" onclick="Book.gotoCfi(\'' + cfi + '\');" data-ajax="false">' + cfi + '</a></li>';
+				counter++;
+				
+				return itemStr;
+			};
+
+			
+			function addBookmark(cfi) {
+				var present = this.isBookmarked(cfi);
+				if(present > -1 ) return;
+
+				this.settings.bookmarks.push(cfi);
+				
+				var item = createBookmarkItem(cfi);
+				$('#bookmarkList').append(item);
+
+			};
+
+			function removeBookmark(cfi) {
+				var bookmark = this.isBookmarked(cfi);
+				if( bookmark === -1 ) return;
+				
+				delete this.settings.bookmarks[bookmark];
+				
+				var $item = $("#bookmark-"+index);
+				$item.remove();
+			};
+
+			function isBookmarked(cfi) {
+				var bookmarks = this.settings.bookmarks;
+				
+				return bookmarks.indexOf(cfi);
+			};
+
+			/*
+			EPUBJS.Reader.prototype.searchBookmarked = function(cfi) {
+				var bookmarks = this.settings.bookmarks,
+						len = bookmarks.length,
+						i;
+				
+				for(i = 0; i < len; i++) {
+					if (bookmarks[i]['cfi'] === cfi) return i;
+				}
+				return -1;
+			};
+			*/
+
+			function clearBookmarks() {
+				this.settings.bookmarks = [];
+			};
+
+			if(!settings.bookmarks) {
+				settings.bookmarks = [];
+			}
+			$bookmark = $("#header_top_bookmark");
+			
+		
+			$bookmark.on("click", function() {
+				var cfi = Book.getCurrentLocationCfi();
+				var bookmarked = isBookmarked(cfi);
+				
+				if(bookmarked === -1) { //-- Add bookmark
+					addBookmark(cfi);
+					$bookmark
+						.addClass("ui-icon-bookmark")
+						.removeClass("ui-icon-bookmark-empty"); 
+				} else { //-- Remove Bookmark
+					removeBookmark(cfi);
+					$bookmark
+						.removeClass("ui-icon-bookmark")
+						.addClass("ui-icon-bookmark-empty"); 
+				}
+
+			});
+		</script>
+    </body>
+</html>

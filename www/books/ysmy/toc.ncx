@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
+<head>
+<meta content="ixdzs:111736" name="dtb:uid"/>
+<meta content="2" name="dtb:depth"/>
+<meta content="爱下电子书 [http://www.ixdzs.com]" name="dtb:generator"/>
+<meta content="0" name="dtb:totalPageCount"/>
+<meta content="0" name="dtb:maxPageNumber"/>
+</head>
+<docTitle>
+<text>喻世明言</text>
+</docTitle>
+<docAuthor>
+<text>冯梦龙</text>
+</docAuthor>
+<navMap><navPoint id="chapter_27290081" playOrder="1"><navLabel><text>第一卷　蒋兴哥重会珍珠衫</text></navLabel><content src="chapter_27290081.xhtml"/></navPoint>
+<navPoint id="chapter_27290082" playOrder="2"><navLabel><text>第二卷　陈御史巧勘金钗钿</text></navLabel><content src="chapter_27290082.xhtml"/></navPoint>
+<navPoint id="chapter_27290083" playOrder="3"><navLabel><text>第三卷　新桥市韩五卖春情</text></navLabel><content src="chapter_27290083.xhtml"/></navPoint>
+<navPoint id="chapter_27290085" playOrder="4"><navLabel><text>第四卷　闲云年庵阮三冤债</text></navLabel><content src="chapter_27290085.xhtml"/></navPoint>
+<navPoint id="chapter_27290087" playOrder="5"><navLabel><text>第五卷　穷马周遭际卖缒(食旁)媪</text></navLabel><content src="chapter_27290087.xhtml"/></navPoint>
+<navPoint id="chapter_27290090" playOrder="6"><navLabel><text>第六卷　葛令公生遣弄珠儿</text></navLabel><content src="chapter_27290090.xhtml"/></navPoint>
+<navPoint id="chapter_27290092" playOrder="7"><navLabel><text>第七卷　羊角哀舍命全交</text></navLabel><content src="chapter_27290092.xhtml"/></navPoint>
+<navPoint id="chapter_27290094" playOrder="8"><navLabel><text>第八卷　吴保安弃家赎友</text></navLabel><content src="chapter_27290094.xhtml"/></navPoint>
+<navPoint id="chapter_27290096" playOrder="9"><navLabel><text>第九卷　裴晋公义还原配</text></navLabel><content src="chapter_27290096.xhtml"/></navPoint>
+<navPoint id="chapter_27290098" playOrder="10"><navLabel><text>第十卷　膝大尹鬼断家私</text></navLabel><content src="chapter_27290098.xhtml"/></navPoint>
+<navPoint id="chapter_27290100" playOrder="11"><navLabel><text>第十一卷　赴伯升茶肆遇仁宗</text></navLabel><content src="chapter_27290100.xhtml"/></navPoint>
+<navPoint id="chapter_27290102" playOrder="12"><navLabel><text>第十二卷　众名姬春风吊柳七</text></navLabel><content src="chapter_27290102.xhtml"/></navPoint>
+<navPoint id="chapter_27290104" playOrder="13"><navLabel><text>第十三卷　张道陵七试赵升</text></navLabel><content src="chapter_27290104.xhtml"/></navPoint>
+<navPoint id="chapter_27290106" playOrder="14"><navLabel><text>第十四卷　陈希夷四辞朝命</text></navLabel><content src="chapter_27290106.xhtml"/></navPoint>
+<navPoint id="chapter_27290108" playOrder="15"><navLabel><text>第十五卷　史弘肇龙虎君臣会</text></navLabel><content src="chapter_27290108.xhtml"/></navPoint>
+<navPoint id="chapter_27290110" playOrder="16"><navLabel><text>第十六卷　范巨卿鸡黍死生交</text></navLabel><content src="chapter_27290110.xhtml"/></navPoint>
+<navPoint id="chapter_27290112" playOrder="17"><navLabel><text>第十七卷　单符郎全州佳偶</text></navLabel><content src="chapter_27290112.xhtml"/></navPoint>
+<navPoint id="chapter_27290114" playOrder="18"><navLabel><text>第十八卷　杨八老越国奇逢</text></navLabel><content src="chapter_27290114.xhtml"/></navPoint>
+<navPoint id="chapter_27290116" playOrder="19"><navLabel><text>第十九卷　杨谦之客舫遇侠僧</text></navLabel><content src="chapter_27290116.xhtml"/></navPoint>
+<navPoint id="chapter_27290118" playOrder="20"><navLabel><text>第二十卷　陈从善梅岭失浑家</text></navLabel><content src="chapter_27290118.xhtml"/></navPoint>
+<navPoint id="chapter_27290120" playOrder="21"><navLabel><text>第二十一卷　临安里钱婆留发迹</text></navLabel><content src="chapter_27290120.xhtml"/></navPoint>
+<navPoint id="chapter_27290122" playOrder="22"><navLabel><text>第二十二卷　木绵庵郑虎臣报冤</text></navLabel><content src="chapter_27290122.xhtml"/></navPoint>
+<navPoint id="chapter_27290123" playOrder="23"><navLabel><text>第二十三卷　张舜美灯宵得丽女</text></navLabel><content src="chapter_27290123.xhtml"/></navPoint>
+<navPoint id="chapter_27290124" playOrder="24"><navLabel><text>第二十四卷　杨思温燕山逢故人</text></navLabel><content src="chapter_27290124.xhtml"/></navPoint>
+<navPoint id="chapter_27290125" playOrder="25"><navLabel><text>第二十五卷　晏平仲二桃杀三士</text></navLabel><content src="chapter_27290125.xhtml"/></navPoint>
+<navPoint id="chapter_27290126" playOrder="26"><navLabel><text>第二十六卷　沈小官一鸟害七命</text></navLabel><content src="chapter_27290126.xhtml"/></navPoint>
+<navPoint id="chapter_27290127" playOrder="27"><navLabel><text>第二十七卷　金玉奴棒打薄情郎</text></navLabel><content src="chapter_27290127.xhtml"/></navPoint>
+<navPoint id="chapter_27290128" playOrder="28"><navLabel><text>第二十八卷　李秀卿义结黄贞女</text></navLabel><content src="chapter_27290128.xhtml"/></navPoint>
+<navPoint id="chapter_27290129" playOrder="29"><navLabel><text>第二十九卷　月明和尚度柳翠</text></navLabel><content src="chapter_27290129.xhtml"/></navPoint>
+<navPoint id="chapter_27290130" playOrder="30"><navLabel><text>第三十卷　明悟禅师赶五戒</text></navLabel><content src="chapter_27290130.xhtml"/></navPoint>
+<navPoint id="chapter_27290131" playOrder="31"><navLabel><text>第三十一卷　闹阴司司马貌断狱</text></navLabel><content src="chapter_27290131.xhtml"/></navPoint>
+<navPoint id="chapter_27290132" playOrder="32"><navLabel><text>第三十二卷　游酆都胡母迪吟诗</text></navLabel><content src="chapter_27290132.xhtml"/></navPoint>
+<navPoint id="chapter_27290133" playOrder="33"><navLabel><text>第三十三卷　张古老种瓜娶文女</text></navLabel><content src="chapter_27290133.xhtml"/></navPoint>
+<navPoint id="chapter_27290134" playOrder="34"><navLabel><text>第三十四卷　李公子救蛇获称心</text></navLabel><content src="chapter_27290134.xhtml"/></navPoint>
+<navPoint id="chapter_27290135" playOrder="35"><navLabel><text>第三十五卷　简帖僧巧骗皇甫妻</text></navLabel><content src="chapter_27290135.xhtml"/></navPoint>
+<navPoint id="chapter_27290136" playOrder="36"><navLabel><text>第三十六卷　宋四公大闹禁魂张</text></navLabel><content src="chapter_27290136.xhtml"/></navPoint>
+<navPoint id="chapter_27290137" playOrder="37"><navLabel><text>第三十七卷　梁武帝累修成佛</text></navLabel><content src="chapter_27290137.xhtml"/></navPoint>
+<navPoint id="chapter_27290138" playOrder="38"><navLabel><text>第三十八卷　任孝子烈性为神</text></navLabel><content src="chapter_27290138.xhtml"/></navPoint>
+<navPoint id="chapter_27290139" playOrder="39"><navLabel><text>第三十九卷　汪信之一死救全家</text></navLabel><content src="chapter_27290139.xhtml"/></navPoint>
+<navPoint id="chapter_27290140" playOrder="40"><navLabel><text>第四十卷　沈小霞相会出师表</text></navLabel><content src="chapter_27290140.xhtml"/></navPoint>
+</navMap></ncx>

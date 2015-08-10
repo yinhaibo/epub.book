@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+    <head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; media-src *">
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+		<link rel="stylesheet" href="jquerymobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+		
+		<script type="text/javascript" src="cordova.js"></script>
+		
+		<script src="jquery/2.1.4/jquery-2.1.4.min.js"></script>
+		<script src="jquerymobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+		
+        <script type="text/javascript" src="js/index.js"></script>
+		<script src="./epub/epub.js"></script>
+
+		<!-- zip -->
+		<script src="./libs/zip/zip.js"></script>
+		<script src="./libs/zip/zip-fs.js"></script>
+		<script src="./libs/zip/zip-ext.js"></script>
+		<script src="./libs/zip/inflate.js"></script>
+		<script src="./libs/zip/mime-types.js"></script>
+		
+		<!-- jszip -->
+		<script src="./libs/jszip/jszip.js"></script>
+		<script src="./libs/jszip/mime-types.js"></script>
+	
+	<style type="text/css">
+
+	  body {
+		overflow: hidden;
+	  }
+
+	  #main {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+	  }
+
+	#area {
+		width: 480px;
+		height: 650px;
+		margin: -5px auto;
+		padding: 40px 40px;
+	}
+
+	  #area iframe {
+		border: none;
+	  }
+
+	  #prev {
+		left: 40px;
+	  }
+
+	  #next {  
+		right: 40px;
+	  }
+
+	  .arrow {
+		position: absolute;
+		top: 50%;
+		margin-top: -32px;
+		font-size: 64px;
+		color: #E2E2E2;
+		font-family: arial, sans-serif;
+		font-weight: bold;
+		cursor: pointer;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		user-select: none;
+	  }
+
+	  .arrow:hover {
+		color: #777;
+	  }
+	   
+	  .arrow:active {
+		color: #000;
+	  }
+	</style>
+	
+	
+        <title>VBook</title>
+		
+		<style>
+			.ui-icon-back:after {background-image: url("img/reader_toolbar_top_back_new.png"); background-size: 18px 18px;}
+			.ui-icon-search:after {background-image: url("img/reader_toolbar_top_search_new.png"); background-size: 18px 18px;}
+			.ui-icon-comment:after {background-image: url("img/reader_toolbar_top_comments_new.png"); background-size: 18px 18px;}
+			.ui-icon-bookmark:after {background-image: url("img/reader_toolbar_top_bookmark_new.png"); background-size: 18px 18px;}
+			.ui-icon-share:after {background-image: url("img/reader_toolbar_top_share_new.png"); background-size: 18px 18px;}
+			.ui-icon-toc_toc:after {background-image: url("img/reader_dwn_dir.png"); background-size: 18px 18px;} 
+			.ui-icon-toc_bookmark:after {background-image: url("img/reader_dwn_bookmark.png"); background-size: 18px 18px;} 
+			.ui-icon-toc_note:after {background-image: url("img/reader_dwn_notes.png"); background-size: 18px 18px;} 
+			.navbar-footer .ui-btn { padding-top: 40px !important; }
+			.navbar-footer .ui-btn:after { width: 30px!important; height: 30px!important; margin-left: -15px !important; box-shadow: none!important; -moz-box-shadow: none!important; -webkit-box-shadow: none!important; -webkit-border-radius: 0 !important; border-radius: 0 !important; }
+			#reader_toolbar_bottom_content:after { background:  url("img/reader_toolbar_bottom_content.png") 50% 50% no-repeat; background-size: 24px 22px; }
+			#reader_toolbar_bottom_foot:after { background:  url("img/reader_toolbar_bottom_foot.png") 50% 50% no-repeat; background-size: 24px 22px; }
+			#reader_toolbar_bottom_fontsize:after { background:  url("img/reader_toolbar_bottom_fontsize.png") 50% 50% no-repeat; background-size: 24px 22px; }
+			#reader_toolbar_bottom_moon:after { background:  url("img/reader_toolbar_bottom_moon.png") 50% 50% no-repeat; background-size: 24px 22px; }
+			
+			#reader_toc_bottom_share:after { background:  url("img/personal_note_share.png") 50% 50% no-repeat; background-size: 24px 22px; }
+			
+			#header_top_back, #header_top_search, #header_top_share, #header_top_comment, #header_top_bookmark, #reader_toc_bottom_share {background-color: transparent;}
+		</style>
+		
+		<script>
+			$(function() {
+				$( ".reader-navbar" ).navbar();
+				$( ".reader-header, reader-footer" ).toolbar();
+				
+				
+			});
+			
+			$( "#header_top_back" ).click(function (e) {
+				e.stopImmediatePropagation();
+				e.preventDefault();
+				alert("Test back button click event.");
+			});
+			
+			function doSomething(){
+			alert("Test back button click event.");
+			}
+		</script>
+		
+		<script>
+			"use strict";
+			var Book = ePub("./books/progit/");
+		</script>
+    </head>
+    <body>
+	<div data-role="page">
+ <div data-role="header" data-position="fixed">
+      <h1>Navigation</h1>
+   </div><!-- /header -->
+   <div data-role="content" >
+      <ul data-role="listview" data-dividertheme="d" style="margin-top: 0;">
+         <li data-role="list-divider">Royal Family</li>
+         <li><a href="#nav1">Henry VIII</a></li>
+         <li><a href="#nav1">George V</a></li>
+         <li><a href="#nav1">Prince of Wales</a></li>
+         <li><a href="#nav1">Elizabeth I</a></li>
+         <li><a href="#nav1">Elizabeth II</a></li>
+         <li data-role="list-divider">Prime Miniseters</li>
+         <li><a href="#nav2">Winston Churchill</a></li>
+         <li><a href="#nav2">Tony Blare</a></li>
+         <li><a href="#nav2">David Cameron</a></li>
+      </ul>
+   </div><!-- /content -->
+<div data-role="footer" data-position="fixed">
+   <div data-role="navbar">
+      <ul>
+         <li><a href="#nav1" class="ui-btn-active">Royals</a></li>
+         <li><a href="#nav2">Leaders</a></li>
+      </ul>
+   </div><!-- /navbar -->
+</div><!-- /footer -->
+</div><!-- /page -->
+<div data-role="page" id="nav1" data-position="fixed">
+   <div data-role="header">
+      <h1>Royal Family</h1>
+   </div><!-- /header -->
+<div data-role="content">
+<p>Members and relatives of the British Royal Family historically represented the monarch in various places throughout the British Empire, sometimes for extended periods as viceroys, or for specific ceremonies or events. Today, they often perform ceremonial and social duties throughout the United Kingdom and abroad on behalf of the UK, but, aside from the monarch, have no constitutional role in the affairs of government. This is the same for the other realms of the Commonwealth though the family there acts on behalf of, is funded by, and represents the sovereign of that particular state, and not the United Kingdom.</P>
+</div><!-- /content -->
+   <div data-role="footer" data-position="fixed">
+      <h4>Royal Family</h4>
+   </div><!-- /header -->
+</div><!-- /page -->
+<div data-role="page" id="nav2" data-position="fixed">
+   <div data-role="header">
+      <h1>Prime Ministers</h1>
+   </div><!-- /header -->
+<div data-role="content">
+The Prime Minister of the United Kingdom of Great Britain and Northern Ireland is the Head of Her Majesty's Government in the United Kingdom. The Prime Minister and Cabinet (consisting of all the most senior ministers, who are government department heads) are collectively accountable for their policies and actions to the Sovereign, to Parliament, to their political party and ultimately to the electorate. The current Prime Minister, David Cameron, was appointed on 11 May 2010.</div><!-- /content -->
+<div data-role="footer" data-position="fixed">
+   <h4>Prime Minister</h4>
+      </div><!-- /header -->
+   </div><!-- /page -->
+    </body>
+</html>

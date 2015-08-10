@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE ncx PUBLIC "-//NISO//DTD ncx 2005-1//EN"
+ "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
+  <head>
+    <meta content="urn:uuid:e64971eb-cf48-4340-81a6-a2ed0bba109f" name="dtb:uid"/>
+    <meta content="2" name="dtb:depth"/>
+    <meta content="0" name="dtb:totalPageCount"/>
+    <meta content="0" name="dtb:maxPageNumber"/>
+  </head>
+  <docTitle>
+    <text>柴油机</text>
+  </docTitle>
+  <navMap>
+    <navPoint id="navPoint-1" playOrder="1">
+      <navLabel>
+        <text>项目七 柴油机的测试及运行管理</text>
+      </navLabel>
+      <content src="Text/Section0001.xhtml"/>
+    </navPoint>
+    <navPoint id="navPoint-2" playOrder="2">
+      <navLabel>
+        <text>7.1.1示功图的种类及用途</text>
+      </navLabel>
+      <content src="Text/Section0001.xhtml#sigil_toc_id_1"/>
+      <navPoint id="navPoint-3" playOrder="3">
+        <navLabel>
+          <text>1. p-V示功图</text>
+        </navLabel>
+        <content src="Text/Section0003.xhtml#sigil_toc_id_2"/>
+      </navPoint>
+      <navPoint id="navPoint-4" playOrder="4">
+        <navLabel>
+          <text>2. p-V转角示功图</text>
+        </navLabel>
+        <content src="Text/Section0003.xhtml#sigil_toc_id_3"/>
+      </navPoint>
+      <navPoint id="navPoint-5" playOrder="5">
+        <navLabel>
+          <text>3.手拉展开示功图</text>
+        </navLabel>
+        <content src="Text/Section0003.xhtml#sigil_toc_id_4"/>
+      </navPoint>
+      <navPoint id="navPoint-6" playOrder="6">
+        <navLabel>
+          <text>4.梳形示功图</text>
+        </navLabel>
+        <content src="Text/Section0003.xhtml#sigil_toc_id_5"/>
+      </navPoint>
+      <navPoint id="navPoint-7" playOrder="7">
+        <navLabel>
+          <text>5.弱弹簧示功图</text>
+        </navLabel>
+        <content src="Text/Section0003.xhtml#sigil_toc_id_6"/>
+      </navPoint>
+      <navPoint id="navPoint-8" playOrder="8">
+        <navLabel>
+          <text>6. p-φ展开示功图</text>
+        </navLabel>
+        <content src="Text/Section0003.xhtml#sigil_toc_id_7"/>
+      </navPoint>
+      <navPoint id="navPoint-9" playOrder="9">
+        <navLabel>
+          <text>7.1.2机械示功器的工作原理、结构及特点</text>
+        </navLabel>
+        <content src="Text/Section0003.xhtml#sigil_toc_id_8"/>
+      </navPoint>
+      <navPoint id="navPoint-10" playOrder="10">
+        <navLabel>
+          <text>7.1.3示功图的测取方法及注意事项</text>
+        </navLabel>
+        <content src="Text/Section0003.xhtml#sigil_toc_id_9"/>
+      </navPoint>
+    </navPoint>
+  </navMap>
+</ncx>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="BookId" version="2.0">
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+    <dc:identifier id="BookId" opf:scheme="UUID">urn:uuid:e64971eb-cf48-4340-81a6-a2ed0bba109f</dc:identifier>
+    <dc:date opf:event="modification">2015-08-04</dc:date>
+    <meta content="0.8.5" name="Sigil version" />
+	<dc:title>柴油机</dc:title>
+  </metadata>
+  <manifest>
+    <item href="toc.ncx" id="ncx" media-type="application/x-dtbncx+xml" />
+    <item href="Text/Section0003.xhtml" id="Section0003.xhtml" media-type="application/xhtml+xml" />
+    <item href="Images/2.png" id="x2.png" media-type="image/png" />
+    <item href="Images/3.png" id="x3.png" media-type="image/png" />
+    <item href="Images/4.png" id="x4.png" media-type="image/png" />
+    <item href="Images/1.jpg" id="x1.jpg" media-type="image/jpeg" />
+    <item href="Video/RBSP_gfys.mp4" id="RBSP_gfys.mp4" media-type="text/plain" />
+    <item href="Images/5.png" id="x5.png" media-type="image/png" />
+    <item href="Images/6.png" id="x6.png" media-type="image/png" />
+    <item href="Images/7.png" id="x7.png" media-type="image/png" />
+    <item href="Text/Section0001.xhtml" id="Section0001.xhtml" media-type="application/xhtml+xml" />
+    <item href="Audio/%E4%B9%8C%E5%85%B0%E6%89%98%E5%A8%85%2B-%2B%E7%BA%A2%E7%BA%A2%E7%9A%84%E7%BA%BF-%E9%93%83%E5%A3%B0%E4%B9%8B%E5%AE%B6.aac" id="乌兰托娅_-_红红的线-铃声之家.aac" media-type="text/plain" />
+  </manifest>
+  <spine toc="ncx">
+    <itemref idref="Section0001.xhtml" />
+    <itemref idref="Section0003.xhtml" />
+  </spine>
+  <guide />
+</package>

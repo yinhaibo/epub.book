@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
+<head>
+<meta content="ixdzs:111645" name="dtb:uid"/>
+<meta content="2" name="dtb:depth"/>
+<meta content="爱下电子书 [http://www.ixdzs.com]" name="dtb:generator"/>
+<meta content="0" name="dtb:totalPageCount"/>
+<meta content="0" name="dtb:maxPageNumber"/>
+</head>
+<docTitle>
+<text>警世通言</text>
+</docTitle>
+<docAuthor>
+<text>冯梦龙</text>
+</docAuthor>
+<navMap><navPoint id="chapter_27289532" playOrder="1"><navLabel><text>第一卷 俞伯牙摔琴谢知音</text></navLabel><content src="chapter_27289532.xhtml"/></navPoint>
+<navPoint id="chapter_27289533" playOrder="2"><navLabel><text>第二卷 庄子休鼓盆成大道</text></navLabel><content src="chapter_27289533.xhtml"/></navPoint>
+<navPoint id="chapter_27289534" playOrder="3"><navLabel><text>第三卷 王安石三难苏学士</text></navLabel><content src="chapter_27289534.xhtml"/></navPoint>
+<navPoint id="chapter_27289535" playOrder="4"><navLabel><text>第四卷 拗相公饮恨半山堂</text></navLabel><content src="chapter_27289535.xhtml"/></navPoint>
+<navPoint id="chapter_27289536" playOrder="5"><navLabel><text>第五卷 吕大郎还金完骨肉</text></navLabel><content src="chapter_27289536.xhtml"/></navPoint>
+<navPoint id="chapter_27289537" playOrder="6"><navLabel><text>第六卷 俞仲举题诗遇上皇</text></navLabel><content src="chapter_27289537.xhtml"/></navPoint>
+<navPoint id="chapter_27289538" playOrder="7"><navLabel><text>第七卷 陈可常端阳仙化</text></navLabel><content src="chapter_27289538.xhtml"/></navPoint>
+<navPoint id="chapter_27289539" playOrder="8"><navLabel><text>第八卷 崔待诏生死冤家</text></navLabel><content src="chapter_27289539.xhtml"/></navPoint>
+<navPoint id="chapter_27289540" playOrder="9"><navLabel><text>第九卷 李谪仙醉草吓蛮书</text></navLabel><content src="chapter_27289540.xhtml"/></navPoint>
+<navPoint id="chapter_27289541" playOrder="10"><navLabel><text>第十卷 钱舍人题诗燕子楼</text></navLabel><content src="chapter_27289541.xhtml"/></navPoint>
+<navPoint id="chapter_27289542" playOrder="11"><navLabel><text>第十一卷 苏知县罗衫再合</text></navLabel><content src="chapter_27289542.xhtml"/></navPoint>
+<navPoint id="chapter_27289543" playOrder="12"><navLabel><text>第十二卷 范鳅儿双镜重圆</text></navLabel><content src="chapter_27289543.xhtml"/></navPoint>
+<navPoint id="chapter_27289544" playOrder="13"><navLabel><text>第十三卷 三现身包龙图断冤</text></navLabel><content src="chapter_27289544.xhtml"/></navPoint>
+<navPoint id="chapter_27289545" playOrder="14"><navLabel><text>第十四卷 一窟鬼癞道人除怪</text></navLabel><content src="chapter_27289545.xhtml"/></navPoint>
+<navPoint id="chapter_27289546" playOrder="15"><navLabel><text>第十五卷 金令史美婢酬秀童</text></navLabel><content src="chapter_27289546.xhtml"/></navPoint>
+<navPoint id="chapter_27289547" playOrder="16"><navLabel><text>第十六卷 小夫人金钱赠年少</text></navLabel><content src="chapter_27289547.xhtml"/></navPoint>
+<navPoint id="chapter_27289548" playOrder="17"><navLabel><text>第十七卷 钝秀才一朝交泰</text></navLabel><content src="chapter_27289548.xhtml"/></navPoint>
+<navPoint id="chapter_27289549" playOrder="18"><navLabel><text>第十八卷 老门生三世报恩</text></navLabel><content src="chapter_27289549.xhtml"/></navPoint>
+<navPoint id="chapter_27289550" playOrder="19"><navLabel><text>第十九卷 崔衙内白鹞招妖</text></navLabel><content src="chapter_27289550.xhtml"/></navPoint>
+<navPoint id="chapter_27289551" playOrder="20"><navLabel><text>第二十卷 计押番金鳗产祸</text></navLabel><content src="chapter_27289551.xhtml"/></navPoint>
+<navPoint id="chapter_27289552" playOrder="21"><navLabel><text>第二十一卷 赵太祖千里送京娘</text></navLabel><content src="chapter_27289552.xhtml"/></navPoint>
+<navPoint id="chapter_27289553" playOrder="22"><navLabel><text>第二十二卷 宋小官团圆破毡笠</text></navLabel><content src="chapter_27289553.xhtml"/></navPoint>
+<navPoint id="chapter_27289554" playOrder="23"><navLabel><text>第二十三卷 乐小舍弃生觅偶</text></navLabel><content src="chapter_27289554.xhtml"/></navPoint>
+<navPoint id="chapter_27289555" playOrder="24"><navLabel><text>第二十四卷 玉堂春落难逢夫</text></navLabel><content src="chapter_27289555.xhtml"/></navPoint>
+<navPoint id="chapter_27289556" playOrder="25"><navLabel><text>第二十五卷 桂员外途穷忏悔</text></navLabel><content src="chapter_27289556.xhtml"/></navPoint>
+<navPoint id="chapter_27289557" playOrder="26"><navLabel><text>第二十六卷 唐解元一笑姻缘</text></navLabel><content src="chapter_27289557.xhtml"/></navPoint>
+<navPoint id="chapter_27289558" playOrder="27"><navLabel><text>第二十七卷 假神仙大闹华光庙</text></navLabel><content src="chapter_27289558.xhtml"/></navPoint>
+<navPoint id="chapter_27289559" playOrder="28"><navLabel><text>第二十八卷 白娘子永镇雷峰塔</text></navLabel><content src="chapter_27289559.xhtml"/></navPoint>
+<navPoint id="chapter_27289560" playOrder="29"><navLabel><text>第二十九卷 宿香亭张浩遇莺莺</text></navLabel><content src="chapter_27289560.xhtml"/></navPoint>
+<navPoint id="chapter_27289561" playOrder="30"><navLabel><text>第三十卷 金明池吴清逢爱爱</text></navLabel><content src="chapter_27289561.xhtml"/></navPoint>
+<navPoint id="chapter_27289562" playOrder="31"><navLabel><text>第三十一卷 赵春儿重旺曹家庄</text></navLabel><content src="chapter_27289562.xhtml"/></navPoint>
+<navPoint id="chapter_27289563" playOrder="32"><navLabel><text>第三十二卷 杜十娘怒沉百宝箱</text></navLabel><content src="chapter_27289563.xhtml"/></navPoint>
+<navPoint id="chapter_27289564" playOrder="33"><navLabel><text>第三十三卷 乔彦杰一妾破家</text></navLabel><content src="chapter_27289564.xhtml"/></navPoint>
+<navPoint id="chapter_27289565" playOrder="34"><navLabel><text>第三十四卷 王娇鸾百年长恨</text></navLabel><content src="chapter_27289565.xhtml"/></navPoint>
+<navPoint id="chapter_27289566" playOrder="35"><navLabel><text>第三十五卷 况太守断死孩儿</text></navLabel><content src="chapter_27289566.xhtml"/></navPoint>
+<navPoint id="chapter_27289567" playOrder="36"><navLabel><text>第三十六卷 皂角林大王假形</text></navLabel><content src="chapter_27289567.xhtml"/></navPoint>
+<navPoint id="chapter_27289568" playOrder="37"><navLabel><text>第三十七卷 万秀娘仇报山亭儿</text></navLabel><content src="chapter_27289568.xhtml"/></navPoint>
+<navPoint id="chapter_27289569" playOrder="38"><navLabel><text>第三十八卷 蒋淑真刎颈鸳鸯会</text></navLabel><content src="chapter_27289569.xhtml"/></navPoint>
+<navPoint id="chapter_27289570" playOrder="39"><navLabel><text>第三十九卷 福禄寿三星度世</text></navLabel><content src="chapter_27289570.xhtml"/></navPoint>
+<navPoint id="chapter_27289571" playOrder="40"><navLabel><text>第四十卷 旌阳宫铁树镇妖</text></navLabel><content src="chapter_27289571.xhtml"/></navPoint>
+</navMap></ncx>
