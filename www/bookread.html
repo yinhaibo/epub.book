@@ -47,13 +47,13 @@
         <script src="libs/epub/src/layout.js"></script>
         <script src="libs/epub/src/pagination.js"></script>
 
-		<!-- zip -->
+		<!-- zip
 		<script src="libs/zip/zip.js"></script>
 		<script src="libs/zip/zip-fs.js"></script>
 		<script src="libs/zip/zip-ext.js"></script>
 		<script src="libs/zip/inflate.js"></script>
 		<script src="libs/zip/mime-types.js"></script>
-		
+		 -->
 		<!-- jszip -->
 		<script src="libs/jszip/jszip.js"></script>
 		<script src="libs/jszip/mime-types.js"></script>
@@ -366,7 +366,109 @@
 		
 		<script> 
 			"use strict";
-			var Book = ePub(getUrlParam("book"));
+			var bookURI = getBaseUrl() + getUrlParam("book");
+			var userName = "default"; // User name, every user has a user directory in externalDataDirectory
+			var Book;
+			
+			document.addEventListener('deviceready', onDeviceReady, false);
+			
+			function getBaseUrl() {
+				var re = new RegExp(/^.*\//);
+				var base = window.location.href;
+				var items = base.split('?');
+				if (items != undefined && items.length > 0){
+					base = items[0];
+				}
+				return re.exec(base);
+			}
+			
+			
+			// Build book directory from book url and user information.
+			// @param userName 用户名
+			// @bookURL 书籍的原始目录和文件名，含epub结尾的打包电子书籍
+			// @param cbfun 成功回掉函数，参数为新生成的书籍目录对象DirectoryEntry
+			function buildBookDirStruct(userName, bookURL, cbfun){
+				var targetDir;
+				if (device.platform == "Android"){
+					targetDir = cordova.file.externalDataDirectory;
+				}else{
+					targetDir = cordova.file.dataDirectory;
+				}
+				window.resolveLocalFileSystemURL(targetDir, 
+					function(dir){
+						dir.getDirectory(userName, {create:true}, 
+							function(dir){								
+								console.log("buildBookDirStruct ok:" + dir.nativeURL);
+								cbfun(getBookName(bookURL), dir);										
+							}, 
+							function(e){console.error("buildBookDirStruct:create user dir error:" + e.code);}
+						);
+					}, function(e){
+						console.error("buildBookDirStruct:get dataDirectory error:" + e.code);
+				});
+			}
+			
+			// 重压缩包书籍路径中获得书名
+			function getBookName(bookURL){
+				var items = bookURI.split('/');
+				if (items != undefined && items.length > 0){
+					var bookName = items[items.length-1];
+					items = bookName.split('.');
+					return items[0];
+				}
+				console.log("Can't get book name from URL:" + bookURL);
+				return ""
+			}
+			
+			function entryUnzipProcess(zipFile, targetDir, cbfun){
+				zip.unzip(zipFile, targetDir, function(flag){
+					if (flag == 0){
+						console.log("entryUnzipProcess:unzip epub file " + zipFile + " to " + targetDir + " successfully.");
+						cbfun(targetDir + getBookName(zipFile) + "/");
+					}else{
+						console.log("entryUnzipProcess:unzip epub file " + zipFile + " to " + targetDir + " failed.");
+					}
+				});
+			}
+			
+			function copyFileToSDCard(destDirEntry){
+				window.resolveLocalFileSystemURL(bookURI, 
+					function(bookFileEntry){
+						bookFileEntry.copyTo(destDirEntry, bookFileEntry.name, function(rs){
+							console.log("copy to result:" + rs);
+							entryUnzipProcess(destDirEntry.nativeURL + bookFileEntry.name, destDirEntry.nativeURL, openEPUBBook);
+						});
+					});
+			}
+			
+			function checkSDCardEPUBFile(bookName, destDirEntry){
+				window.resolveLocalFileSystemURL(destDirEntry.nativeURL + bookName + ".epub", function(rs){
+					// epub file exist, check unzip directory
+					window.resolveLocalFileSystemURL(destDirEntry.nativeURL + bookName + "/", function(rs){
+						openEPUBBook(destDirEntry.nativeURL + bookName + "/");
+					}, function(e){
+						entryUnzipProcess(destDirEntry.nativeURL + bookName + ".epub", destDirEntry.nativeURL, openEPUBBook);
+					});
+				}, function(e){
+					// no epub file exist, just copy to current directory
+					copyFileToSDCard(destDirEntry);
+				});
+			}
+			
+			function openEPUBBook(bookURL){
+				Book = ePub(bookURL);
+				initializeBookEventBind();
+			}
+			
+			function onDeviceReady(){
+				if (bookURI.slice(-5) == ".epub"){
+					buildBookDirStruct("default", bookURI, checkSDCardEPUBFile);
+				}else{
+					// open directly
+					Book = ePub(getUrlParam("book"));
+					initializeBookEventBind();
+				}
+			}
 			
 			// proxy, call from iframe(in book)
 			function swipeLeftHandler(){
@@ -411,89 +513,94 @@
 				});
 			}
 			
-			/*EPUBJS.Hooks.register("beforeChapterDisplay").swipeDetection = function(callback, renderer){
-				alert('beforeChapterDisplay swipe detection');
-				if(callback) callback();        
-			};*/
-			Book.getMetadata().then(function(meta){
-				$('#bookTitle').text(meta.bookTitle);
-				document.title = meta.bookTitle+" – "+meta.creator;
-			});
-
 			var chapterHref2Name = [];
-			Book.getToc().then(function(toc){
-			  toc.forEach(function(chapter) {
-				$('#tocListView').append('<li><a href="#book" onclick="locateBookUrl(\'' + chapter.href + '\');" data-ajax="false">' + chapter.label + '</a></li>');
-				// add chapter href 2 name
-			    chapterHref2Name[chapter.spinePos] = chapter.label.trim();
-			  });
-			  $('#tocPage').page();
-			  $('#tocListView').listview('refresh');
-			});
-			Book.ready.all.then(function(){
-			  document.getElementById("loader").style.display = "none";
-			  actionBookHeaderAndFooter("hide");
-			  //
-			  setInterval('updateClock()', 1000);
-			  $('#CurrentPagination').text('分页准备中...');
-			  //Pagination
-			  Book.generatePagination();
-			});
-			Book.renderTo("area");
-			// Load in stored pageList from json or local storage
-            ///*
-            // EPUBJS.core.request("page_list.json").then(function(storedPageList){
-            //     pageList = storedPageList;
-            //     console.log(storedPageList)
-            //     book.loadPagination(pageList);
-            // });
+			
+			function initializeBookEventBind(){
+				/*EPUBJS.Hooks.register("beforeChapterDisplay").swipeDetection = function(callback, renderer){
+					alert('beforeChapterDisplay swipe detection');
+					if(callback) callback();        
+				};*/
+				Book.getMetadata().then(function(meta){
+					$('#bookTitle').text(meta.bookTitle);
+					document.title = meta.bookTitle+" – "+meta.creator;
+				});
+				
+				Book.getToc().then(function(toc){
+				  toc.forEach(function(chapter) {
+					$('#tocListView').append('<li><a href="#book" onclick="locateBookUrl(\'' + chapter.href + '\');" data-ajax="false">' + chapter.label + '</a></li>');
+					// add chapter href 2 name
+					chapterHref2Name[chapter.spinePos] = chapter.label.trim();
+				  });
+				  $('#tocPage').page();
+				  $('#tocListView').listview('refresh');
+				});
+				Book.ready.all.then(function(){
+				  document.getElementById("loader").style.display = "none";
+				  actionBookHeaderAndFooter("hide");
+				  //
+				  setInterval('updateClock()', 1000);
+				  $('#CurrentPagination').text('分页准备中...');
+				  //Pagination
+				  Book.generatePagination();
+				});
+				Book.renderTo("area");
+				// Load in stored pageList from json or local storage
+				///*
+				// EPUBJS.core.request("page_list.json").then(function(storedPageList){
+				//     pageList = storedPageList;
+				//     console.log(storedPageList)
+				//     book.loadPagination(pageList);
+				// });
 
-			var paginationReady = false;
-            // Wait for the pageList to be ready and then show slider
-            Book.pageListReady.then(function(pageList){
-				paginationReady = true;
-				var currentPage = Book.pagination.pageFromCfi(Book.getCurrentLocationCfi());
-				$('#CurrentPagination').text(currentPage + '/' + Book.pagination.lastPage);
-                //controls.style.display = "block";
-                console.log(JSON.stringify(pageList)); // Save the result
-                /*slider.setAttribute("type", "range");
-                slider.setAttribute("min", book.pagination.firstPage);
-                slider.setAttribute("max", book.pagination.lastPage);
-                slider.setAttribute("step", 1);
-                slider.setAttribute("value", 0);
+				var paginationReady = false;
+				// Wait for the pageList to be ready and then show slider
+				Book.pageListReady.then(function(pageList){
+					paginationReady = true;
+					var currentPage = Book.pagination.pageFromCfi(Book.getCurrentLocationCfi());
+					$('#CurrentPagination').text(currentPage + '/' + Book.pagination.lastPage);
+					//controls.style.display = "block";
+					console.log(JSON.stringify(pageList)); // Save the result
+					/*slider.setAttribute("type", "range");
+					slider.setAttribute("min", book.pagination.firstPage);
+					slider.setAttribute("max", book.pagination.lastPage);
+					slider.setAttribute("step", 1);
+					slider.setAttribute("value", 0);
 
-                slider.addEventListener("change", throttledSlide, false);
-                slider.addEventListener("mousedown", function(){
-                    mouseDown = true;
-                }, false);
-                slider.addEventListener("mouseup", function(){
-                    mouseDown = false;
-                }, false);
+					slider.addEventListener("change", throttledSlide, false);
+					slider.addEventListener("mousedown", function(){
+						mouseDown = true;
+					}, false);
+					slider.addEventListener("mouseup", function(){
+						mouseDown = false;
+					}, false);
 
-                // Wait for book to be rendered to get current page
-                rendered.then(function(){
-                    var currentLocation = book.getCurrentLocationCfi();
-                    var currentPage = book.pagination.pageFromCfi(currentLocation);
-                    slider.value = currentPage;
-                    currentPage.value = currentPage;
-                });
+					// Wait for book to be rendered to get current page
+					rendered.then(function(){
+						var currentLocation = book.getCurrentLocationCfi();
+						var currentPage = book.pagination.pageFromCfi(currentLocation);
+						slider.value = currentPage;
+						currentPage.value = currentPage;
+					});
 
-                controls.appendChild(slider);
+					controls.appendChild(slider);
 
-                totalPages.innerText = book.pagination.totalPages;
-                currentPage.addEventListener("change", function(){
-                    book.gotoPage(currentPage.value);
-                }, false);*/
-            });
+					totalPages.innerText = book.pagination.totalPages;
+					currentPage.addEventListener("change", function(){
+						book.gotoPage(currentPage.value);
+					}, false);*/
+				});
 
-            Book.on('book:pageChanged', function(location){
-                /*if(!mouseDown) {
-                    slider.value = location.anchorPage;
-                }
-                currentPage.value = location.anchorPage;*/
-				$('#CurrentPagination').text(location.anchorPage + '/' + Book.pagination.lastPage);
-                console.log(location.pageRange)
-            });
+				Book.on('book:pageChanged', function(location){
+					/*if(!mouseDown) {
+						slider.value = location.anchorPage;
+					}
+					currentPage.value = location.anchorPage;*/
+					$('#CurrentPagination').text(location.anchorPage + '/' + Book.pagination.lastPage);
+					console.log(location.pageRange)
+				});
+				
+				Book.on('renderer:chapterDisplayed', chapterChange);
+			}
 			
 			////////////////////////////////////////////////
 			// Page Show
@@ -515,7 +622,7 @@
 				$("#Clock").html(currentTimeString);
 					
 			 }
-			Book.on('renderer:chapterDisplayed', chapterChange);
+			
 			function chapterChange(e){
 				var chapterIdx = null;
 				for (var idx in chapterHref2Name){

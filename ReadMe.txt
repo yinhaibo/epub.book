@@ -28,3 +28,23 @@ Debug
 需要Andorid手机，并打开调试，并且，安装好驱动
 -------------------------------
 cordova run --device
+
+
+电子书目录结构：
+==========================
+dataDirectory
+下存用户目录，缺省调试为default目录，下面为epub文件，书籍分页信息，还有解压的目录信息。
+|
+-<user dir>
+   |
+   |--aa.epub
+   |--aa.page
+   |--aa
+      |--OPES
+      |--...
+-<default>
+   |--zz.epub
+   |--zz.page
+   |--zz
+      |--OPES
+      |--...

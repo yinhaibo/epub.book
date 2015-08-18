@@ -1,8 +1,6 @@
 EPUBJS.Hooks.register("beforeChapterDisplay").smartimages = function(callback, renderer){
 		var images = renderer.contents.querySelectorAll('img'),
 			items = Array.prototype.slice.call(images),
-			videos = renderer.contents.querySelectorAll('video'),
-			videos = Array.prototype.slice.call(videos),
 			iheight = renderer.height,//chapter.bodyEl.clientHeight,//chapter.doc.body.getBoundingClientRect().height,
 			oheight;
 

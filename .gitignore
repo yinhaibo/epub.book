@@ -4,7 +4,7 @@
 # Cordova platform build files
 build/*
 # Cordova platform build asset files
-asset/*
+assets/*
 # Cordova plugins directory
 /plugins/*
 
