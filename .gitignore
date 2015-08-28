@@ -6,5 +6,5 @@ build/*
 # Cordova platform build asset files
 assets/*
 # Cordova plugins directory
-/plugins/*
+#/plugins/*
 
