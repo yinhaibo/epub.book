@@ -4,6 +4,8 @@ An electrical book reader and share app software for Android, iPhone, iPad and W
 
 Create by Yinhaibo in data 2015.7
 
+°¢ÀïÔÆ ¿ØÖÆÌ¨ÃÜÂë£º766605
+
 Features:
 1. Book list.
 2. Book reading, pagination, chapter, image view, bookmark.
