@@ -16,32 +16,20 @@ var VBOOK = (function(){
 	//Private
 	/////////////////////////////////////////////////
 	
-	function chapterChange(e){
-		var chapterIdx = null;
-		for (var idx in chapterHref2Name){
-			if (chapterIdx == null){ chapterIdx = idx;}
-			if (idx > e.spinePos) break;
-			if (idx <= e.spinePos){chapterIdx = idx;}
-		}
-		if (chapterIdx != null){
-			$('#chapterLabel').text(chapterHref2Name[chapterIdx]);
-		}
-		// set audio event listener
-		//initAllAudioElement();
-	}
-
 	var chapterHref2Name = [];
 
 	var needSavePageList = true;
 	function initializeBookEventBind(){
 		Book.getMetadata().then(function(meta){
 			$('#bookTitle').text(meta.bookTitle);
-			document.title = meta.bookTitle+" 鈥� "+meta.creator;
+			document.title = meta.bookTitle+" - "+meta.creator;
 		});
 		
 		Book.getToc().then(function(toc){
 		  toc.forEach(function(chapter) {
-			$('#tocListView').append('<li><a href="#book" onclick="locateBookUrl(\'' + chapter.href + '\');" data-ajax="false">' + chapter.label + '</a></li>');
+			$('#tocListView').append('<li><a href="#book" onclick="VBOOK.locateBookUrl(\'' 
+					+ chapter.href + '\');" data-ajax="false">' 
+					+ chapter.label.trim() + '</a></li>');
 			// add chapter href 2 name
 			chapterHref2Name[chapter.spinePos] = chapter.label.trim();
 		  });
@@ -53,7 +41,7 @@ var VBOOK = (function(){
 		  actionBookHeaderAndFooter("hide");
 		  //
 		  setInterval('updateClock()', 1000);
-		  $('#CurrentPagination').text('分页中...');
+		  $('#pageLabel').text('分页中...');
 		  //Pagination
 		  // check pagenation file
 		  readFileFromBookDir("page_list.json", function(data){
@@ -72,57 +60,38 @@ var VBOOK = (function(){
 		Book.pageListReady.then(function(pageList){
 			paginationReady = true;
 			var currentPage = Book.pagination.pageFromCfi(Book.getCurrentLocationCfi());
-			$('#CurrentPagination').text(currentPage + '/' + Book.pagination.lastPage);
+			updatePageLabel(currentPage, Book.pagination.lastPage);
 			if (needSavePageList){
 				writeFileToBookDir("page_list.json", JSON.stringify(pageList));
 			}
-			/*slider.setAttribute("type", "range");
-			slider.setAttribute("min", book.pagination.firstPage);
-			slider.setAttribute("max", book.pagination.lastPage);
-			slider.setAttribute("step", 1);
-			slider.setAttribute("value", 0);
-
-			slider.addEventListener("change", throttledSlide, false);
-			slider.addEventListener("mousedown", function(){
-				mouseDown = true;
-			}, false);
-			slider.addEventListener("mouseup", function(){
-				mouseDown = false;
-			}, false);
-
-			// Wait for book to be rendered to get current page
-			rendered.then(function(){
-				var currentLocation = book.getCurrentLocationCfi();
-				var currentPage = book.pagination.pageFromCfi(currentLocation);
-				slider.value = currentPage;
-				currentPage.value = currentPage;
-			});
-
-			controls.appendChild(slider);
-
-			totalPages.innerText = book.pagination.totalPages;
-			currentPage.addEventListener("change", function(){
-				book.gotoPage(currentPage.value);
-			}, false);*/
-		});
-
-		Book.on('book:pageChanged', function(location){
-			/*if(!mouseDown) {
-				slider.value = location.anchorPage;
-			}
-			currentPage.value = location.anchorPage;*/
-			$('#CurrentPagination').text(location.anchorPage + '/' + Book.pagination.lastPage);
-			console.log(location.pageRange)
 		});
 		
-		Book.on('renderer:chapterDisplayed', chapterChange);
+		Book.on('book:pageChanged', function(location){
+			updatePageLabel(location.anchorPage, Book.pagination.lastPage);
+			console.log(location.pageRange);
+		});
+		
+		Book.on('renderer:chapterDisplayed', VBOOK.chapterChange);
 	}
 	
+	function updatePageLabel(curPage, totalPage){
+		var pageLabel = document.getElementById('pageLabel');
+		if (pageLabel == undefined){
+			if (document.getElementById('footerIFM') != undefined && 
+				document.getElementById('footerIFM').contentWindow.document.getElementById('pageLabel') != undefined){
+				document.getElementById('footerIFM').contentWindow.document.getElementById('pageLabel').innerHTML
+					= curPage + '/' + totalPage;
+			}
+		}else{
+			pageLabel.innerHTML = curPage + '/' + totalPage;
+		}
+	}
+
 	function openEPUBBook(book){
 		bookURL = book;
-		loadVBookSkin(function(){
+		loadVBookSkin(function(options){
 			console.log("Open EPUB book:" + bookURL);
-			vReader.Book = Book = ePub(bookURL);
+			vReader.Book = Book = ePub(bookURL, options);
 			Book.renderer.setGap(setting.columnGap);
 			initializeBookEventBind();
 		});
@@ -138,7 +107,7 @@ var VBOOK = (function(){
 			vbook_skin = JSON.parse(data);
 			var cw = document.width,
 			    pw, ph, scale;
-			var area;
+			var area,header,footer;
 			
 			if (vbook_skin.margin != undefined){
 				setting.marginLeft = vbook_skin.margin.left;
@@ -146,36 +115,46 @@ var VBOOK = (function(){
 				setting.marginTop = vbook_skin.margin.top;
 				setting.marginBottom = vbook_skin.margin.bottom;
 			}
+			header = document.getElementById('header');
 			if (vbook_skin.header != undefined){
 				pw = vbook_skin.header.width,
 				ph = vbook_skin.header.height;
 				
 				scale = cw / pw;
 				setting.headerHeight = ph * scale;
-				document.getElementById('header').innerHTML = '<iframe src="' + bookURL + vbook_skin.header.url 
+				header.style.width = window.width + "px";
+				header.style.height = setting.headerHeight + "px"
+				header.innerHTML = '<iframe src="' + bookURL + vbook_skin.header.url 
 					+'" id="headerIFM" frameborder="0" scrolling="no" width="100%" height="' + setting.headerHeight 
 					+ '"></iframe>';
 			}else{
-				document.getElementById('header').innerHTML = '<div id="bookName"><span id="bookTitle">Book Title</span></div>'
+				header.innerHTML = '<div id="bookName"><span id="bookTitle">Book Title</span></div>'
 					+ '<div id="chapterName"><span id="chapterLabel">Chapter Name</span></div>';
 			}
+			
+			footer = document.getElementById("footer");
 			if (vbook_skin.footer != undefined){
 				pw = vbook_skin.footer.width,
 				ph = vbook_skin.footer.height;
 				
 				scale = cw / pw;
 				setting.footerHeight = ph * scale;
-				document.getElementById('footer').innerHTML = '<iframe src="' + bookURL + vbook_skin.footer.url 
+				footer.style.width = window.width + "px";
+				footer.style.height = setting.footerHeight + "px"
+				footer.innerHTML = '<iframe src="' + bookURL + vbook_skin.footer.url 
 					+'" id="footerIFM" frameborder="0" scrolling="no" width="100%" height="' + setting.footerHeight 
 					+ '"></iframe>';
 			}else{
-				document.getElementById('footer').innerHTML = '<div id="CurrentTime"><span id="Clock">Time</span></div>'
-					+ '<div id="CurrentPagination"><span id="Pagination">Time</span></div>';
+				footer.innerHTML = '<div id="CurrentTime"><span id="Clock">Time</span></div>'
+					+ '<div id="pageLabel"><span id="Pagination">Time</span></div>';
 			}
+			options = {};
+			options.height = (document.height - setting.headerHeight - setting.footerHeight
+					- setting.marginTop - setting.marginBottom);
+			options.width = (document.width - setting.marginLeft - setting.marginRight);
 			area = document.getElementById('area');
-			area.style.height = (document.height - setting.headerHeight - setting.footerHeight
-				- setting.marginTop - setting.marginBottom)+ "px";
-			area.style.width = (document.width - setting.marginLeft - setting.marginRight) + "px";
+			area.style.height =  options.height + "px";
+			area.style.width = options.width + "px";
 			area.style.marginLeft = setting.marginLeft;
 			area.style.marginRight = setting.marginRight;
 			area.style.marginTop = setting.marginTop;
@@ -190,20 +169,23 @@ var VBOOK = (function(){
 			}
 			
 			if (successCallback){
-				successCallback();
+				successCallback(options);
 			}
 		}, function(flag, error){
 			console.log("Load VBook skin failed:" + error);
-			document.getElementById('header').innerHTML = '<div id="bookName"><span id="bookTitle">Book Title</span></div>'
+			document.getElementById('header').innerHTML = '<div id="bookName">Book Title</div>'
 				+ '<div id="chapterName"><span id="chapterLabel">Chapter Name</span></div>';
-			document.getElementById('footer').innerHTML = '<div id="CurrentTime"><span id="Clock">Time</span></div>'
-				+ '<div id="CurrentPagination"><span id="Pagination">Time</span></div>';
+			document.getElementById('footer').innerHTML = '<div id="CurrentTime">Time</div>'
+				+ '<div id="pageLabel">Page<</div>';
 			area = document.getElementById('area');
-			area.style.height = document.height - 20 - 20 - 10 - 10;
-			area.style.width = document.width - 20 - 20;
+			options = {};
+			options.height = document.height - 20 - 20 - 10 - 10;
+			options.width = document.width - 20 - 20;
+			area.style.height = options.height + "px";
+			area.style.width = options.width + "px";
 			
 			if (successCallback){
-				successCallback();
+				successCallback(options);
 			}
 		});
 	}
@@ -282,8 +264,31 @@ var VBOOK = (function(){
 	vReader.prevPage = function(){Book.prevPage();}
 	vReader.nextPage = function(){Book.nextPage();}
 	
-	vReader.locateBookUrl = function(rul){
+	vReader.locateBookUrl = function(url){
 		Book.goto(url);
+	}
+	
+	vReader.chapterChange = function(e){
+		var chapterIdx = null;
+		for (var idx in chapterHref2Name){
+			if (chapterIdx == null){ chapterIdx = idx;}
+			if (idx > e.spinePos) break;
+			if (idx <= e.spinePos){chapterIdx = idx;}
+		}
+		if (chapterIdx != null){
+			var chapterLabel = document.getElementById('chapterLabel');
+			if (chapterLabel == undefined){
+				if (document.getElementById('headerIFM') != undefined && 
+					document.getElementById('headerIFM').contentWindow.document.getElementById('chapterLabel') != undefined){
+					document.getElementById('headerIFM').contentWindow.document.getElementById('chapterLabel').innerHTML
+						= chapterHref2Name[chapterIdx];
+				}
+			}else{
+				chapterLabel.innerHTML = chapterHref2Name[chapterIdx];
+			}
+		}
+		// set audio event listener
+		//initAllAudioElement();
 	}
 	
 	//

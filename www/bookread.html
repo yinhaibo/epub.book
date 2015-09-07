@@ -98,10 +98,10 @@
 			
 			#main{overflow-y:hidden;}
 			
-			#bookName{position:fixed; height:20px; top:5px; left:20px; color:#CCCCCC;}
-			#chapterName{position:fixed; height:20px; top:5px; right:20px; color:#CCCCCC;}
-			#CurrentTime{position:fixed; height:20px; bottom:5px; left:20px; color:#CCCCCC;}
-			#CurrentPagination{position:fixed; height:20px; bottom:5px; right:20px; color:#CCCCCC;}
+			#bookTitle{position:fixed; height:20px; top:5px; left:20px; color:#CCCCCC;}
+			#chapterLabel{position:fixed; height:20px; top:5px; right:20px; color:#CCCCCC;}
+			#timeLabel{position:fixed; height:20px; bottom:5px; left:20px; color:#CCCCCC;}
+			#pageLabel{position:fixed; height:20px; bottom:5px; right:20px; color:#CCCCCC;}
 		</style>
 		
 		<script>
@@ -209,13 +209,13 @@
 		
 			<div role="main" class="ui-content" id="main">
 				<div id="header">
-					<div id="bookName"><span id="bookTitle">Book Title</span></div>
-					<div id="chapterName"><span id="chapterLabel">Chapter Name</span></div>
+					<div id="bookTitle">Book Title</div>
+					<div id="chapterLabel">Chapter Name</div>
 				</div>
 				<div id="area"></div>
 				<div id="footer">
-					<div id="CurrentTime"><span id="Clock">Time</span></div>
-					<div id="CurrentPagination"><span id="Pagination">Time</span></div>
+					<div id="timeLabel">Time</div>
+					<div id="pageLabel">Page</div>
 				</div>
 				<div id="loader"><img src="img/loader.gif"></div>
 				<!-- Root element of PhotoSwipe. Must have class pswp. -->
@@ -363,6 +363,7 @@
 			}
 			
 			function onDeviceReady(){
+				StatusBar.hide();
 				VBOOK.open(bookURI);
 			}
 			
@@ -395,7 +396,7 @@
 				var currentTimeString = currentHours + ":" + currentMinutes;
 				
 				
-				$("#Clock").html(currentTimeString);
+				$("#timeLabel").html(currentTimeString);
 					
 			 }
 			

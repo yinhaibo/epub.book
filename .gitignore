@@ -7,4 +7,10 @@ build/*
 assets/*
 # Cordova plugins directory
 #/plugins/*
+#
+/.DS_Store
+.DS_Store
 
+#Eclipse project file
+/.settings/*
+/.project

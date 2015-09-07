@@ -17,7 +17,16 @@
 <script src="js/TouchSlide.1.1.js"></script>
 <base target="_self" >
 </head>
-<body>
+<script>
+if (detectOS()=="Windows"){
+}else{
+	document.addEventListener('deviceready', onDeviceReady, false);
+}
+
+function onDeviceReady(){
+	StatusBar.show();
+}
+</script>
 <div id="nav-over"></div>
 <div id="warmp" class="warmp">
 <header class="header">
