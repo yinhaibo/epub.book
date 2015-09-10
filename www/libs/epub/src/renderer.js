@@ -594,6 +594,7 @@ EPUBJS.Renderer.prototype.mapPage = function(){
 	var limit = (width * page) - offset;// (width * page) - offset;
 	var elLimit = 0;
 	var prevRange;
+	var prevNode;
 	var cfi;
 	var check = function(node) {
 		var elPos;
@@ -612,9 +613,12 @@ EPUBJS.Renderer.prototype.mapPage = function(){
 			//-- Element starts new Col
 			if(elPos.left > elLimit) {
 				children.forEach(function(node){
-					if(node.nodeType == Node.TEXT_NODE &&
-						node.textContent.trim().length) {
-						checkText(node);
+					if(node.nodeType == Node.TEXT_NODE){
+						if (node.textContent.trim().length) {
+							checkText(node);
+						}
+					}else{
+						checkNonText(node);
 					}
 				});
 			}
@@ -622,9 +626,12 @@ EPUBJS.Renderer.prototype.mapPage = function(){
 			//-- Element Spans new Col
 			if(elPos.right > elLimit) {
 				children.forEach(function(node){
-					if(node.nodeType == Node.TEXT_NODE &&
-						node.textContent.trim().length) {
-						checkText(node);
+					if(node.nodeType == Node.TEXT_NODE){
+						if (node.textContent.trim().length) {
+							checkText(node);
+						}
+					}else{
+						checkNonText(node);
 					}
 				});
 			}
@@ -642,19 +649,22 @@ EPUBJS.Renderer.prototype.mapPage = function(){
 			if(pos.left + pos.width < limit) {
 				if(!map[page-1]){
 					range.collapse(true);
-					cfi = renderer.currentChapter.cfiFromRange(range);
+					//cfi = renderer.currentChapter.cfiFromRange(range);
+					cfi = renderer.currentChapter.cfiFromRangeSafe(range);
 					// map[page-1].start = cfi;
 					map.push({ start: cfi, end: null });
 				}
 			} else {
 				if(prevRange){
 					prevRange.collapse(true);
-					cfi = renderer.currentChapter.cfiFromRange(prevRange);
+					//cfi = renderer.currentChapter.cfiFromRange(prevRange);
+					cfi = renderer.currentChapter.cfiFromRangeSafe(range);
 					map[map.length-1].end = cfi;
 				}
 
 				range.collapse(true);
-				cfi = renderer.currentChapter.cfiFromRange(range);
+				//cfi = renderer.currentChapter.cfiFromRange(range);
+				cfi = renderer.currentChapter.cfiFromRangeSafe(range);
 				map.push({
 						start: cfi,
 						end: null
@@ -666,9 +676,54 @@ EPUBJS.Renderer.prototype.mapPage = function(){
 			}
 
 			prevRange = range;
+			prevNode = node;
 		});
 
 
+	};
+	var checkNonText = function(node){
+		var range = renderer.doc.createRange();
+		range.selectNodeContents(node);
+		var pos = range.getBoundingClientRect();
+
+		console.log("NonText (" + node.id + ") boudning:(" + pos.left + ", " + pos.top + " - " + pos.width + ", " + pos.height);
+		if(!pos || (pos.width === 0 && pos.height === 0)) {
+			return;
+		}
+		if(pos.left + pos.width < limit) {
+			if(!map[page-1]){
+				range.collapse(true);
+				//cfi = renderer.currentChapter.cfiFromRange(range);
+				cfi = renderer.currentChapter.cfiFromRangeSafe(range);
+				// map[page-1].start = cfi;
+				console.log("map.push(start:" + cfi + ", end:null");
+				map.push({ start: cfi, end: null });
+			}
+		} else {
+			if(prevRange){
+				prevRange.collapse(true);
+				//cfi = renderer.currentChapter.cfiFromRange(prevRange);
+				cfi = renderer.currentChapter.cfiFromRangeSafe(prevRange);
+				console.log("map[" + (map.length-1) + "].end:" + cfi);
+				map[map.length-1].end = cfi;
+			}
+
+			range.collapse(true);
+			//cfi = renderer.currentChapter.cfiFromRange(range);
+			cfi = renderer.currentChapter.cfiFromRangeSafe(range);
+			console.log("map.push(start:" + cfi + ", end:null");
+			map.push({
+					start: cfi,
+					end: null
+			});
+
+			page += 1;
+			limit = (width * page) - offset;
+			elLimit = limit;
+		}
+
+		prevRange = range;
+		prevNode = node;
 	};
 	var docEl = this.render.getDocumentElement();
 	var dir = docEl.dir;
@@ -693,7 +748,11 @@ EPUBJS.Renderer.prototype.mapPage = function(){
 	if(prevRange){
 		prevRange.collapse(true);
 
-		cfi = renderer.currentChapter.cfiFromRange(prevRange);
+		if (prevNode.nodeType == Node.TEXT_NODE){
+			cfi = renderer.currentChapter.cfiFromRange(prevRange);
+		}else{
+			cfi = renderer.currentChapter.cfiFromRangeSafe(prevRange);
+		}
 		map[map.length-1].end = cfi;
 	}
 

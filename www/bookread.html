@@ -115,7 +115,11 @@
 				e.preventDefault();
 				alert("Test back button click event.");
 			});
-											
+						
+			function backClickHandler(event){
+				StatusBar.show();
+				return true;
+			}
 			//
 			//For image zoom
 			//
@@ -197,7 +201,9 @@
     <body>
         <div data-role="page" id="book">
 			<div data-role="header" id="reader-header" data-position="fixed" data-tap-toggle="false" data-fullscreen="true" data-theme="b">		
-				<a href="./index.html" id="header_top_back" class="ui-nodisc-icon ui-btn ui-corner-all ui-btn-b ui-btn-icon-left ui-icon-back ui-btn-icon-notext" data-ajax="false">Back</a>
+				<a href="./index.html" id="header_top_back" 
+					class="ui-nodisc-icon ui-btn ui-corner-all ui-btn-b ui-btn-icon-left ui-icon-back ui-btn-icon-notext"
+					data-ajax="false" onclick="backClickHandler(event);">Back</a>
 				<h1></h1>
 				<div id="header_top_right_grp" data-type="horizontal" data-role="controlgroup" class="ui-btn-right"> 
 					<a href="#" id="header_top_search" data-role="button" class="ui-nodisc-icon ui-btn ui-corner-all ui-btn-b ui-btn-icon-left ui-icon-search ui-btn-icon-notext">Search</a>

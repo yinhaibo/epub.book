@@ -212,6 +212,11 @@ EPUBJS.Chapter.prototype.cfiFromRange = function(_range) {
 	return this.epubcfi.generateCfiFromRange(range, this.cfiBase);
 };
 
+EPUBJS.Chapter.prototype.cfiFromRangeSafe = function(_range) {
+	// Generate the Cfi
+	return this.epubcfi.generateCfiFromRange(_range, this.cfiBase);
+}
+
 EPUBJS.Chapter.prototype.find = function(_query){
 	var chapter = this;
 	var matches = [];

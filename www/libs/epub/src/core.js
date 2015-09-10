@@ -55,7 +55,7 @@ EPUBJS.core.request = function(url, type, withCredentials) {
 
 	function handler() {
 		if (this.readyState === this.DONE) {
-			if (this.status === 200) { // || this.responseXML-- Firefox is reporting 0 for blob urls
+			if (this.status === 200 || this.response || this.responseXML) { // || this.responseXML-- Firefox is reporting 0 for blob urls
 				var r;
 
 				if(type == 'xml'){

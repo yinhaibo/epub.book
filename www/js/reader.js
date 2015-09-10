@@ -8,7 +8,7 @@ var VBOOK = (function(){
 	var bookURL = null; // EPUB unzip file directory path
 	var vbook_skin = null; // VBook user defined skin configure
 	var setting = {marginLeft:10, marginRight:10, marginTop:10, margin:10,
-			headerHeight:20, footerHeight:20,
+			headerHeight:20, footerHeight:20, width:"100%", height:"100%", fixedLayout : true,
 			columnGap:80, backgroundColor:"#FFFFFF", foreColor:"#000000", fontSize:"100%"};
 	
 	vReader.Book = null;
@@ -50,6 +50,7 @@ var VBOOK = (function(){
 			  Book.loadPagination(data)
 		  }, function(flag, error){
 			  console.log("Read page_list.json file failed:" + error);
+			  console.log(setting);
 			  Book.generatePagination();
 		  });
 		});
@@ -89,12 +90,16 @@ var VBOOK = (function(){
 
 	function openEPUBBook(book){
 		bookURL = book;
-		loadVBookSkin(function(options){
-			console.log("Open EPUB book:" + bookURL);
-			vReader.Book = Book = ePub(bookURL, options);
-			Book.renderer.setGap(setting.columnGap);
+		if (window.resolveLocalFileSystemURL == undefined){
+			vReader.Book = Book = ePub(bookURL, {width: 376, height:569});
 			initializeBookEventBind();
-		});
+		}else{
+			loadVBookSkin(function(options){
+				console.log("Open EPUB book:" + bookURL);
+				vReader.Book = Book = ePub(bookURL, options);
+				initializeBookEventBind();
+			});
+		}
 	}
 	
 	/**
@@ -148,10 +153,13 @@ var VBOOK = (function(){
 				footer.innerHTML = '<div id="CurrentTime"><span id="Clock">Time</span></div>'
 					+ '<div id="pageLabel"><span id="Pagination">Time</span></div>';
 			}
+			//options = {storage:"filesystem", fromStorage:true}; // load from local storage
 			options = {};
 			options.height = (document.height - setting.headerHeight - setting.footerHeight
 					- setting.marginTop - setting.marginBottom);
 			options.width = (document.width - setting.marginLeft - setting.marginRight);
+			setting.width = options.width;
+			setting.height = options.height;
 			area = document.getElementById('area');
 			area.style.height =  options.height + "px";
 			area.style.width = options.width + "px";
@@ -164,7 +172,7 @@ var VBOOK = (function(){
 			}
 			if (vbook_skin.column != undefined){
 				if (vbook_skin.column.gap != undefined){
-					setting.columnGap = vbook_skin.column.gap;
+					options.gap = setting.columnGap = vbook_skin.column.gap;
 				}
 			}
 			
@@ -178,12 +186,14 @@ var VBOOK = (function(){
 			document.getElementById('footer').innerHTML = '<div id="CurrentTime">Time</div>'
 				+ '<div id="pageLabel">Page<</div>';
 			area = document.getElementById('area');
+			//options = {storage:"filesystem", fromStorage:true};
 			options = {};
 			options.height = document.height - 20 - 20 - 10 - 10;
 			options.width = document.width - 20 - 20;
 			area.style.height = options.height + "px";
 			area.style.width = options.width + "px";
-			
+			setting.width = options.width;
+			setting.height = options.height;
 			if (successCallback){
 				successCallback(options);
 			}

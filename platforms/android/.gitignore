@@ -15,7 +15,3 @@ out
 /build
 CordovaLib/build
 
-#cordova build
-cordova/version
-cordova/build
-cordova/run

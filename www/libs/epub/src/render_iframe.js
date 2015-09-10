@@ -115,8 +115,8 @@ EPUBJS.Render.Iframe.prototype.resize = function(width, height){
 	this.iframe.width = width;
 	// Get the fractional height and width of the iframe
 	// Default to orginal if bounding rect is 0
-	this.width = this.iframe.getBoundingClientRect().width || width;
-	this.height = this.iframe.getBoundingClientRect().height || height;
+	this.width = width || this.iframe.getBoundingClientRect().width;
+	this.height = height || this.iframe.getBoundingClientRect().height;
 };
 
 
