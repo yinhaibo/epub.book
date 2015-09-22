@@ -1,0 +1,239 @@
+﻿<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="format-detection" content="telephone=no">
+<title>VBook</title>
+<meta name="Keywords" content="VBook">
+<meta name="Description" content="VBook">
+<link rel="apple-touch-icon-precomposed" href="logo_icon.png">
+<link rel="icon" href="favicon.ico" mce_href="http://m.boai.com/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" href="css/common.css">
+<link rel="stylesheet" href="css/style.css">
+<script src="libs/jquery/jquery-2.1.4.min.js"></script>
+<script src="js/TouchSlide.1.1.js"></script>
+<base target="_self" >
+</head>
+<script>
+if (detectOS()=="Windows"){
+}else{
+	document.addEventListener('deviceready', onDeviceReady, false);
+}
+
+function onDeviceReady(){
+	StatusBar.show();
+}
+</script>
+<div id="nav-over"></div>
+<div id="warmp" class="warmp">
+<header class="header">
+	<section class="fix navbar">
+        <a class="ico-home" href="index.html"><span>返回首页</span></a>
+        <h1 id="title">BOOKS</h1>
+        <span class="ico-nav navHome">BOOKS导航</span>
+	<a class="ico-nav1" href="index.html">BOOKS导航</a>
+    </section>
+    <div class="topge"></div>
+</header>
+
+<div class="fix search">
+	
+	<input type="text" value="" placeholder="按书名/作业/出版社搜索" onFocus="this.blur();" autocomplete="off" class="keywords"><button type="submit" value="" class="go"></button>
+</div>
+
+
+<div id="search-over" class="search-over"></div>
+<div id="search-warmp" class="search-warmp">
+	<div class="fix search-hd">
+    	<div class="bd"><input type="text" value="" placeholder="请输入关键词..." autofocus class="keywords" id="keywords"><i id="search-clear"></i></div>
+        <span class="search-button" id="search-button">取消</span>
+    </div>
+    <div class="search-tab" id="search-tab">
+		<div class="fix search-tab-hd">
+            <ul>
+                <li class="on"><span>最近搜索</span></li>
+                <li><span>热门搜索</span></li>
+            </ul>
+        </div>
+        <div class="search-tab-bd">
+    		<div class="active search-tab-con" id="history">
+            	<p class="fix"></p>
+            	<span class="search-change">清除最近搜索</span>
+            </div>
+            <div class="search-tab-con">
+            	<p class="fix"><a href="">大学人文</a></p>
+            	<span class="search-change">换一批</span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="tab-iteam" id="tab-iteam1">
+    <div class="tab-iteam-con" id="tabBox1-bd">
+    	<div class="con active">
+    		<ul>
+		
+            	<li><a href="bookread.html?book=books/progit.epub"><img src="./books/progit.png" alt="ProGit"></a></li> 
+				<li><a href="bookread.html?book=books/jsty.epub"><img src="./books/jsty.png" alt="警世通言"></a></li> 
+				<li><a href="bookread.html?book=books/mcnxse.epub"><img src="./books/mcnxse.png" alt="明朝那些事儿"></a></li> 
+		
+				<li><a href="bookread.html?book=books/ydys.epub"><img src="./books/ydys.png" alt="元代野史"></a></li> 
+				<li><a href="bookread.html?book=books/ysmy.epub"><img src="./books/ysmy.png" alt="喻世明言"></a></li> 
+				<li><a href="bookread.html?book=books/mobydick.epub"><img src="./books/mobydick.png" alt=""></a></li> 
+				<li><a href="bookread.html?book=books/zyx.epub"><img src="./books/cyjcsyx.png" alt="植物学"></a></li>
+				<li><a href="bookread.html?book=books/zyx/"><img src="./books/cyjcsyx.png" alt="植物学"></a></li>
+               </ul>
+        </div>
+    </div>
+</div>
+<footer class="footer">
+	<menu class="footer-con">
+    	<ul class="fix">
+        	<li class="zx"><span >护眼模式</span></li>
+            <li class="tel"><a >WIFI传书</a></li>
+            <li class="yy"><a >书架排序</a></li>
+            <li class="dh"><span >云端下载</span></li>
+        </ul>
+	</menu>
+</footer>
+
+<nav id="nav" class="nav home">
+	<h3><a href="default.htm">设置</a></h3>
+    <div id="scrollerBox" class="scrollerBox">
+        <div class="scroller">
+            <ul>
+                <li><a href=""><span></span>我的书房</a></li>
+                <li><a href=""><span></span>个人资料</a></li>
+                <li><a href=""><span></span>充值</a></li>
+		<li><a href=""><span></span>..</a></li>              
+            </ul>
+        </div>
+    </div>
+</nav><script src="js/history.js"></script>
+
+<script>	
+
+	$(".search").bind("click",function(){
+
+		$("#search-over").fadeIn(50);
+
+		$("#search-warmp").show();
+
+		$("html,body").animate({scrollTop:0},200);
+
+		searchBtn();			
+
+		//TouchSlide({ slideCell:"#search-tab",titCell:".search-tab-hd li",mainCell:".search-tab-bd"});	//搜索切换
+
+		//搜索切换
+
+		$("#search-tab .search-tab-hd li").each(function(i) {$(this).click(function(){$(this).addClass("on").siblings().removeClass("on");$("#search-tab .search-tab-con").eq(i).show().siblings().hide();})
+
+        });
+
+		
+
+		$("#search-over").bind("touchmove",function(e){e.preventDefault()}, false);
+
+	});			
+
+	$("#search-clear").bind("click",function(){
+
+		$("#search-button").text("取消");
+
+		$("#search-button").removeClass("search-go").addClass("search-cancel");
+
+		$("#keywords").val("");
+
+		$(this).hide();		
+
+	});		
+
+	$("#keywords").bind("keyup input keywords",function(){
+
+		searchBtn()
+
+	});
+
+	$("#search-button").bind("click",function(){
+
+		if($(this).hasClass("search-go")){
+
+			searchGo()//搜索
+
+		}else{
+
+			searchCancle();//取消搜索 
+
+		}
+
+	});	
+
+	
+
+	$("#history .search-change").click(function(){
+
+		clearCookie('history');
+
+		getHistory("history",$("#history p"));
+
+	})
+
+	function searchBtn(){
+
+		if($("#keywords").val()==""){
+
+			$("#search-clear").hide();
+
+			$("#search-button").text("取消");
+
+			$("#search-button").removeClass("search-go");
+
+		}else{
+
+			$("i#search-clear").show();
+
+			$("#search-button").text("搜索");
+
+			$("#search-button").addClass("search-go");
+
+		}
+
+	}
+
+	function searchCancle(){
+
+		$("#search-over").fadeOut(50);
+
+		$("#search-warmp").hide();
+
+	}
+
+	function searchGo(){
+
+		//设置最近搜索
+
+		setHistory("history",$("#keywords").val());
+
+		getHistory("history",$("#history p"));
+
+		var k = $("#keywords").val();
+
+		var url = "search.php@keyword="+k;
+
+		window.location = url;
+
+	}
+
+	//获取历史浏览记录
+
+	getHistory("history",$("#history p"));	
+
+</script>
+<script src="js/foot.js"></script>
+
+</body>
+
+</html>

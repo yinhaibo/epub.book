@@ -1,239 +1,137 @@
-﻿<!doctype html>
+<!DOCTYPE html>
 <html>
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no" />
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="format-detection" content="telephone=no">
-<title>VBook</title>
-<meta name="Keywords" content="VBook">
-<meta name="Description" content="VBook">
-<link rel="apple-touch-icon-precomposed" href="logo_icon.png">
-<link rel="icon" href="favicon.ico" mce_href="http://m.boai.com/favicon.ico" type="image/x-icon" />
-<link rel="stylesheet" href="css/common.css">
-<link rel="stylesheet" href="css/style.css">
-<script src="libs/jquery/jquery-2.1.4.min.js"></script>
-<script src="js/TouchSlide.1.1.js"></script>
-<base target="_self" >
+	<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>External toolbars - jQuery Mobile Demos</title>
+	<link rel="shortcut icon" href="../favicon.ico">
+	<link rel="stylesheet" href="libs/jquerymobile/jquery.mobile-1.4.5.css">
+	<link rel="stylesheet" href="css/mainview.css">
+	
+	<script src="libs/jquery/jquery-2.1.4.min.js"></script>
+	<script src="libs/jquerymobile/jquery.mobile-1.4.5.min.js"></script>
+	<script src="js/index.js"></script>
+	<script>
+		$(function(){
+			$( "[data-role='navbar']" ).navbar();
+			$( "[data-role='header'], [data-role='footer']" ).toolbar();
+		});
+		// Update the contents of the toolbars
+		$(document).on("pageshow", "[data-role='page']", function () {
+		    // Each of the four pages in this demo has a data-title attribute
+		    // which value is equal to the text of the nav button
+		    // For example, on first page: <div data-role="page" data-title="Info">
+		    var current = $(this).jqmData("title");
+		    // Change the heading
+		    //$("[data-role='header'] h1").text(current);
+		    // Remove active class from nav buttons
+		    $("[data-role='navbar'] a.my-btn-active").removeClass("my-btn-active");
+		    // Add active class to current nav button
+		    $("[data-role='navbar'] a").each(function () {
+		        if ($(this).text() === current) {
+		            $(this).addClass("my-btn-active");
+		        }
+		    }); 
+		});
+	</script>
+	
 </head>
-<script>
-if (detectOS()=="Windows"){
-}else{
-	document.addEventListener('deviceready', onDeviceReady, false);
-}
-
-function onDeviceReady(){
-	StatusBar.show();
-}
-</script>
-<div id="nav-over"></div>
-<div id="warmp" class="warmp">
-<header class="header">
-	<section class="fix navbar">
-        <a class="ico-home" href="index.html"><span>返回首页</span></a>
-        <h1 id="title">BOOKS</h1>
-        <span class="ico-nav navHome">BOOKS导航</span>
-	<a class="ico-nav1" href="index.html">BOOKS导航</a>
-    </section>
-    <div class="topge"></div>
-</header>
-
-<div class="fix search">
-	
-	<input type="text" value="" placeholder="按书名/作业/出版社搜索" onFocus="this.blur();" autocomplete="off" class="keywords"><button type="submit" value="" class="go"></button>
-</div>
-
-
-<div id="search-over" class="search-over"></div>
-<div id="search-warmp" class="search-warmp">
-	<div class="fix search-hd">
-    	<div class="bd"><input type="text" value="" placeholder="请输入关键词..." autofocus class="keywords" id="keywords"><i id="search-clear"></i></div>
-        <span class="search-button" id="search-button">取消</span>
-    </div>
-    <div class="search-tab" id="search-tab">
-		<div class="fix search-tab-hd">
-            <ul>
-                <li class="on"><span>最近搜索</span></li>
-                <li><span>热门搜索</span></li>
-            </ul>
-        </div>
-        <div class="search-tab-bd">
-    		<div class="active search-tab-con" id="history">
-            	<p class="fix"></p>
-            	<span class="search-change">清除最近搜索</span>
-            </div>
-            <div class="search-tab-con">
-            	<p class="fix"><a href="">大学人文</a></p>
-            	<span class="search-change">换一批</span>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="tab-iteam" id="tab-iteam1">
-    <div class="tab-iteam-con" id="tabBox1-bd">
-    	<div class="con active">
-    		<ul>
-		
-            	<li><a href="bookread.html?book=books/progit.epub"><img src="./books/progit.png" alt="ProGit"></a></li> 
-				<li><a href="bookread.html?book=books/jsty.epub"><img src="./books/jsty.png" alt="警世通言"></a></li> 
-				<li><a href="bookread.html?book=books/mcnxse.epub"><img src="./books/mcnxse.png" alt="明朝那些事儿"></a></li> 
-		
-				<li><a href="bookread.html?book=books/ydys.epub"><img src="./books/ydys.png" alt="元代野史"></a></li> 
-				<li><a href="bookread.html?book=books/ysmy.epub"><img src="./books/ysmy.png" alt="喻世明言"></a></li> 
-				<li><a href="bookread.html?book=books/mobydick.epub"><img src="./books/mobydick.png" alt=""></a></li> 
-				<li><a href="bookread.html?book=books/zyx.epub"><img src="./books/cyjcsyx.png" alt="植物学"></a></li>
-				<li><a href="bookread.html?book=books/zyx/"><img src="./books/cyjcsyx.png" alt="植物学"></a></li>
-               </ul>
-        </div>
-    </div>
-</div>
-<footer class="footer">
-	<menu class="footer-con">
-    	<ul class="fix">
-        	<li class="zx"><span >护眼模式</span></li>
-            <li class="tel"><a >WIFI传书</a></li>
-            <li class="yy"><a >书架排序</a></li>
-            <li class="dh"><span >云端下载</span></li>
-        </ul>
-	</menu>
-</footer>
-
-<nav id="nav" class="nav home">
-	<h3><a href="default.htm">设置</a></h3>
-    <div id="scrollerBox" class="scrollerBox">
-        <div class="scroller">
-            <ul>
-                <li><a href=""><span></span>我的书房</a></li>
-                <li><a href=""><span></span>个人资料</a></li>
-                <li><a href=""><span></span>充值</a></li>
-		<li><a href=""><span></span>..</a></li>              
-            </ul>
-        </div>
-    </div>
-</nav><script src="js/history.js"></script>
-
-<script>	
-
-	$(".search").bind("click",function(){
-
-		$("#search-over").fadeIn(50);
-
-		$("#search-warmp").show();
-
-		$("html,body").animate({scrollTop:0},200);
-
-		searchBtn();			
-
-		//TouchSlide({ slideCell:"#search-tab",titCell:".search-tab-hd li",mainCell:".search-tab-bd"});	//搜索切换
-
-		//搜索切换
-
-		$("#search-tab .search-tab-hd li").each(function(i) {$(this).click(function(){$(this).addClass("on").siblings().removeClass("on");$("#search-tab .search-tab-con").eq(i).show().siblings().hide();})
-
-        });
-
-		
-
-		$("#search-over").bind("touchmove",function(e){e.preventDefault()}, false);
-
-	});			
-
-	$("#search-clear").bind("click",function(){
-
-		$("#search-button").text("取消");
-
-		$("#search-button").removeClass("search-go").addClass("search-cancel");
-
-		$("#keywords").val("");
-
-		$(this).hide();		
-
-	});		
-
-	$("#keywords").bind("keyup input keywords",function(){
-
-		searchBtn()
-
-	});
-
-	$("#search-button").bind("click",function(){
-
-		if($(this).hasClass("search-go")){
-
-			searchGo()//搜索
-
-		}else{
-
-			searchCancle();//取消搜索 
-
-		}
-
-	});	
-
-	
-
-	$("#history .search-change").click(function(){
-
-		clearCookie('history');
-
-		getHistory("history",$("#history p"));
-
-	})
-
-	function searchBtn(){
-
-		if($("#keywords").val()==""){
-
-			$("#search-clear").hide();
-
-			$("#search-button").text("取消");
-
-			$("#search-button").removeClass("search-go");
-
-		}else{
-
-			$("i#search-clear").show();
-
-			$("#search-button").text("搜索");
-
-			$("#search-button").addClass("search-go");
-
-		}
-
-	}
-
-	function searchCancle(){
-
-		$("#search-over").fadeOut(50);
-
-		$("#search-warmp").hide();
-
-	}
-
-	function searchGo(){
-
-		//设置最近搜索
-
-		setHistory("history",$("#keywords").val());
-
-		getHistory("history",$("#history p"));
-
-		var k = $("#keywords").val();
-
-		var url = "search.php@keyword="+k;
-
-		window.location = url;
-
-	}
-
-	//获取历史浏览记录
-
-	getHistory("history",$("#history p"));	
-
-</script>
-<script src="js/foot.js"></script>
+<body>
+	<div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme="d" role="banner" 
+		class="ui-header ui-bar-a ui-header-fixed slidedown">
+		<p>微训</p>
+	</div><!-- /header -->
+
+	<div data-role="page" id="vbook-bookshelf" data-title="我的教材" data-quicklinks="true" data-theme="d">
+		<div class="vbook-books-toolbar">
+			<div class="ui-filterable vbook-search-bar">
+				<input id="vbook-books-search" data-type="search" placeholder="搜索">
+			</div>
+			<div id="vbook-books-menu" class="vbook-menu-right">
+				<a href="#" onclick="openGroupMenu();" data-rel="popup" data-transition="pop">
+				<!-- <img src="./images/ico-group-menu.png"/> -->
+				<img src="./images/icon-carat-down.png"/>
+				</a>
+			</div>
+		</div>
+		<div data-role="popup" id="vbook-menu-group"
+			class="vbook-menu-popup ui-popup-container ui-popup-active ui-popup ui-corner-all">
+			<ul data-role="listview" data-inset="true">
+				<li><a href="#" onclick="vbook_shelf_switch_cover_mode();">
+					<img src="./images/vbook-menu-check.png" id="vbook-menu-item-cover-mode"
+						class="ui-li-icon ui-corner-none vbook-show"/>封面模式
+				</a></li>
+				<li><a href="#" onclick="vbook_shelf_switch_list_mode();">
+				<img src="./img/vbook-menu-check.png" id="vbook-menu-item-list-mode"
+					class="ui-li-icon ui-corner-none vbook-hide"/>列表模式</a></li>
+			</ul>
+			<div  class="ui-popup-arrow-container ui-popup-arrow-t">
+			<div id="vbook-menu-group-arrow" class="ui-popup-arrow ui-body-inherit"></div>
+			</div>
+		</div>
+		<div role="main" id="vbook-shelf-main" class="ui-content vbook-shelf">
+    		<ul data-role="listview" data-inset="true" data-filter="true" data-input="#vbook-books-search">
+            	<li><div><a href="read.html">
+            	<div><img src="./books/progit.png" alt="ProGit" class="ui-li-thumb"/></div>
+            	<p class="booktitle">ProGit</p>
+            	<p class="bookauthor">Scott Chacon and Ben Straub</p>
+            	<p class="bookbrief">Pro Git second edition, an open source book on Git.</p>
+            	<p class="vbook-new">新书首发</p>
+            	</div></a></li> 
+				<li><div><a href="bookread.html?book=books/jsty.epub">
+				<div><img src="./books/jsty.png" alt="警世通言" class="ui-li-thumb"/></div>
+				<p class="booktitle">警世通言</p>
+				<p class="bookauthor">冯梦龙</p>
+            	<p class="bookbrief">《警世通言》，白话短篇小说集。明末冯梦龙纂辑。完成于1624年（明天启四年）。其题材或来自民间传说，或来自史传和小说。故事描述的时代包括宋、元、明三代。</p>
+				</div></a></li> 
+				<li><div><a href="bookread.html?book=books/mcnxse.epub">
+				<div><img src="./books/mcnxse.png" alt="明朝那些事儿" class="ui-li-thumb"/></div>
+				<p class="booktitle">明朝那些事儿</p>
+				<p class="bookauthor">当年明月</p>
+            	<p class="bookbrief">《明朝那些事儿》[1]  ，网络连载历史小说，作者是当年明月，本名石悦，广东顺德海关公务员。2006年3月在天涯社区首次发表，2009年3月21日连载完毕，边写作边集结成书出版发行，一共7本 。</p>
+				</div></a></li> 
+				<li><div><a href="bookread.html?book=books/ydys.epub">
+				<div><img src="./books/ydys.png" alt="元代野史" class="ui-li-thumb"/></div>
+				<p class="booktitle">元代野史</p>
+				<p class="bookauthor">田腾蛟</p>
+            	<p class="bookbrief">元之先世，本号蒙古，其国在女真之北，以奇渥温三字为姓。有始祖母曰阿兰氏，寡居在极北沙漠。屡有光明耀腹，后一侞而生三子。季子曰孛端义儿，魁梧奇伟，沉毅寡言。其后子孙蕃盛，不相统属。......</p>
+				</div></a></li> 
+				<li><div><a href="bookread.html?book=books/ysmy.epub">
+				<div><img src="./books/ysmy.png" alt="喻世明言" class="ui-li-thumb"/></div>
+				<p class="booktitle">喻世明言</p>
+            	<p class="bookauthor">冯梦龙</p>
+            	<p class="bookbrief">《喻世明言》，白话短篇小说集，初刻用名《古今小说》，又称《全像古今小说》。明末冯梦龙纂辑。部分为宋元话本旧作，也有明人拟作。文字可能经过纂修者的加工。题材多来自民间，也有根据历史小说和前人小说改编改写的。</p>
+				</div></a></li> 
+				<li><div><a href="bookread.html?book=books/mobydick.epub">
+				<div><img src="./books/mobydick.png" alt="Moby Dick" class="ui-li-thumb"/></div>
+				<p class="booktitle">Moby Dick</p>
+				<p class="bookauthor">Herman Melville</p>
+            	<p class="bookbrief">A century and a half after its publication, "Moby-Dick" still stands as a literary classic. A novel of adventure the story of a madman pursuing an unholy war against a creature as vast and dangerous as the sea, it is also an important social commentary populated with several of the most unforgettable characters in literature. This edition features French flaps and deluxe packag...</p>
+				</div></a></li> 
+				<li><div><a href="bookread.html?book=books/cyjcsyx.epub">
+				<div><img src="./books/cyjcsyx.png" alt="柴油机的测试及运行管理" class="ui-li-thumb"/></div>
+				<p class="booktitle">柴油机的测试及运行管理</p>
+				<p class="vbook-new">新书首发</p>
+				</div></a></li> 
+              </ul>
+		</div><!-- /content -->
+
+	</div><!-- /page -->
+
+	<div data-role="page" id="vbook-personal" data-title="个人">
+	</div>
+	<div data-role="page" id="vbook-store" data-title="教材库">
+	</div>
+	<div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="d" role="contentinfo" class="ui-footer ui-bar-a ui-footer-fixed slideup">
+		<div data-role="navbar" data-theme="d">
+			<ul>
+			<li id="personal"><a href="#vbook-personal" data-theme="d">个人</a></li>
+			<li id="bookshelf"><a href="#vbook-bookshelf"  data-theme="d">我的教材</a></li>
+			<li id="library"><a href="#vbook-store" data-theme="d">教材库</a></li>
+		</ul>
+		</div>
+	</div><!-- /footer -->
 
 </body>
-
 </html>
+

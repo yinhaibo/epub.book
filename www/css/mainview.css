@@ -1,0 +1,450 @@
+@CHARSET "UTF-8";
+.vbook-show{
+	display:block;
+}
+
+.vbook-hide{
+	display:none;
+}
+div.ui-footer .ui-navbar ul li a {
+	background: transparent; 
+	padding:30px 0 0 0; 
+	font-size:12px;
+	font-family:PingHei, STHeitiSC-Light, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+div.ui-header{
+	background: url(../images/navbg.png);
+	background-size: auto contain;
+	border-width:0px;
+}
+
+div.ui-header p{
+	margin-top: 5px;
+	margin-bottom:5px;
+	font-size:1.4em;
+	font-weight:bold;
+	font-family:PingHei, STHeitiSC-Light, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	text-align:center;
+}
+
+/*主页－个人菜单活动状态下背景和颜色*/
+div.ui-footer .ui-navbar ul li#personal a.my-btn-active {
+    background: url(../images/ico-person-active.png) 50% 20% no-repeat;
+    background-size:25px;
+    color:#ffffff;
+}
+/*主页－个人菜单正常状态下背景和颜色*/
+div.ui-footer .ui-navbar ul li#personal a {
+    background: url(../images/ico-person.png) 50% 20% no-repeat;
+    background-size:24px;
+    color:#cccccc;
+}
+
+/*主页－我的教材导航栏*/
+div.ui-footer .ui-navbar ul li#bookshelf a.my-btn-active {
+    background: url(../images/ico-mybook-active.png) 50% 20% no-repeat;
+    background-size: 30px;
+    color:#ffffff;
+}
+div.ui-footer .ui-navbar ul li#bookshelf a {
+    background: url(../images/ico-mybook.png) 50% 20% no-repeat;
+    background-size: 30px;
+    color:#cccccc;
+}
+/*主页－教材库导航栏*/
+div.ui-footer .ui-navbar ul li#library a.my-btn-active {
+    background: url(../images/ico-books-active.png) 50% 20% no-repeat;
+    background-size: 30px;
+    color:#ffffff;
+}
+div.ui-footer .ui-navbar ul li#library a {
+    background: url(../images/ico-books.png) 50% 20% no-repeat;
+    background-size: 30px;
+    color:#cccccc;
+}
+
+/*搜索栏*/
+div.vbook-books-toolbar{
+	margin-left:10px;
+}
+/*vbookshelf*/
+div.vbook-shelf,
+div.vbook-shelf-list{
+	/*清除前面的div浮动效果*/
+	clear:both;
+	/*边距*/
+	padding:0 10px 0em 10px;
+}
+
+/*
+ * VBook 书架封面模式, 书架列表模式
+ */
+div.vbook-shelf ul.ui-listview,
+div.vbook-shelf-list ul.ui-listview{
+	text-shadow: none;
+	box-shadow: none;
+	-webkit-box-shadow: none;
+	border-radius:0;
+	-webkit-border-radius:0;
+	margin:0;
+}
+@media screen and (max-width: 600px) { /*当屏幕尺寸小于600px时，应用下面的CSS样式*/
+	div.vbook-shelf .ui-listview li{
+		float: left;
+		width: 30.9%;
+		height: 10em; /* 232p */
+		margin: .5625em 1.2%;
+		padding:0;
+		border-width:0px;
+		background-color:transparent;
+	}
+}
+@media screen and (min-width: 600px) { /*当屏幕尺寸大于1024px时，应用下面的CSS样式*/
+	div.vbook-shelf .ui-listview li{
+		float: left;
+		width: 110px;
+		height: 10em; /* 232p */
+		margin: .5625em 1.2%;
+		padding:0;
+		border-width:0px;
+		background-color:transparent;
+	}
+}
+
+div.vbook-shelf .ui-listview li.ui-first-child,
+div.vbook-shelf .ui-listview li.ui-last-child{
+	border-width:0px;
+}
+
+div.vbook-shelf .ui-listview a,
+div.vbook-shelf-list .ui-listview a{
+	-webkit-box-sizing: border-box;
+	/* include padding and border in height so we can set it to 100% */
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	height: 100%;
+	/* remove book item border */
+	border-left-width:0px;
+	border-right-width:0px;
+	/* setting padding to zero */
+	padding-left:0px;
+	/* book item background color */
+	background-color:transparent;
+}
+
+div.vbook-shelf-list .ui-listview li div a div{
+	width:60px;
+	margin-left:6px;
+	margin-right:5px;
+	text-align:center;
+	left:0px;
+}
+
+div.vbook-shelf .ui-listview li a.ui-btn,
+div.vbook-shelf-list .ui-listview li a.ui-btn  {
+	border-width:0px 0 0 0;
+	padding:0px;
+}
+
+div.vbook-shelf-list .ui-listview  li{
+	margin-top:3px;
+	margin-bottom:3px;
+	border-width:0px;
+	padding:0px;
+	/* book item background color */
+	background-color:transparent;
+}
+
+/*书架图片比例样式*/
+div.vbook-shelf .ui-listview .ui-li-thumb{
+	text-align:center;
+	width: auto; /* To keep aspect ratio. */
+	max-height: 8em;
+}
+
+div.vbook-shelf-list .ui-listview .ui-li-thumb {
+	text-align:center;
+	width: auto; /* To keep aspect ratio. */
+	max-height: 5em;
+}
+
+/* remove ui-btn right button */
+div.vbook-shelf .ui-listview li .ui-btn-icon-right:after,
+div.vbook-shelf-list .ui-listview li .ui-btn-icon-right:after{
+	display:none;
+}
+
+/* 封面模式－书文字标题，位于书的下方 */
+div.vbook-shelf .ui-listview  p.booktitle {
+	text-align:center;
+	font-size: 0.8em;
+	margin: 0;
+	white-space: normal;
+	overflow: visible;
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	display:block;
+	color:#1d1d1d;
+}
+
+div.vbook-shelf .ui-listview  p{
+	display:none;
+	position:absolute;
+}
+div.vbook-shelf .ui-listview div{
+	text-align:center;
+}
+/* 列表模式－书文字标题，位于书的右方 */
+div.vbook-shelf-list .ui-listview  p{
+	margin-left:80px;
+	margin-top:3px;
+	margin-bottom:3px;
+	color:#cccccc;
+	height: 1.2em;       /* height is 2x line-height, so two lines will display */
+    overflow: hidden;  /* prevents extra lines from being visible */
+}
+div.vbook-shelf-list .ui-listview  p.booktitle{
+	color:#1d1d1d;
+	text-align:left;
+	font-size: 1em;
+	position: absolute;
+	top:0px;
+}
+
+div.vbook-shelf-list .ui-listview  p.bookauthor{
+	position: absolute;
+	top:1.6em;
+}
+
+div.vbook-shelf-list .ui-listview  p.bookbrief {
+	position: absolute;
+	top:3em;
+	display: block;
+	 /* Fallback for non-webkit */
+	display: -webkit-box;
+	max-width: 100%;
+	height: 3em;
+	/* Fallback for non-webkit */
+	line-height: 1em;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space:normal;
+}
+/* 新书标签 */
+div.vbook-shelf .ui-listview  p.vbook-new {
+	position:absolute;
+	font-size:0.6em;
+	marign:0;
+	-webkit-margin-before:0px;
+	padding: .125em .625em;
+	width: auto;
+	min-height: 0;
+	top: 0px;
+	right:auto;
+	left: 0px;
+	bottom: auto;
+	/* Custom styling. */
+	color:#ffffff;
+	background: rgba(75,190,150,.85);
+	-webkit-border-top-right-radius: inherit;
+	border-top-right-radius: inherit;
+	-webkit-border-bottom-left-radius: inherit;
+	border-bottom-left-radius: inherit;
+	-webkit-border-bottom-right-radius: 0;
+	border-bottom-right-radius: 0;
+	text-shadow:0 0px 0;
+	display:block;
+}
+
+
+div.vbook-shelf-list .ui-listview  p.vbook-new {
+	position:absolute;
+	margin-left:0px;
+	margin-top:0px;
+	font-size:0.6em;
+	height:1.25em;
+	padding: .125em .625em 0.125em;
+	width: auto;
+	min-height: 0;
+	top: 0;
+	left: 0;
+	bottom: auto;
+	/* Custom styling. */
+	color:#ffffff;
+	background: rgba(75,190,150,.85);
+	-webkit-border-top-right-radius: inherit;
+	border-top-right-radius: inherit;
+	-webkit-border-bottom-left-radius: inherit;
+	border-bottom-left-radius: inherit;
+	-webkit-border-bottom-right-radius: 0;
+	border-bottom-right-radius: 0;
+	text-shadow:0 0px 0;
+}
+
+
+
+/*设置搜索栏宽度，给菜单栏留点位置*/
+.vbook-books-toolbar .vbook-search-bar{
+	display:block;
+	position: relative;
+	width:80%;
+}
+/*通过决定定位定位菜单位置*/
+.vbook-books-toolbar .vbook-menu-right {
+	width:20%;
+	position: absolute;
+	right:0px;
+	top:48px;/*相对与页面顶端*/
+	display:block;
+	text-align:center;
+}
+/*取消菜单的连接下划线*/
+.vbook-books-toolbar .vbook-menu-right a{
+	text-decoration:none;
+}
+.vbook-books-toolbar .vbook-menu-right img{
+	height:28px;
+	width:auto;
+}
+/*取消我的书籍搜索阴影*/
+.vbook-search-bar .ui-shadow-inset {
+	text-shadow: none;
+	box-shadow: none;
+	-webkit-box-shadow: none;
+}
+/*弹出菜单*/
+.ui-popup-container .vbook-menu-popup
+{
+	border-width:0px;
+	background-color:#313131;
+	text-shadow: none;
+	box-shadow: none;
+	-webkit-box-shadow: none;
+}
+.vbook-menu-popup .ui-listview
+.vbook-menu-popup .ui-listview.ui-listview-inset
+{
+	background-color:#313131;
+	min-width:100px;
+}
+
+.ui-popup-container .vbook-menu-popup .ui-listview .ui-btn{
+	background-color:#313131;
+	border-color:#313131;
+	color:#7d7d7d;
+	text-shadow: none;
+	box-shadow: none;
+	-webkit-box-shadow: none;
+}
+/*弹出菜单箭头*/
+.ui-popup-container .vbook-menu-popup .ui-popup-arrow{
+	border-width:0px;
+	background-color:#313131;
+	text-shadow: none;
+	box-shadow: none;
+	-webkit-box-shadow: none;
+}
+
+.ui-popup-container .vbook-menu-popup .ui-shadow
+.ui-popup-container .vbook-menu-popup .ui-shadow-inset
+.ui-popup-container .vbook-menu-popup .ui-overlay-shadow
+{
+	-webkit-box-shadow:none;
+	-moz-box-shadow:none;
+	box-shadow: none;
+}
+
+.ui-popup-container .vbook-menu-popup .ui-btn-icon-right::after{
+	display:none;
+}
+
+/*弹出框箭头*/
+.ui-popup-arrow-container {
+    width: 30px;
+    height: 30px;
+}
+ 
+.ui-popup-arrow-container.ui-popup-arrow-l {
+    left: -15px;
+    clip: rect(-1000px,15px,2000px,-1000px);
+}
+ 
+.ui-popup-arrow-container.ui-popup-arrow-t {
+    top: -15px;
+    clip: rect(-1000px,2000px,15px,-1000px);
+}
+ 
+.ui-popup-arrow-container.ui-popup-arrow-r {
+    right: -15px;
+    clip: rect(-1000px,2000px,2000px,15px);
+}
+ 
+.ui-popup-arrow-container.ui-popup-arrow-b {
+    bottom: -15px;
+    clip: rect(15px,2000px,1000px,-1000px);
+}
+ 
+.ui-popup-arrow-container .ui-popup-arrow {
+    width: 42.42640687119285px;
+    height: 42.42640687119285px;
+    border-width: 1px;
+    border-style: solid;
+}
+ 
+.ui-popup-arrow-container.ui-popup-arrow-t .ui-popup-arrow {
+    left: -6.213203435596427px;
+    top: 8.786796564403573px;
+}
+ 
+.ui-popup-arrow-container.ui-popup-arrow-b .ui-popup-arrow {
+    left: -6.213203435596427px;
+    top: -21.213203435596427px;
+}
+ 
+.ui-popup-arrow-container.ui-popup-arrow-l .ui-popup-arrow {
+    left: 8.786796564403573px;
+    top: -6.213203435596427px;
+}
+ 
+.ui-popup-arrow-container.ui-popup-arrow-r .ui-popup-arrow {
+    left: -21.213203435596427px;
+    top: -6.213203435596427px;
+}
+ 
+.ui-popup-arrow-container.ui-popup-arrow-t.ie .ui-popup-arrow {
+    margin-left: -8.786796564403573px;
+    margin-top: -10.606601717798213px;
+}
+.ui-popup-arrow-container.ui-popup-arrow-b.ie .ui-popup-arrow {
+    margin-left: -8.786796564403573px;
+    margin-top: -6.213203435596427px;
+}
+ 
+.ui-popup-arrow-container.ui-popup-arrow-l.ie .ui-popup-arrow {
+    margin-left: -10.606601717798213px;
+    margin-top: -8.786796564403573px;
+}
+.ui-popup-arrow-container.ui-popup-arrow-r.ie .ui-popup-arrow {
+    margin-left: -6.213203435596427px;
+    margin-top: -8.786796564403573px;
+}
+ 
+.ui-popup-arrow-background {
+    width: 30px;
+    height: 30px;
+}
+ 
+.ui-popup-arrow-container.ui-popup-arrow-t .ui-popup-arrow-background,
+.ui-popup-arrow-container.ui-popup-arrow-b .ui-popup-arrow-background {
+    background-position: 0 15px;
+}
+ 
+.ui-popup-arrow-container.ui-popup-arrow-l .ui-popup-arrow-background,
+.ui-popup-arrow-container.ui-popup-arrow-r .ui-popup-arrow-background {
+    background-position: 15px 0;
+}

@@ -22,7 +22,9 @@
     <platform name="ios">
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
-        <preference name="StatusBarOverlaysWebView" value="true" />
+        <preference name="StatusBarOverlaysWebView" value="false" />
+        <preference name="StatusBarBackgroundColor" value="#22ad95" />
+        <preference name="StatusBarStyle" value="lightcontent" />
         <preference name="DisallowOverscroll" value="true" />
     </platform>
 </widget>
