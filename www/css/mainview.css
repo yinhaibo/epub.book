@@ -1,4 +1,6 @@
 @CHARSET "UTF-8";
+.ui-page { -webkit-backface-visibility:hidden; }
+
 .vbook-show{
 	display:block;
 }
@@ -23,7 +25,7 @@ div.ui-header p{
 	margin-top: 5px;
 	margin-bottom:5px;
 	font-size:1.4em;
-	font-weight:bold;
+	font-weight:normal;
 	font-family:PingHei, STHeitiSC-Light, 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	text-align:center;
 }

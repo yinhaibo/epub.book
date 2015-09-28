@@ -1,0 +1,214 @@
+@CHARSET "UTF-8";
+/*用户信息页样式表*/
+.perinfo{
+	width:100%;height:160px;font-size:10px;line-height:0px;
+	background:url(../images/navbg.png);/*perbg*/
+	background-size:1px 160px;
+}
+.userpic{
+	float:left;width:100%;height:100px;text-align:center;padding-top:20px;
+}
+.userpic img{height:80px;width:auto;}
+.usernametxt{
+	float:left;width:100%;height:20px;text-align:center;padding-top:5px;color:#ffffff;font-size:1.54285em;
+	text-shadow:none;
+	font-family:PingHei, STHeitiSC-Light, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+.usernameinfo{
+	float:left;width:100%;height:20px;text-align:center;padding-top:5px;color:#ffffff;font-size:0.8em;
+	font-family:Arial, sans-serif;
+	text-shadow:none;
+}
+
+/*用户信息*/
+.read-profile{
+	margin:0 0 0 0;
+	background:url(../images/perbg1.png) left bottom;
+	background-size:1px 60px;
+}
+.read-profile ul{
+	width:99.99%;
+	height:50px;
+	margin:0 auto;
+	padding:0;
+}
+.read-profile li{
+	float:left;
+	width:33.33%;
+	text-align:center;
+	color:#fff;
+	font-size:0.8em;
+	list-style-type:none;
+}
+.read-profile li.on {color:#fffc00;background:#168dd9;}
+
+.pernavinfo{
+	float:left;
+	margin-top:1px;
+	width:100%;
+	text-align:center;
+	color:#ffffff;
+	border-right:1px solid #baeadc;
+	text-shadow:none;
+	font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+.pernavtxt{
+	float:left;width:100%;
+	text-align:center;
+	color:#ffffff;
+}
+
+/*工具栏样式*/
+.profile-toolbar{height:100px;}
+.profile-toolbar ul{
+	padding-left:10px;
+	padding-right:10px;
+	margin: 0px;
+}
+.profile-toolbar li{
+	float:left;width:33.33%;
+	padding-top:10px;
+	text-align:center;
+	display:table;
+	padding-bottom:20px;
+}
+.profile-toolbar  li a,
+.profile-toolbar  li a:visited{
+	display:table-cell;
+	width:260px;
+	vertical-align:middle;
+	text-algin:center;
+	font-size:1.2em;
+	font-weight:normal;
+	text-align:center;
+	text-shadow:none;
+	text-decoration:none;
+	color:#208160;
+}
+.profile-toolbar  li img{
+	max-width:260px;
+	width:40%;
+	margin:0px;
+}
+
+/*广告部分样式*/
+.profile-ads ul{
+	padding-left:10px;
+	padding-right:10px;
+	marign:0px;
+}
+/*广告部分列表项样式*/
+.profile-ads li{
+	height:50px;
+	border-bottom: 8px solid #eeeeee;
+	list-style-type:none;
+	text-shadow:none;
+	text-decoration:none;
+}
+
+/*广告部分列表项样式*/
+.profile-ads li div{
+	vertical-align:middle;
+	font-weight: normal;
+}
+
+/*广告部分链接样式*/
+.profile-ads li a,
+.profile-ads li a:visited{
+	float:left;
+	text-decoration:none;
+	line-height:50px;
+	height:50px;
+	color:#1d1d1d;
+}
+
+
+/*广告部分标题样式*/
+.profile-ads li .profile-ads-title,
+.profile-ads li .profile-ads-title-hot{
+	padding-left:30px;
+	float:left;
+}
+
+/*热点图片样式*/
+.profile-ads li .profile-ads-title-hot img{
+	float: left;
+	margin-top:2px;
+	margin-left:0px;
+	height:20px;
+}
+/*非热点图片样式*/
+.profile-ads li .profile-ads-title img{
+	display:none;
+}
+
+/*热点字符样式*/
+.profile-ads li .profile-ads-title-hot .hot-new{
+	float: left;
+	margin-left: -17px;
+	margin-top:3px;
+	color:#ffffff;
+	font-size:12px;
+	font-weight:normal;
+}
+/*非热点字符样式*/
+.profile-ads li .profile-ads-title .hot-new{
+	display:none;
+}
+
+/*广告部分更多信息样式*/
+.profile-ads li .profile-ads-more{
+	height:50px;
+	line-height:50px;
+	color:#cccccc;
+	float:right;
+	font-size:10px;
+	padding-right:4px;
+	vertical-align:middle;
+	font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.profile-ads li .profile-ads-more .hot-msg{
+	float:right;
+	display: block;
+}
+
+.profile-ads li .profile-ads-more a{
+	float:right;
+	font-weight:normal;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
+}
+
+/*广告部分－更多连接样式*/
+.profile-ads li .profile-ads-more a,
+.profile-ads li .profile-ads-more a:visited{
+	color:#cccccc;
+}
+
+/*广告部分更多信息－右边箭头样式样式*/
+.profile-ads li .profile-ads-more img.profile-ads-more-ico{
+	float:right;
+	height:20px; 
+	width:auto; 
+	padding-top:15px;
+	padding-bottom:15px;
+}
+
+/*广告部分的三个图标*/
+.profile-ads li.ads-grift{
+	background: url(../images/lp1.png) 10px center no-repeat;
+	background-size: 20px 21px;
+}
+
+.profile-ads li.ads-actives{
+	background: url(../images/lp2.png) 10px center no-repeat;
+	background-size: 20px 21px;
+}
+
+.profile-ads li.ads-tasks{
+	background: url(../images/lp3.png) 10px center no-repeat;
+	background-size: 20px 21px;
+}
