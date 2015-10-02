@@ -1,0 +1,128 @@
+@CHARSET "UTF-8";
+
+
+#reader-footer{
+	background-color:#272727;
+	text-align:center;
+	border:none;
+}
+#reader-setting-back{
+	background-image: url("../images/ico-btn-reader-back.png");
+}
+
+#reader-setting a,
+#reader-booknav a{
+	background-repeat: no-repeat;
+	background-position:center;
+	background-size: 24px 24px;
+	background-color:transparent;
+	width:18.5%;
+	line-height:28px;
+	margin:5px 0;
+	padding:0px;
+	height:28px;
+	border:none;
+	display:inline-block;
+	text-shadow: none;
+	color: #fff;
+}
+
+#reader-setting-screen-brightness{
+	background-image: url("../images/ico-btn-reader-brightness.png");
+}
+
+#reader-setting-bookmark{
+	background-image: url("../images/ico-btn-reader-bookmark.png");
+}
+
+#reader-setting-book-search{
+	background-image: url("../images/ico-btn-reader-search.png");
+}
+
+#reader-setting-book-toc{
+	background-image: url("../images/ico-btn-reader-toc.png");
+}
+
+#reader-booknav-pages{
+	width:57%;
+	display:inline-block;
+}
+
+.reader-booknav-chapter{
+	line-height:28px;
+	color:#fff;
+}
+
+#reader-booknav-pageidx{
+	color:#fff;
+	line-height:0.5em;
+	font-size:0.5em;
+}
+
+#reader-booknav .ui-slider{
+	width:57%;
+	display:inline-block;
+	margin:5px 0px;
+	line-height: 28px;
+}
+#reader-booknav .ui-slider-track{
+	color:#fff;
+	background-color: #fff;
+	height:2px;
+	display:inline-block;
+	width:100%;
+	margin: 0px;
+	top:0px;
+}
+
+/* #reader-booknav .ui-slider-track .ui-slider-bg{
+	background-color: #43ffbf;
+} */
+
+#reader-booknav .ui-slider-input{
+	display:none;
+}
+#reader-booknav .ui-slider-handle{
+	color: #fff;
+	background-color: #fff;
+	width:10px;
+	height:10px;
+	margin-top: -5px;
+}
+/* 阅读器样式 */
+#main {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+#book-reader-loader {
+  position: absolute;
+  z-index: 10;
+  left: 50%;
+  top: 50%;
+  margin: -33px 0 0 -33px;
+}			
+#book-reader-bookName{position:fixed; height:20px; top:5px; left:20px; color:#CCCCCC;}
+#book-reader-chapterName{position:fixed; height:20px; top:5px; right:20px; color:#CCCCCC;}
+#book-reader-CurrentTime{position:fixed; height:20px; bottom:5px; left:20px; color:#CCCCCC;}
+#book-reader-pageLabel{position:fixed; height:20px; bottom:5px; right:20px; color:#CCCCCC;}
+
+#book-reader-area {
+  width: -moz-calc(100% - 40px);
+  width: -webkit-calc(100% - 40px);
+  width: -o-calc(100% - 40px);
+  width: calc(100% - 40px);
+  height: -moz-calc(100% - 60px);
+  height: -webkit-calc(100% - 60px);
+  height: -o-calc(100% - 60px);
+  height: calc(100% - 60px);
+  margin-left:20px;
+  margin-right:20px;
+  margin-bottom:30px;
+  margin-top:30px;
+  max-width: 1250px;
+}
+
+#book-reader-area iframe {
+  border: none;
+}

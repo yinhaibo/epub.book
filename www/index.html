@@ -2,6 +2,7 @@
 <html>
 	<head>
 	<meta charset="utf-8">
+	<meta name="format-detection"content="telephone=no"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>VBook</title>
 	<link rel="shortcut icon" href="../favicon.ico">
@@ -10,11 +11,64 @@
 	<link rel="stylesheet" href="css/childpage.css">
 	<link rel="stylesheet" href="css/personal.css">
 	<link rel="stylesheet" href="css/userprofile.css">
+	<link rel="stylesheet" href="css/reader.css">
+	
+	<script type="text/javascript" src="cordova.js"></script>
 	
 	<script src="libs/jquery/jquery-2.1.4.min.js"></script>
 	<script src="libs/jquerymobile/jquery.mobile-1.4.5.min.js"></script>
 	<script src="js/index.js"></script>
+	
+	<script src="libs/epub/libs/underscore/underscore.js"></script>
+    <script src="libs/epub/libs/rsvp/rsvp.js"></script>
+    <script src="libs/epub/libs/fileStorage/fileStorage.min.js"></script>
+	
+	<script src="libs/epub/src/base.js"></script>
+	<script src="libs/epub/src/core.js"></script>
+	<script src="libs/epub/src/unarchiver.js"></script>
+	<script src="libs/epub/src/parser.js"></script>
+	<script src="libs/epub/src/hooks.js"></script>
+	<script src="libs/epub/src/locations.js"></script>
+	<script src="libs/epub/src/book.js"></script>
+	<script src="libs/epub/src/chapter.js"></script>
+	<script src="libs/epub/src/renderer.js"></script>
+	<script src="libs/epub/src/replace.js"></script>
+	<script src="libs/epub/src/epubcfi.js"></script>
+	<script src="libs/epub/src/render_iframe.js"></script>
+	<script src="libs/epub/src/layout.js"></script>
+	<script src="libs/epub/src/pagination.js"></script>
+     
+    <!-- jszip -->
+	<script src="libs/jszip/jszip.js"></script>
+	<script src="libs/jszip/mime-types.js"></script>
+	<!-- EPUB.js Hook -->
+       <script src="libs/epub/hooks/default/smartimages.js"></script>
+	<script src="libs/epub/hooks/default/smartmedia.js"></script>
+	<script src="libs/epub/hooks/extensions/swipeDetection.js"></script>
+
+	<!-- PhotoSwipe Core CSS file -->
+	<link rel="stylesheet" href="libs/photoswipe/photoswipe.css"> 
+
+	<!-- PhotoSwipe Skin CSS file (styling of UI - buttons, caption, etc.)
+		 In the folder of skin CSS file there are also:
+		 - .png and .svg icons sprite, 
+		 - preloader.gif (for browsers that do not support CSS animations) -->
+	<link rel="stylesheet" href="libs/photoswipe/default-skin/default-skin.css"> 
+
+	<!-- PhotoSwipe Core JS file -->
+	<script src="libs/photoswipe/photoswipe.js"></script> 
+
+	<!-- PhotoSwipe UI JS file -->
+	<script src="libs/photoswipe/photoswipe-ui-default.js"></script> 
+	
+	<!-- VBOOK reader-->
+	<script src="js/utils.js"></script> 
+	<script src="js/reader.js"></script> 
+	<script src="js/readhelp.js"></script> 
 	<script>
+		$(document).on('mobileinit', function () {
+			$.mobile.ignoreContentEnabled = true;
+		});	
 		$(function(){
 			$( "[data-role='navbar']" ).navbar();
 			$( "[data-role='header'], [data-role='footer']" ).toolbar();
@@ -28,13 +82,18 @@
 		    // Change the heading
 		    //$("[data-role='header'] h1").text(current);
 		    // Remove active class from nav buttons
-		    $("[data-role='navbar'] a.my-btn-active").removeClass("my-btn-active");
+		    $("#main-footer [data-role='navbar'] a.my-btn-active").removeClass("my-btn-active");
 		    // Add active class to current nav button
-		    $("[data-role='navbar'] a").each(function () {
+		    $("#main-footer [data-role='navbar'] a").each(function () {
 		        if ($(this).text() === current) {
 		            $(this).addClass("my-btn-active");
 		        }
 		    }); 
+		    
+		    // Process other
+		    if (this.id == 'book-reader'){
+		    	vbookLoadBook();
+		    }
 		});
 		
 		function hideGlobalNavBar(){
@@ -51,6 +110,12 @@
 		function gotoUserProfilePage(){
 			$('#main-footer').toolbar('hide');
 			$(':mobile-pagecontainer').pagecontainer("change", "userprofile.html", {transition:"slidefade"});
+		}
+		
+		function gotoBookReaderPage(bookname){
+			window.localStorage.setItem("vbook-book", bookname);
+			$('#main-footer').toolbar('hide');
+			$(':mobile-pagecontainer').pagecontainer("change", "reader.html", {transition:"slidefade"});
 		}
 		
 		function showGlobalNavBar(){
@@ -95,7 +160,7 @@
 		<div role="main" id="vbook-shelf-main" class="ui-content vbook-shelf">
     		<ul data-role="listview" data-inset="true" data-filter="true" data-input="#vbook-books-search">
             	<li><div>
-            		<a href="bookread.html?book=books/progit.epub">
+            		<a href="#" onclick="gotoBookReaderPage('books/progit/');">
 	            	<div><img src="./books/progit.png" alt="ProGit" class="ui-li-thumb"></div>
 	            	<p class="booktitle">ProGit</p>
 	            	<p class="bookauthor">Scott Chacon and Ben Straub</p>
@@ -180,7 +245,7 @@
 	<div data-role="page" id="vbook-userinfo" data-title="用户信息">
 	</div>
 	
-	<div data-role="footer" id="main-footer" data-position="fixed" data-tap-toggle="false" data-theme="d" role="contentinfo" class="ui-footer ui-bar-a ui-footer-fixed slideup">
+	<div data-role="footer" id="main-footer" data-tap-toggle="false" data-theme="d" data-position="fixed" data-fullscreen="true">
 		<div data-role="navbar" data-theme="d">
 			<ul>
 			<li id="library"><a href="#vbook-store" data-theme="d">书库</a></li>

@@ -21,7 +21,7 @@ var VBOOK = (function(){
 	var needSavePageList = true;
 	function initializeBookEventBind(){
 		Book.getMetadata().then(function(meta){
-			$('#bookTitle').text(meta.bookTitle);
+			$('#book-reader-bookTitle').text(meta.bookTitle);
 			document.title = meta.bookTitle+" - "+meta.creator;
 		});
 		
@@ -37,11 +37,12 @@ var VBOOK = (function(){
 		  $('#tocListView').listview('refresh');
 		});
 		Book.ready.all.then(function(){
-		  document.getElementById("loader").style.display = "none";
+		  document.getElementById("book-reader-loader").style.display = "none";
 		  actionBookHeaderAndFooter("hide");
 		  //
+		  updateClock();
 		  setInterval('updateClock()', 1000);
-		  $('#pageLabel').text('分页中...');
+		  $('#book-reader-pageLabel').text('分页中...');
 		  //Pagination
 		  // check pagenation file
 		  readFileFromBookDir("page_list.json", function(data){
@@ -54,7 +55,7 @@ var VBOOK = (function(){
 			  Book.generatePagination();
 		  });
 		});
-		Book.renderTo("area");
+		Book.renderTo("book-reader-area");
 
 		var paginationReady = false;
 		// Wait for the pageList to be ready and then show slider
@@ -76,7 +77,7 @@ var VBOOK = (function(){
 	}
 	
 	function updatePageLabel(curPage, totalPage){
-		var pageLabel = document.getElementById('pageLabel');
+		var pageLabel = document.getElementById('book-reader-pageLabel');
 		if (pageLabel == undefined){
 			if (document.getElementById('footerIFM') != undefined && 
 				document.getElementById('footerIFM').contentWindow.document.getElementById('pageLabel') != undefined){
@@ -120,7 +121,7 @@ var VBOOK = (function(){
 				setting.marginTop = vbook_skin.margin.top;
 				setting.marginBottom = vbook_skin.margin.bottom;
 			}
-			header = document.getElementById('header');
+			header = document.getElementById('book-reader-header');
 			if (vbook_skin.header != undefined){
 				pw = vbook_skin.header.width,
 				ph = vbook_skin.header.height;
@@ -133,11 +134,11 @@ var VBOOK = (function(){
 					+'" id="headerIFM" frameborder="0" scrolling="no" width="100%" height="' + setting.headerHeight 
 					+ '"></iframe>';
 			}else{
-				header.innerHTML = '<div id="bookName"><span id="bookTitle">Book Title</span></div>'
-					+ '<div id="chapterName"><span id="chapterLabel">Chapter Name</span></div>';
+				header.innerHTML = '<div id="book-reader-bookName"><span id="book-reader-bookTitle">Book Title</span></div>'
+					+ '<div id="book-reader-chapterName"><span id="book-reader-chapterLabel">Chapter Name</span></div>';
 			}
 			
-			footer = document.getElementById("footer");
+			footer = document.getElementById("book-reader-footer");
 			if (vbook_skin.footer != undefined){
 				pw = vbook_skin.footer.width,
 				ph = vbook_skin.footer.height;
@@ -150,8 +151,8 @@ var VBOOK = (function(){
 					+'" id="footerIFM" frameborder="0" scrolling="no" width="100%" height="' + setting.footerHeight 
 					+ '"></iframe>';
 			}else{
-				footer.innerHTML = '<div id="CurrentTime"><span id="Clock">Time</span></div>'
-					+ '<div id="pageLabel"><span id="Pagination">Time</span></div>';
+				footer.innerHTML = '<div id="book-reader-CurrentTime"><span id="book-reader-Clock">Time</span></div>'
+					+ '<div id="book-reader-pageLabel"><span id="book-reader-Pagination">Page</span></div>';
 			}
 			//options = {storage:"filesystem", fromStorage:true}; // load from local storage
 			options = {};
@@ -160,7 +161,7 @@ var VBOOK = (function(){
 			options.width = (document.width - setting.marginLeft - setting.marginRight);
 			setting.width = options.width;
 			setting.height = options.height;
-			area = document.getElementById('area');
+			area = document.getElementById('book-reader-area');
 			area.style.height =  options.height + "px";
 			area.style.width = options.width + "px";
 			area.style.marginLeft = setting.marginLeft;
@@ -181,11 +182,11 @@ var VBOOK = (function(){
 			}
 		}, function(flag, error){
 			console.log("Load VBook skin failed:" + error);
-			document.getElementById('header').innerHTML = '<div id="bookName">Book Title</div>'
-				+ '<div id="chapterName"><span id="chapterLabel">Chapter Name</span></div>';
-			document.getElementById('footer').innerHTML = '<div id="CurrentTime">Time</div>'
-				+ '<div id="pageLabel">Page<</div>';
-			area = document.getElementById('area');
+			document.getElementById('book-reader-header').innerHTML = '<div id="book-reader-bookName">Book Title</div>'
+				+ '<div id="book-reader-chapterName"><span id="book-reader-chapterLabel">Chapter Name</span></div>';
+			document.getElementById('book-reader-footer').innerHTML = '<div id="book-reader-CurrentTime"><span id="book-reader-Clock">Time</span></div>'
+				+ '<div id="book-reader-pageLabel"><span id="book-reader-Pagination">Page</span><</div>';
+			area = document.getElementById('book-reader-area');
 			//options = {storage:"filesystem", fromStorage:true};
 			options = {};
 			options.height = document.height - 20 - 20 - 10 - 10;
@@ -286,7 +287,7 @@ var VBOOK = (function(){
 			if (idx <= e.spinePos){chapterIdx = idx;}
 		}
 		if (chapterIdx != null){
-			var chapterLabel = document.getElementById('chapterLabel');
+			var chapterLabel = document.getElementById('book-reader-chapterLabel');
 			if (chapterLabel == undefined){
 				if (document.getElementById('headerIFM') != undefined && 
 					document.getElementById('headerIFM').contentWindow.document.getElementById('chapterLabel') != undefined){
