@@ -12,6 +12,7 @@
 	<link rel="stylesheet" href="css/personal.css">
 	<link rel="stylesheet" href="css/userprofile.css">
 	<link rel="stylesheet" href="css/reader.css">
+	<link rel="stylesheet" href="css/readertoc.css" />
 	
 	<script type="text/javascript" src="cordova.js"></script>
 	
@@ -66,6 +67,7 @@
 	<script src="js/reader.js"></script> 
 	<script src="js/readhelp.js"></script> 
 	<script>
+		var bookReload = true;
 		$(document).on('mobileinit', function () {
 			$.mobile.ignoreContentEnabled = true;
 		});	
@@ -92,7 +94,12 @@
 		    
 		    // Process other
 		    if (this.id == 'book-reader'){
-		    	vbookLoadBook();
+		    	if (bookReload == true){
+			    	bookReload = false;
+			    	vbookLoadBook();
+			    }
+		    }else if(this.id == 'book-reader-toc'){
+		    	VBOOK.loadBookTocData('tocListView', 'book-reader-toc', 'book-reader');
 		    }
 		});
 		
@@ -113,14 +120,35 @@
 		}
 		
 		function gotoBookReaderPage(bookname){
-			window.localStorage.setItem("vbook-book", bookname);
+			if (bookname != window.localStorage.getItem("vbook-book")){
+				bookReload = true;
+				window.localStorage.setItem("vbook-book", bookname);
+			}
 			$('#main-footer').toolbar('hide');
 			$(':mobile-pagecontainer').pagecontainer("change", "reader.html", {transition:"slidefade"});
+		}
+		
+		function backBookReaderPage(){
+			$(':mobile-pagecontainer').pagecontainer("change", "reader.html", {transition:"slidefade"});
+		}
+		
+		function gotoBookReaderTocPage(){
+			$(':mobile-pagecontainer').pagecontainer("change", "readertoc.html", {transition:"slidefade"});
+		}
+		
+		function gotoBookReaderPageChapter(chapurl){
+			backBookReaderPage();
+			VBOOK.locateBookUrl(chapurl);
 		}
 		
 		function showGlobalNavBar(){
 			$('#main-footer').toolbar('show');
 		}
+		
+		window.addEventListener("orientationchange", function(){
+		    console.log('Orientation changed to ' + screen.orientation);
+		});
+		
 		optimizeSpeed();
 	</script>
 	
@@ -198,9 +226,13 @@
 				<p class="bookauthor">Herman Melville</p>
             	<p class="bookbrief">A century and a half after its publication, "Moby-Dick" still stands as a literary classic. A novel of adventure the story of a madman pursuing an unholy war against a creature as vast and dangerous as the sea, it is also an important social commentary populated with several of the most unforgettable characters in literature. This edition features French flaps and deluxe packag...</p>
 				</a></div></li> 
-				<li><div><a href="bookread.html?book=books/cyjcsyx.epub">
+				<li><div><a href="#" onclick="gotoBookReaderPage('books/zyx/');">
 				<div><img src="./books/cyjcsyx.png" alt="柴油机的测试及运行管理" class="ui-li-thumb"/></div>
 				<p class="booktitle">柴油机的测试及运行管理</p>
+				</a></div></li> 
+				<li><div><a href="#" onclick="gotoBookReaderPage('books/testbook/');">
+				<div><img src="./books/testbook/corver.png" alt="贷款实地调查" class="ui-li-thumb"/></div>
+				<p class="booktitle">贷款实地调查</p>
 				<p class="vbook-new">新书首发</p>
 				</a></div></li> 
               </ul>
@@ -245,7 +277,7 @@
 	<div data-role="page" id="vbook-userinfo" data-title="用户信息">
 	</div>
 	
-	<div data-role="footer" id="main-footer" data-tap-toggle="false" data-theme="d" data-position="fixed" data-fullscreen="true">
+	<div data-role="footer" id="main-footer" data-tap-toggle="false" data-theme="d" data-position="fixed">
 		<div data-role="navbar" data-theme="d">
 			<ul>
 			<li id="library"><a href="#vbook-store" data-theme="d">书库</a></li>

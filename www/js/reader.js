@@ -7,6 +7,7 @@ var VBOOK = (function(){
 	var Book = null;
 	var bookURL = null; // EPUB unzip file directory path
 	var vbook_skin = null; // VBook user defined skin configure
+	var vbook_toc_load = false;
 	var setting = {marginLeft:10, marginRight:10, marginTop:10, margin:10,
 			headerHeight:20, footerHeight:20, width:"100%", height:"100%", fixedLayout : true,
 			columnGap:80, backgroundColor:"#FFFFFF", foreColor:"#000000", fontSize:"100%"};
@@ -25,7 +26,7 @@ var VBOOK = (function(){
 			document.title = meta.bookTitle+" - "+meta.creator;
 		});
 		
-		Book.getToc().then(function(toc){
+		/*Book.getToc().then(function(toc){
 		  toc.forEach(function(chapter) {
 			$('#tocListView').append('<li><a href="#book" onclick="VBOOK.locateBookUrl(\'' 
 					+ chapter.href + '\');" data-ajax="false">' 
@@ -35,7 +36,7 @@ var VBOOK = (function(){
 		  });
 		  $('#tocPage').page();
 		  $('#tocListView').listview('refresh');
-		});
+		});*/
 		Book.ready.all.then(function(){
 		  document.getElementById("book-reader-loader").style.display = "none";
 		  actionBookHeaderAndFooter("hide");
@@ -92,10 +93,16 @@ var VBOOK = (function(){
 	function openEPUBBook(book){
 		bookURL = book;
 		if (window.resolveLocalFileSystemURL == undefined){
-			vReader.Book = Book = ePub(bookURL, {width: 376, height:569});
+			if (Book != null){
+				Book.destroy();
+			}
+			vReader.Book = Book = ePub(bookURL);
 			initializeBookEventBind();
 		}else{
 			loadVBookSkin(function(options){
+				if (Book != null){
+					Book.destroy();
+				}
 				console.log("Open EPUB book:" + bookURL);
 				vReader.Book = Book = ePub(bookURL, options);
 				initializeBookEventBind();
@@ -115,45 +122,93 @@ var VBOOK = (function(){
 			    pw, ph, scale;
 			var area,header,footer;
 			
+			if (vbook_skin.mode != undefined){
+				if (vbook_skin.mode.screen != undefined){
+					if (vbook_skin.mode.screen == "landscape"){
+						screen.lockOrientation('landscape-primary');
+					}else if (vbook_skin.mode.screen == "portrait"){
+						screen.lockOrientation('portrait-primary');
+					}else{
+						screen.unlockOrientation();
+					}
+				}
+				if (vbook_skin.mode.header == "none"){
+					header = "none";
+				}
+				
+				if (vbook_skin.mode.footer == "none"){
+					footer = "none";
+				}
+				
+				if (vbook_skin.mode.smartimage == "false"){
+					window.localStorage.setItem("vbook-apply-smartimage", "false");
+				}else{
+					// default to apply smart images
+					window.localStorage.getItem("vbook-apply-smartimage", "true")
+				}
+				
+				if (vbook_skin.mode.smartmedia == "false"){
+					window.localStorage.setItem("vbook-apply-smartmedia", "false");
+				}else{
+					// default to apply smart images
+					window.localStorage.getItem("vbook-apply-smartmedia", "true")
+				}
+			}
+			
 			if (vbook_skin.margin != undefined){
 				setting.marginLeft = vbook_skin.margin.left;
 				setting.marginRight = vbook_skin.margin.right;
 				setting.marginTop = vbook_skin.margin.top;
 				setting.marginBottom = vbook_skin.margin.bottom;
 			}
-			header = document.getElementById('book-reader-header');
-			if (vbook_skin.header != undefined){
-				pw = vbook_skin.header.width,
-				ph = vbook_skin.header.height;
-				
-				scale = cw / pw;
-				setting.headerHeight = ph * scale;
-				header.style.width = window.width + "px";
-				header.style.height = setting.headerHeight + "px"
-				header.innerHTML = '<iframe src="' + bookURL + vbook_skin.header.url 
-					+'" id="headerIFM" frameborder="0" scrolling="no" width="100%" height="' + setting.headerHeight 
-					+ '"></iframe>';
+			if (header == "none"){
+				header = document.getElementById('book-reader-header');
+				header.style.display = "none";
+				setting.headerHeight = 0;
 			}else{
-				header.innerHTML = '<div id="book-reader-bookName"><span id="book-reader-bookTitle">Book Title</span></div>'
-					+ '<div id="book-reader-chapterName"><span id="book-reader-chapterLabel">Chapter Name</span></div>';
+				header = document.getElementById('book-reader-header');
+				if (vbook_skin.header != undefined){
+					pw = vbook_skin.header.width,
+					ph = vbook_skin.header.height;
+					
+					scale = cw / pw;
+					setting.headerHeight = ph * scale;
+					header.style.width = window.width + "px";
+					header.style.height = setting.headerHeight + "px"
+					header.innerHTML = '<iframe src="' + bookURL + vbook_skin.header.url 
+						+'" id="headerIFM" frameborder="0" scrolling="no" width="100%" height="' + setting.headerHeight 
+						+ '"></iframe>';
+				}else{
+					header.innerHTML = '<div id="book-reader-bookName"><span id="book-reader-bookTitle">Book Title</span></div>'
+						+ '<div id="book-reader-chapterName"><span id="book-reader-chapterLabel">Chapter Name</span></div>';
+					setting.headerHeight = 20;
+				}
 			}
 			
-			footer = document.getElementById("book-reader-footer");
-			if (vbook_skin.footer != undefined){
-				pw = vbook_skin.footer.width,
-				ph = vbook_skin.footer.height;
-				
-				scale = cw / pw;
-				setting.footerHeight = ph * scale;
-				footer.style.width = window.width + "px";
-				footer.style.height = setting.footerHeight + "px"
-				footer.innerHTML = '<iframe src="' + bookURL + vbook_skin.footer.url 
-					+'" id="footerIFM" frameborder="0" scrolling="no" width="100%" height="' + setting.footerHeight 
-					+ '"></iframe>';
+			if (footer == "none"){
+				footer = document.getElementById('book-reader-footer');
+				footer.style.display = "none";
+				setting.footerHeight = 0;
 			}else{
-				footer.innerHTML = '<div id="book-reader-CurrentTime"><span id="book-reader-Clock">Time</span></div>'
-					+ '<div id="book-reader-pageLabel"><span id="book-reader-Pagination">Page</span></div>';
+				footer = document.getElementById("book-reader-footer");
+				if (vbook_skin.footer != undefined){
+					pw = vbook_skin.footer.width,
+					ph = vbook_skin.footer.height;
+					
+					scale = cw / pw;
+					setting.footerHeight = ph * scale;
+					footer.style.width = window.width + "px";
+					footer.style.height = setting.footerHeight + "px"
+					footer.innerHTML = '<iframe src="' + bookURL + vbook_skin.footer.url 
+						+'" id="footerIFM" frameborder="0" scrolling="no" width="100%" height="' + setting.footerHeight 
+						+ '"></iframe>';
+				}else{
+					footer.innerHTML = '<div id="book-reader-CurrentTime"><span id="book-reader-Clock">Time</span></div>'
+						+ '<div id="book-reader-pageLabel"><span id="book-reader-Pagination">Page</span></div>';
+					setting.footerHeight = 20;
+				}
 			}
+			
 			//options = {storage:"filesystem", fromStorage:true}; // load from local storage
 			options = {};
 			options.height = (document.height - setting.headerHeight - setting.footerHeight
@@ -244,7 +299,7 @@ var VBOOK = (function(){
 	 * @param errorCallback 失败回调函数，第一个参数为flag，1表示文件存在，当无法获取文件对象，0表示文件不存在， 第二个参数为调试信息
 	 */
 	function readFileFromBookDir(filename, successCallback, errorCallback){
-		window.resolveLocalFileSystemURL(bookURL + filename, function(fileEntry){
+		window.resolveLocalFileSystemURL(cordova.file.applicationDirectory + "/www/" + bookURL + filename, function(fileEntry){
 			  console.log("reading to read " + fileEntry.fullPath);
 			  fileEntry.file(function(file){
 				  var reader = new FileReader();
@@ -277,6 +332,32 @@ var VBOOK = (function(){
 	
 	vReader.locateBookUrl = function(url){
 		Book.goto(url);
+	}
+	
+	/**
+	 * 加载目录数据
+	 * @tocList 目录列表ID字符串，例如'tocListView'
+	 * @tocPage 目录列表所在页面ID字符串
+	 * @readerPage 阅读页面ID字符串
+	 */
+	vReader.loadBookTocData = function(tocList, tocPage, readerPage){
+		var bookname = window.localStorage.getItem("vbook-book");
+		var booknametoc = window.localStorage.getItem("vbook-book-toc");
+		if (bookname != booknametoc){
+			chapterHref2Name = [];
+			// 目录数据与书籍数据不匹配，重新加载
+			VBOOK.Book.getToc().then(function(toc){
+				  toc.forEach(function(chapter) {
+					$('#'+tocList).append('<li><a href="#" onclick="gotoBookReaderPageChapter(\'' 
+							+ chapter.href + '\');" data-ajax="true">' 
+							+ chapter.label.trim() + '</a></li>');
+					// add chapter href 2 name
+					chapterHref2Name[chapter.spinePos] = chapter.label.trim();
+				  });
+				  $('#'+tocPage).page();
+				  $('#'+tocList).listview('refresh');
+			});
+		}
 	}
 	
 	vReader.chapterChange = function(e){
@@ -429,7 +510,7 @@ var VBOOK = (function(){
 	}
 
 	function copyFileToSDCard(bookURL, destDirEntry){
-		window.resolveLocalFileSystemURL(bookURL, 
+		window.resolveLocalFileSystemURL(cordova.file.applicationDirectory + "/www/" + bookURL, 
 			function(bookFileEntry){
 				var bookName = getBookName(bookURL);
 				bookFileEntry.copyTo(destDirEntry, bookFileEntry.name, function(rs){

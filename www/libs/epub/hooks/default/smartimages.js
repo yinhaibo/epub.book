@@ -8,6 +8,13 @@ EPUBJS.Hooks.register("beforeChapterDisplay").smartimages = function(callback, r
 			callback();
 			return; //-- Only adjust images for reflowable text
 		}
+		
+		
+		var applyflag = window.localStorage.getItem("vbook-apply-smartimage");
+		if (applyflag != "true"){
+			callback();
+			return;
+		}
 
 		items.forEach(function(item){
 			

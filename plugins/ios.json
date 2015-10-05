@@ -35,6 +35,10 @@
                         {
                             "xml": "<preference name=\"StatusBarStyle\" value=\"lightcontent\" />",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"YoikScreenOrientation\"><param name=\"ios-package\" value=\"YoikScreenOrientation\" /></feature>",
+                            "count": 1
                         }
                     ],
                     "/widget": [
@@ -95,6 +99,9 @@
             "PACKAGE_NAME": "cn.vbook"
         },
         "org.apache.cordova.statusbar": {
+            "PACKAGE_NAME": "cn.vbook"
+        },
+        "cordova-plugin-screen-orientation": {
             "PACKAGE_NAME": "cn.vbook"
         }
     },

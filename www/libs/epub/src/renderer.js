@@ -686,7 +686,7 @@ EPUBJS.Renderer.prototype.mapPage = function(){
 		range.selectNodeContents(node);
 		var pos = range.getBoundingClientRect();
 
-		console.log("NonText (" + node.id + ") boudning:(" + pos.left + ", " + pos.top + " - " + pos.width + ", " + pos.height);
+//		console.log("NonText (" + node.id + ") boudning:(" + pos.left + ", " + pos.top + " - " + pos.width + ", " + pos.height);
 		if(!pos || (pos.width === 0 && pos.height === 0)) {
 			return;
 		}
@@ -696,7 +696,7 @@ EPUBJS.Renderer.prototype.mapPage = function(){
 				//cfi = renderer.currentChapter.cfiFromRange(range);
 				cfi = renderer.currentChapter.cfiFromRangeSafe(range);
 				// map[page-1].start = cfi;
-				console.log("map.push(start:" + cfi + ", end:null");
+//				console.log("map.push(start:" + cfi + ", end:null");
 				map.push({ start: cfi, end: null });
 			}
 		} else {
@@ -704,14 +704,14 @@ EPUBJS.Renderer.prototype.mapPage = function(){
 				prevRange.collapse(true);
 				//cfi = renderer.currentChapter.cfiFromRange(prevRange);
 				cfi = renderer.currentChapter.cfiFromRangeSafe(prevRange);
-				console.log("map[" + (map.length-1) + "].end:" + cfi);
+//				console.log("map[" + (map.length-1) + "].end:" + cfi);
 				map[map.length-1].end = cfi;
 			}
 
 			range.collapse(true);
 			//cfi = renderer.currentChapter.cfiFromRange(range);
 			cfi = renderer.currentChapter.cfiFromRangeSafe(range);
-			console.log("map.push(start:" + cfi + ", end:null");
+//			console.log("map.push(start:" + cfi + ", end:null");
 			map.push({
 					start: cfi,
 					end: null

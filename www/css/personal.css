@@ -66,10 +66,10 @@
 	margin: 0px;
 }
 .profile-toolbar li{
-	float:left;width:33.33%;
+	width:32%;
 	padding-top:10px;
 	text-align:center;
-	display:table;
+	display:inline-block;
 	padding-bottom:20px;
 }
 .profile-toolbar  li a,

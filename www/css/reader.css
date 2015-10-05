@@ -5,6 +5,7 @@
 	background-color:#272727;
 	text-align:center;
 	border:none;
+	padding-top: 5px;
 }
 #reader-setting-back{
 	background-image: url("../images/ico-btn-reader-back.png");
