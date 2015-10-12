@@ -8,11 +8,14 @@ var VBOOK = (function(){
 	var bookURL = null; // EPUB unzip file directory path
 	var vbook_skin = null; // VBook user defined skin configure
 	var vbook_toc_load = false;
-	var setting = {marginLeft:10, marginRight:10, marginTop:10, margin:10,
+	var setting = {marginLeft:10, marginRight:10, marginTop:20, marginBottom:20,
 			headerHeight:20, footerHeight:20, width:"100%", height:"100%", fixedLayout : true,
 			columnGap:80, backgroundColor:"#FFFFFF", foreColor:"#000000", fontSize:"100%"};
 	
 	vReader.Book = null;
+	/*公开的设置值，与私有变量不一样*/
+	vReader.setting = {bookmarks:[]};
+	vReader.updateBookmarkStatus = null; // function for update bookmark status
 	/////////////////////////////////////////////////
 	//Private
 	/////////////////////////////////////////////////
@@ -39,6 +42,7 @@ var VBOOK = (function(){
 		});*/
 		Book.ready.all.then(function(){
 		  document.getElementById("book-reader-loader").style.display = "none";
+		  
 		  actionBookHeaderAndFooter("hide");
 		  //
 		  updateClock();
@@ -75,6 +79,7 @@ var VBOOK = (function(){
 		});
 		
 		Book.on('renderer:chapterDisplayed', VBOOK.chapterChange);
+		Book.on('renderer:locationChanged', VBOOK.locationChange);
 	}
 	
 	function updatePageLabel(curPage, totalPage){
@@ -89,14 +94,16 @@ var VBOOK = (function(){
 			pageLabel.innerHTML = curPage + '/' + totalPage;
 		}
 	}
-
+	
 	function openEPUBBook(book){
+		setting.screenOrientation = undefined;
+		setting.zoom = undefined;
 		bookURL = book;
 		if (window.resolveLocalFileSystemURL == undefined){
 			if (Book != null){
 				Book.destroy();
 			}
-			vReader.Book = Book = ePub(bookURL);
+			vReader.Book = Book = ePub(bookURL, {width:(document.width - 40), height:(document.height - 60)});
 			initializeBookEventBind();
 		}else{
 			loadVBookSkin(function(options){
@@ -110,24 +117,53 @@ var VBOOK = (function(){
 		}
 	}
 	
+	
+	
 	/**
 	 * 加载VBook自定义皮肤，包括页眉，页脚，背景等
 	 */
 	function loadVBookSkin(successCallback){
+		var docw, doch;
+		var area,header,footer;
+		docw = screen.width;//document.body.clientWidth;
+		doch = screen.height;//document.body.clientHeight;
+		setting.screenOrientation = undefined;
+		
 		// 读皮肤定义文件
 		readFileFromBookDir("vbook_skin.json", function(data){
 			// 解析JSON数据
 			vbook_skin = JSON.parse(data);
 			var cw = document.width,
 			    pw, ph, scale;
-			var area,header,footer;
+			
+			var fixedw, fixedh; // 固定的宽度和高度，如果屏幕不与之匹配，通过文档缩放实现，确保可以优先显示
+								// 如果存在该参数，页眉，页脚都不会显示，并在填充边缘显示黑色
+			var scalew, scaleh, zoom;
 			
 			if (vbook_skin.mode != undefined){
 				if (vbook_skin.mode.screen != undefined){
 					if (vbook_skin.mode.screen == "landscape"){
-						screen.lockOrientation('landscape-primary');
+						if (screen.orientation.substring(0,9) != "landscape"){
+							// switch width and height
+							//!!! 需要在变换之前设置，Android可以实时反应，而iOS不能
+							if (screen.width < screen.height){
+								docw = screen.height;//document.body.clientHeight;
+								doch = screen.width;//document.body.clientWidth;
+							}
+							console.log("docw,doch:" + docw + ", " + doch);
+							setting.screenOrientation = vbook_skin.mode.screen;
+							screen.lockOrientation('portrait-primary');
+						}
 					}else if (vbook_skin.mode.screen == "portrait"){
-						screen.lockOrientation('portrait-primary');
+						if (screen.orientation.substring(0,8) != "portrait"){
+							if (screen.width > screen.height){
+								// switch width and height
+								docw = screen.height;//document.body.clientHeight;
+								doch = screen.width;//document.body.clientWidth;
+							}
+							setting.screenOrientation = vbook_skin.mode.screen;
+							screen.lockOrientation('portrait-primary');
+						}
 					}else{
 						screen.unlockOrientation();
 					}
@@ -144,24 +180,62 @@ var VBOOK = (function(){
 					window.localStorage.setItem("vbook-apply-smartimage", "false");
 				}else{
 					// default to apply smart images
-					window.localStorage.getItem("vbook-apply-smartimage", "true")
+					window.localStorage.setItem("vbook-apply-smartimage", "true");
 				}
 				
 				if (vbook_skin.mode.smartmedia == "false"){
 					window.localStorage.setItem("vbook-apply-smartmedia", "false");
 				}else{
 					// default to apply smart images
-					window.localStorage.getItem("vbook-apply-smartmedia", "true")
+					window.localStorage.setItem("vbook-apply-smartmedia", "true");
+				}
+				
+				if (vbook_skin.mode.fixedwidth != undefined || 
+						vbook_skin.mode.fixedwidth != "default" ||
+						vbook_skin.mode.fixedwidth != "0"){
+					fixedw = parseInt(vbook_skin.mode.fixedwidth);
+				}
+				
+				if (vbook_skin.mode.fixedheight != undefined || 
+						vbook_skin.mode.fixedheight != "default" ||
+						vbook_skin.mode.fixedheight != "0"){
+					fixedh = parseInt(vbook_skin.mode.fixedheight);
+				}
+				
+				if (fixedw != undefined && fixedh != undefined){
+					scalew = docw / fixedw;
+					scaleh = doch / fixedh;
+					if (scalew > scaleh){
+						zoom = (scaleh * 100);
+						setting.marginLeft = (docw - (fixedw * scaleh))/2;
+						setting.marginRight = setting.marginLeft;
+						setting.marginTop = 0;
+						setting.marginBottom = 0;
+					}else{
+						zoom = (scalew * 100);
+						setting.marginTop = (doch - (fixedh * scalew))/2;
+						setting.marginBottom = setting.marginTop;
+						setting.marginLeft = 0;
+						setting.marginRight = 0;
+					}
+					setting.zoom = zoom + "%";
+					console.log("zoom:" + zoom);
+					console.log(setting);
+					document.getElementById('book-reader').style.backgroundColor="#000";
 				}
 			}
 			
-			if (vbook_skin.margin != undefined){
-				setting.marginLeft = vbook_skin.margin.left;
-				setting.marginRight = vbook_skin.margin.right;
-				setting.marginTop = vbook_skin.margin.top;
-				setting.marginBottom = vbook_skin.margin.bottom;
+			if (fixedw != undefined && fixedh != undefined){
+				//do nothing
+			}else{
+				if (vbook_skin.margin != undefined){
+					setting.marginLeft = vbook_skin.margin.left;
+					setting.marginRight = vbook_skin.margin.right;
+					setting.marginTop = vbook_skin.margin.top;
+					setting.marginBottom = vbook_skin.margin.bottom;
+				}
 			}
-			if (header == "none"){
+			if (header == "none" || fixedh != undefined){
 				header = document.getElementById('book-reader-header');
 				header.style.display = "none";
 				setting.headerHeight = 0;
@@ -173,7 +247,7 @@ var VBOOK = (function(){
 					
 					scale = cw / pw;
 					setting.headerHeight = ph * scale;
-					header.style.width = window.width + "px";
+					header.style.width = docw + "px";
 					header.style.height = setting.headerHeight + "px"
 					header.innerHTML = '<iframe src="' + bookURL + vbook_skin.header.url 
 						+'" id="headerIFM" frameborder="0" scrolling="no" width="100%" height="' + setting.headerHeight 
@@ -185,7 +259,7 @@ var VBOOK = (function(){
 				}
 			}
 			
-			if (footer == "none"){
+			if (footer == "none" || fixedh != undefined){
 				footer = document.getElementById('book-reader-footer');
 				footer.style.display = "none";
 				setting.footerHeight = 0;
@@ -197,7 +271,7 @@ var VBOOK = (function(){
 					
 					scale = cw / pw;
 					setting.footerHeight = ph * scale;
-					footer.style.width = window.width + "px";
+					footer.style.width = docw + "px";
 					footer.style.height = setting.footerHeight + "px"
 					footer.innerHTML = '<iframe src="' + bookURL + vbook_skin.footer.url 
 						+'" id="footerIFM" frameborder="0" scrolling="no" width="100%" height="' + setting.footerHeight 
@@ -210,19 +284,19 @@ var VBOOK = (function(){
 			}
 			
 			//options = {storage:"filesystem", fromStorage:true}; // load from local storage
-			options = {};
-			options.height = (document.height - setting.headerHeight - setting.footerHeight
+			options = {fixedLayout:true, spreads:false};
+			options.height = (doch - setting.headerHeight - setting.footerHeight
 					- setting.marginTop - setting.marginBottom);
-			options.width = (document.width - setting.marginLeft - setting.marginRight);
+			options.width = (docw - setting.marginLeft - setting.marginRight);
 			setting.width = options.width;
 			setting.height = options.height;
 			area = document.getElementById('book-reader-area');
 			area.style.height =  options.height + "px";
 			area.style.width = options.width + "px";
-			area.style.marginLeft = setting.marginLeft;
-			area.style.marginRight = setting.marginRight;
-			area.style.marginTop = setting.marginTop;
-			area.style.marginBottom = setting.marginBottom;
+			area.style.marginLeft = setting.marginLeft + "px";
+			area.style.marginRight = setting.marginRight + "px";
+			area.style.marginTop = setting.marginTop + "px";
+			area.style.marginBottom = setting.marginBottom + "px";
 			if (vbook_skin.color != undefined){
 				vbook_skin.color.background;
 			}
@@ -235,21 +309,52 @@ var VBOOK = (function(){
 			if (successCallback){
 				successCallback(options);
 			}
+			console.log("finish load vbook.");
 		}, function(flag, error){
 			console.log("Load VBook skin failed:" + error);
 			document.getElementById('book-reader-header').innerHTML = '<div id="book-reader-bookName">Book Title</div>'
 				+ '<div id="book-reader-chapterName"><span id="book-reader-chapterLabel">Chapter Name</span></div>';
 			document.getElementById('book-reader-footer').innerHTML = '<div id="book-reader-CurrentTime"><span id="book-reader-Clock">Time</span></div>'
 				+ '<div id="book-reader-pageLabel"><span id="book-reader-Pagination">Page</span><</div>';
+			
+			setting.marginTop = 20;
+			setting.marginBottom = 20;
+			setting.marginLeft = 10;
+			setting.marginRight = 10;
+			
+			// default to apply smart images and media
+			window.localStorage.setItem("vbook-apply-smartimage", "true");
+			window.localStorage.setItem("vbook-apply-smartmedia", "true");
+			
+			header = document.getElementById('book-reader-header');
+			header.style.display = "block";
+			header.innerHTML = '<div id="book-reader-bookName"><span id="book-reader-bookTitle">Book Title</span></div>'
+				+ '<div id="book-reader-chapterName"><span id="book-reader-chapterLabel">Chapter Name</span></div>';
+			setting.headerHeight = 20;
+			
+			footer = document.getElementById('book-reader-footer');
+			footer.style.display = "block";
+			footer.innerHTML = '<div id="book-reader-CurrentTime"><span id="book-reader-Clock">Time</span></div>'
+				+ '<div id="book-reader-pageLabel"><span id="book-reader-Pagination">Page</span></div>';
+			setting.footerHeight = 20;
+			
 			area = document.getElementById('book-reader-area');
 			//options = {storage:"filesystem", fromStorage:true};
 			options = {};
-			options.height = document.height - 20 - 20 - 10 - 10;
-			options.width = document.width - 20 - 20;
+			options.height = (doch - setting.headerHeight - setting.footerHeight
+					- setting.marginTop - setting.marginBottom);
+			options.width = (docw - setting.marginLeft - setting.marginRight);
+			
 			area.style.height = options.height + "px";
 			area.style.width = options.width + "px";
 			setting.width = options.width;
 			setting.height = options.height;
+			area.style.marginLeft = setting.marginLeft + "px";
+			area.style.marginRight = setting.marginRight + "px";
+			area.style.marginTop = setting.marginTop + "px";
+			area.style.marginBottom = setting.marginBottom + "px";
+			
+			document.getElementById('book-reader').style.backgroundColor="#fff";
 			if (successCallback){
 				successCallback(options);
 			}
@@ -294,12 +399,23 @@ var VBOOK = (function(){
 	
 	/**
 	 * 从书籍目录读文件内容
-	 * @param filename 要读的文件名
+	 * @param filename 要读的文件名,路径定位在书籍目录下
 	 * @param successCallback 成功回调函数，参数为文件内容
 	 * @param errorCallback 失败回调函数，第一个参数为flag，1表示文件存在，当无法获取文件对象，0表示文件不存在， 第二个参数为调试信息
 	 */
 	function readFileFromBookDir(filename, successCallback, errorCallback){
-		window.resolveLocalFileSystemURL(cordova.file.applicationDirectory + "/www/" + bookURL + filename, function(fileEntry){
+		if (filename == null || filename.length == 0){
+			errorCallback(0, "filename error:" + filename);
+			return;
+		}
+		var fullfilename;
+		if (bookURL.substring(0, 7) == "file://"){
+			fullfilename = bookURL + filename;
+		}else{
+			// 位于项目目录，不可写，用于测试
+			fullfilename = cordova.file.applicationDirectory + "www/" + bookURL + filename;
+		}
+		window.resolveLocalFileSystemURL(fullfilename, function(fileEntry){
 			  console.log("reading to read " + fileEntry.fullPath);
 			  fileEntry.file(function(file){
 				  var reader = new FileReader();
@@ -311,7 +427,7 @@ var VBOOK = (function(){
 				  if (errorCallback) errorCallback(1, "readFileFromBookDir: Get File Object failed.");
 			  });
 		  },function(evt){
-			  if (errorCallback) errorCallback(0, "readFileFromBookDir: File does not exist.");
+			  if (errorCallback) errorCallback(0, "readFileFromBookDir: File does not exist:" + fullfilename);
 		  });
 	}
 
@@ -324,6 +440,12 @@ var VBOOK = (function(){
 		}else{
 			// open directly
 			openEPUBBook(bookURI);
+		}
+	}
+	
+	vReader.show = function(){
+		if (setting.screenOrientation != undefined){
+			screen.lockOrientation(setting.screenOrientation);
 		}
 	}
 	
@@ -357,6 +479,65 @@ var VBOOK = (function(){
 				  $('#'+tocPage).page();
 				  $('#'+tocList).listview('refresh');
 			});
+		}
+	}
+	
+	////////////////////////////////////////////
+	//Bookmark
+	var createBookmarkItem = function(cfi) {			
+		var itemStr = '<li id="' + "reader-bookmark-idx-" + counter + '"><a href="#book" onclick="VBOOK.Book.gotoCfi(\'' 
+			+ cfi + '\');" data-ajax="false">' + cfi + '</a></li>';
+		counter++;
+		
+		return itemStr;
+	};
+
+	vReader.addBookmark = function (cfi) {
+		var present = vReader.isBookmarked(cfi);
+		if(present > -1 ) return;
+
+		this.setting.bookmarks.push(cfi);
+
+	};
+
+	vReader.removeBookmark = function (cfi) {
+		var bookmark = vReader.isBookmarked(cfi);
+		if( bookmark === -1 ) return;
+		//TODO: 需要移除索引
+		delete this.setting.bookmarks[bookmark];
+	};
+
+	vReader.isBookmarked = function (cfi) {
+		var bookmarks = this.setting.bookmarks;
+		
+		return bookmarks.indexOf(cfi);
+	};
+
+	vReader.clearBookmarks = function() {
+		this.settings.bookmarks = [];
+	};
+	
+	vReader.loadBookBookmarkData = function(bookmarkList, bookmarkPage, readerPage){
+		this.setting.bookmarks.forEach(function(cfi) {
+			$('#'+bookmarkList).append('<li><a href="#' + "readerPage" + '" onclick="VBOOK.Book.gotoCfi(\'' 
+				+ cfi + '\');" data-ajax="true">' 
+				+ cfi + '</a></li>');
+		});
+		$('#'+bookmarkPage).page();
+		$('#'+bookmarkList).listview('refresh');
+	}
+	
+	//有外部的Hooks调用
+	vReader.chapterBeforeDisplay = function(renderer){
+		if (setting.zoom != undefined){
+			// update zoom
+			renderer.doc.body.style.zoom = setting.zoom;
+		}
+	}
+	
+	vReader.locationChange = function(){
+		if (vReader.updateBookmarkStatus != null){
+			vReader.updateBookmarkStatus(Book.getCurrentLocationCfi());
 		}
 	}
 	
@@ -531,7 +712,7 @@ var VBOOK = (function(){
 				openEPUBBook(destDirEntry.nativeURL + bookName + "/");
 			}, function(e){
 				entryUnzipProcess(destDirEntry.nativeURL + bookName + ".epub", 
-						destDirEntry.nativeURL + bookName + "/", openEPUBBook);
+						destDirEntry.nativeURL + "/", openEPUBBook);
 			});
 		}, function(e){
 			// no epub file exist, just copy to current directory

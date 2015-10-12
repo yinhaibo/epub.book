@@ -5,8 +5,17 @@
 var bookURI;
 var userName = "default"; // User name, every user has a user directory in externalDataDirectory
 var Book;
+var fDeviceReady = false;
+EPUBJS.Hooks.register("beforeChapterDisplay").reader = function(callback, renderer){
+	VBOOK.chapterBeforeDisplay(renderer);
+	callback();
+	return;
+}
 
-
+function vbookLoadBookImpl(){
+	StatusBar.hide();
+	VBOOK.open(bookURI);
+}
 function vbookLoadBook(){
 	bookURI = window.localStorage.getItem("vbook-book");
 	var _os = detectOS();
@@ -14,14 +23,25 @@ function vbookLoadBook(){
 	if (_os == "Windows" || _os == "Mac"){
 		VBOOK.open(bookURI);
 	}else{
-		document.addEventListener('deviceready', onDeviceReady, false);
+		if (fDeviceReady){
+			vbookLoadBookImpl();
+		}else{
+			document.addEventListener('deviceready', onDeviceReady, false);
+		}
 	}
 }
 
-function onDeviceReady(){
+function vbookShowBook(){
 	StatusBar.hide();
-	VBOOK.open(bookURI);
+	actionBookHeaderAndFooter("hide");
+	VBOOK.show(); // 仅在重新显示时需要调用
 }
+
+function onDeviceReady(){
+	fDeviceReady = true;
+	vbookLoadBookImpl();
+}
+
 
 // proxy, call from iframe(in book)
 function swipeLeftHandler(){
@@ -87,69 +107,69 @@ var settings = {
 
 var counter = 0;
 
-var createBookmarkItem = function(cfi) {			
-	var itemStr = '<li id="' + "bookmark-" + counter + '"><a href="#book" onclick="VBOOK.Book.gotoCfi(\'' 
-		+ cfi + '\');" data-ajax="false">' + cfi + '</a></li>';
-	counter++;
-	
-	return itemStr;
-};
+window.addEventListener("orientationchange", function(){
+    console.log('Orientation changed to ' + screen.orientation);
+});
 
-
-function addBookmark(cfi) {
-	var present = this.isBookmarked(cfi);
-	if(present > -1 ) return;
-
-	this.settings.bookmarks.push(cfi);
-	
-	var item = createBookmarkItem(cfi);
-	$('#bookmarkList').append(item);
-
-};
-
-function removeBookmark(cfi) {
-	var bookmark = this.isBookmarked(cfi);
-	if( bookmark === -1 ) return;
-	
-	delete this.settings.bookmarks[bookmark];
-	
-	var $item = $("#bookmark-"+index);
-	$item.remove();
-};
-
-function isBookmarked(cfi) {
-	var bookmarks = this.settings.bookmarks;
-	
-	return bookmarks.indexOf(cfi);
-};
-
-function clearBookmarks() {
-	this.settings.bookmarks = [];
-};
-
-if(!settings.bookmarks) {
-	settings.bookmarks = [];
-}
-var bookmark = $("#reader-setting-bookmark");
-
-
-bookmark.on("click", function() {
+/**
+ * 更新书签状态，在页面改变时更新 
+ */
+VBOOK.updateBookmarkStatus = function(cfi){
 	var cfi = VBOOK.Book.getCurrentLocationCfi();
-	var bookmarked = isBookmarked(cfi);
+	var bookmarked = VBOOK.isBookmarked(cfi);
+	
+	if(bookmarked === -1) { //-- Clear bookmark
+		$('#reader-setting-bookmark').removeClass("btn-active"); 
+	} else { //-- add Bookmark
+		$('#reader-setting-bookmark').addClass("btn-active"); 
+	}
+}
+
+
+/**
+ * 切换页面书签
+ */
+function toggleBookmark(){
+	var cfi = VBOOK.Book.getCurrentLocationCfi();
+	var bookmarked = VBOOK.isBookmarked(cfi);
 	
 	if(bookmarked === -1) { //-- Add bookmark
-		addBookmark(cfi);
-		bookmark
-			.addClass("ui-icon-bookmark")
-			.removeClass("ui-icon-bookmark-empty"); 
+		// 书签数据
+		var bookmarkdata = {cfi:cfi, page:0, breif:''};
+		VBOOK.addBookmark(cfi);
+		$('#reader-setting-bookmark').addClass("btn-active"); 
 	} else { //-- Remove Bookmark
-		removeBookmark(cfi);
-		bookmark
-			.removeClass("ui-icon-bookmark")
-			.addClass("ui-icon-bookmark-empty"); 
+		VBOOK.removeBookmark(cfi);
+		$('#reader-setting-bookmark').removeClass("btn-active"); 
 	}
+}
 
-});
+function getCurrentPageBrief(){
+	var bgettext = false;
+	var range, textNode, offset;
+	do{
+		// standard
+	    if (document.caretPositionFromPoint) {
+	        range = document.caretPositionFromPoint(0, 0);
+	        textNode = range.offsetNode;
+	        offset = range.offset;
+	        
+	    // WebKit
+	    } else if (document.caretRangeFromPoint) {
+	        range = document.caretRangeFromPoint(0, 0);
+	        textNode = range.startContainer;
+	        offset = range.startOffset;
+	    }
+	
+	    // only split TEXT_NODEs
+	    if (textNode.nodeType == 3) {
+	    	if (offset > 0){
+	    		textNode.textContent.substring(offset, 100);
+	    	}
+	    	bgettext = true;
+	    }
+	}while(bgettext);
+}
 //
 //For image zoom
 //

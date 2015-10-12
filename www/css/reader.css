@@ -36,6 +36,10 @@
 	background-image: url("../images/ico-btn-reader-bookmark.png");
 }
 
+#reader-setting-bookmark.btn-active{
+	background-image: url("../images/ico-btn-reader-bookmark-active.png");
+}
+
 #reader-setting-book-search{
 	background-image: url("../images/ico-btn-reader-search.png");
 }
@@ -103,10 +107,10 @@
   top: 50%;
   margin: -33px 0 0 -33px;
 }			
-#book-reader-bookName{position:fixed; height:20px; top:5px; left:20px; color:#CCCCCC;}
-#book-reader-chapterName{position:fixed; height:20px; top:5px; right:20px; color:#CCCCCC;}
-#book-reader-CurrentTime{position:fixed; height:20px; bottom:5px; left:20px; color:#CCCCCC;}
-#book-reader-pageLabel{position:fixed; height:20px; bottom:5px; right:20px; color:#CCCCCC;}
+#book-reader-bookName{position:fixed; height:20px; top:5px; left:10px; color:#CCCCCC;}
+#book-reader-chapterName{position:fixed; height:20px; top:5px; right:10px; color:#CCCCCC;}
+#book-reader-CurrentTime{position:fixed; height:20px; bottom:5px; left:10px; color:#CCCCCC;}
+#book-reader-pageLabel{position:fixed; height:20px; bottom:5px; right:10px; color:#CCCCCC;}
 
 #book-reader-area {
   width: -moz-calc(100% - 40px);

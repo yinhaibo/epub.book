@@ -21,6 +21,8 @@ package cn.vbook;
 
 import android.os.Bundle;
 import org.apache.cordova.*;
+import android.view.View;  
+import android.view.View.OnLongClickListener; 
 
 public class MainActivity extends CordovaActivity
 {
@@ -30,5 +32,12 @@ public class MainActivity extends CordovaActivity
         super.onCreate(savedInstanceState);
         // Set by <content src="index.html" /> in config.xml
         loadUrl(launchUrl);
+        
+        super.appView.getView().setOnLongClickListener(new View.OnLongClickListener() {
+
+            public boolean onLongClick(View v) {
+                return true;
+            }
+        });
     }
 }

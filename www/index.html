@@ -97,9 +97,13 @@
 		    	if (bookReload == true){
 			    	bookReload = false;
 			    	vbookLoadBook();
+			    }else{
+			    	vbookShowBook();
 			    }
 		    }else if(this.id == 'book-reader-toc'){
 		    	VBOOK.loadBookTocData('tocListView', 'book-reader-toc', 'book-reader');
+		    }else if(this.id == 'book-reader-bookmark'){
+		    	VBOOK.loadBookBookmarkData('bookmarkListView', 'book-reader-bookmark', 'book-reader');
 		    }
 		});
 		
@@ -143,6 +147,7 @@
 		
 		function showGlobalNavBar(){
 			$('#main-footer').toolbar('show');
+			screen.lockOrientation('portrait');
 		}
 		
 		window.addEventListener("orientationchange", function(){
@@ -196,6 +201,7 @@
 	            	<p class="vbook-new">新书首发</p>
             		</a>
             	</div></li> 
+            	<!-- 
 				<li><div><a href="bookread.html?book=books/jsty.epub">
 				<div><img src="./books/jsty.png" alt="警世通言" class="ui-li-thumb"/></div>
 				<p class="booktitle">警世通言</p>
@@ -229,9 +235,9 @@
 				<li><div><a href="#" onclick="gotoBookReaderPage('books/zyx/');">
 				<div><img src="./books/cyjcsyx.png" alt="柴油机的测试及运行管理" class="ui-li-thumb"/></div>
 				<p class="booktitle">柴油机的测试及运行管理</p>
-				</a></div></li> 
-				<li><div><a href="#" onclick="gotoBookReaderPage('books/testbook/');">
-				<div><img src="./books/testbook/corver.png" alt="贷款实地调查" class="ui-li-thumb"/></div>
+				</a></div></li>  -->
+				<li><div><a href="#" onclick="gotoBookReaderPage('books/testbook.epub');">
+				<div><img src="./books/testbook-corver.png" alt="贷款实地调查" class="ui-li-thumb"/></div>
 				<p class="booktitle">贷款实地调查</p>
 				<p class="vbook-new">新书首发</p>
 				</a></div></li> 

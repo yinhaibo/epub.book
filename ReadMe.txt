@@ -3,9 +3,12 @@ VBook Project
 An electrical book reader and share app software for Android, iPhone, iPad and WindowsPhone devices.
 
 Create by Yinhaibo in data 2015.7
-Aliyun ECS 101.200.73.55 Centos7 ssh 22
+Aliyun ECS 101.200.73.55 Centos7 
+ssh 22
+å¯†ç ï¼šroot/Vbooks0825
 gitlab:http://101.200.73.55:2000/root/vbookapp
-°¢ÀïÔÆ ¿ØÖÆÌ¨ÃÜÂë£º766605
+gitlab:root/Vbooks0825
+é˜¿é‡Œäº‘ æ§åˆ¶å°å¯†ç ï¼š766605
 
 Features:
 1. Book list.
@@ -16,27 +19,36 @@ Develop:
 2. Share
 
 =================================================
-Cordova ÏîÄ¿
+Cordova é¡¹ç›®
 Build
 -------------------------------
 cordova build
+cordova build android
+cordova build ios
+cordova run ios
+cordova run ios --target="iPad-Air"
 
-·¢²¼
+iOSçœŸæœºè°ƒè¯•éœ€è¦åŠ å…¥uuidã€‚
+
+åœ¨macä¸Šä»¥ä¸‹å‘½ä»¤å¯ä»¥å‚çœ‹ç³»ç»Ÿæä¾›çš„ä»¿çœŸç¯å¢ƒ
+./platforms/ios/cordova/lib/list-emulator-images
+
+å‘å¸ƒ
 -------------------------------
 cordova build android --release
 jarsigner -keystore cn.vbook -signedjar VBook_v0.03.apk .\platforms\android\build\outputs\apk\android-release-unsigned.apk cn.vbook
-ÃÜÂë£º87654321
+å¯†ç ï¼š87654321
 
 Debug
-ĞèÒªAndoridÊÖ»ú£¬²¢´ò¿ªµ÷ÊÔ£¬²¢ÇÒ£¬°²×°ºÃÇı¶¯
+éœ€è¦Andoridæ‰‹æœºï¼Œå¹¶æ‰“å¼€è°ƒè¯•ï¼Œå¹¶ä¸”ï¼Œå®‰è£…å¥½é©±åŠ¨
 -------------------------------
 cordova run --device
 
 
-µç×ÓÊéÄ¿Â¼½á¹¹£º
+ç”µå­ä¹¦ç›®å½•ç»“æ„ï¼š
 ==========================
 dataDirectory
-ÏÂ´æÓÃ»§Ä¿Â¼£¬È±Ê¡µ÷ÊÔÎªdefaultÄ¿Â¼£¬ÏÂÃæÎªepubÎÄ¼ş£¬Êé¼®·ÖÒ³ĞÅÏ¢£¬»¹ÓĞ½âÑ¹µÄÄ¿Â¼ĞÅÏ¢¡£
+ä¸‹å­˜ç”¨æˆ·ç›®å½•ï¼Œç¼ºçœè°ƒè¯•ä¸ºdefaultç›®å½•ï¼Œä¸‹é¢ä¸ºepubæ–‡ä»¶ï¼Œä¹¦ç±åˆ†é¡µä¿¡æ¯ï¼Œè¿˜æœ‰è§£å‹çš„ç›®å½•ä¿¡æ¯ã€‚
 |
 -<user dir>
    |

@@ -1,25 +1,25 @@
 @CHARSET "UTF-8";
 
-#reader-toc-footer{
+.reader-toc-footer{
 	background-color:#272727;
 	padding-top:5px;
 	padding-bottom:5px;
 	text-align:center;
 	border:none;
 }
-#reader-toc-back{
+.reader-toc-back{
 	background-image: url("../images/ico-btn-reader-back.png");
 }
 
-#reader-toc-btn-bookmark{
+.reader-toc-btn-bookmark{
 	background-image: url("../images/ico-btn-reader-bookmark.png");
 }
 
-#reader-toc-btn-note{
+.reader-toc-btn-note{
 	background-image: url("../images/ico-btn-reader-bookmark.png");
 }
 
-#reader-toc-setting a{
+.reader-toc-setting a{
 	background-repeat: no-repeat;
 	background-position:left center;
 	background-size: 24px 24px;
@@ -37,6 +37,13 @@
 }
 
 
-#reader-toc-btn-list{
+.reader-toc-setting a:link,
+.reader-toc-setting a:visited{
+	color:#fff !important;
+	text-decoration: none;
+}
+
+
+.reader-toc-btn-list{
 	background-image: url("../images/ico-btn-reader-toc.png");
 }

@@ -11,6 +11,12 @@ EPUBJS.Hooks.register("beforeChapterDisplay").smartmedia = function(callback, re
 			return; //-- Only adjust images for reflowable text
 		}
 		
+		var applyflag = window.localStorage.getItem("vbook-apply-smartmedia");
+		if (applyflag != "true"){
+			callback();
+			return;
+		}
+		
 		videos.forEach(function(item){
 			function videoSize() {
 				// return while item has not client position
