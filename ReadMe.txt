@@ -35,8 +35,13 @@ iOS真机调试需要加入uuid。
 
 发布
 -------------------------------
+-->Windows
 cordova build android --release
 jarsigner -keystore cn.vbook -signedjar VBook_v0.03.apk .\platforms\android\build\outputs\apk\android-release-unsigned.apk cn.vbook
+-->Mac OS X
+cordova build android --release
+jarsigner -keystore cn.vbook -signedjar VBook_v0.05.apk ./platforms/android/build/outputs/apk/android-release-unsigned.apk cn.vbook
+
 密码：87654321
 
 Debug

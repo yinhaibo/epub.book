@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Reader book mark</title>
+<link rel="stylesheet" href="libs/jquerymobile/jquery.mobile-1.4.5.min.css" />
+<link rel="stylesheet" href="css/childpage.css" />
+<link rel="stylesheet" href="css/readertoc.css" />
+<script src="libs/jquery/jquery-2.1.4.min.js"></script>
+<script src="libs/jquerymobile/jquery.mobile-1.4.5.min.js"></script>
+</head>
+<body>
+<div data-role="page" class="child-page" id="book-reader-bookmark">
+<script id="book-reader-bookmark-template" type="text/html">
+	<li><a href="#" onclick="gotoBookReaderPageCfi('{{epubcfi}}');" class="book-reader-bookmark-item" data-ajax="true">
+	<div>
+		<p class="book-reader-bookmark-item-chapter">{{chapterName}}</p>
+		<p class="book-reader-bookmark-item-time">{{addTime}}</p>
+		<p class="book-reader-bookmark-item-page">{{page}}</p>
+		<p class="book-reader-bookmark-item-brief">{{brief}}</p>
+	</div>
+	</a></li>
+</script>
+	<div data-role="header" class="child-page-header">
+		<a href="#"  data-role="back" data-transition="slidefade" data-direction="reverse"
+			onclick="backBookReaderPage();"></a>
+		<p>书签</p>
+	</div>
+	<!-- /header -->
+	<div data-role="content">
+		<p id="bookmarkListView-bookname"></p>
+		<ul id="bookmarkListView" class="bookmark-listview" data-role="listview" data-filter="false" data-filter-placeholder="搜索" >  
+		</ul>
+   </div><!-- /content -->
+	<div data-role="footer" class="reader-toc-footer child-page-footer" data-position="fixed" data-theme="d">
+			<div class="reader-toc-setting">
+				<a href="#" class="reader-toc-back" data-role="back" data-transition="slidefade" data-direction="reverse"
+					onclick="backBookReaderPage();">返回阅读</a>
+				<a href="readertoc.html" class="reader-toc-btn-list">目录</a>
+				<a href="readerbookmark.html" class="reader-toc-btn-bookmark btn-active">书签</a>
+				<a href="readernote.html" class="reader-toc-btn-note">笔记</a>
+			</div>
+	</div><!-- /footer -->
+</div>
+</body>
+</html>

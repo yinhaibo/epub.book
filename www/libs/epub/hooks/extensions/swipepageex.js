@@ -54,10 +54,9 @@ $(document).swipe( {
 		}
 	},
 	threshold:0,
-	preventDefaultEvents:false,
 	excludedElements:"label, button, input, select, textarea, a, audio, video, .noSwipe"
  });
 
 if (window.localStorage.getItem("vbook-device-platform")=="iOS"){
-	$(document).swipe({preventDefaultEvents:true});
+	$(document).swipe({preventDefaultEvents:false}); // default to true
 }

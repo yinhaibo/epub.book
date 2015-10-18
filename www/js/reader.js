@@ -30,7 +30,7 @@ var VBOOK = (function(){
 		
 		Book.getToc().then(function(toc){
 		  toc.forEach(function(chapter) {
-			  //vReader.setting.chapterHref2Name[chapter.spinePos] = {chapterHref:chapter.href, chapterText:chapter.label.trim()};
+			  vReader.setting.chapterHref2Name[chapter.spinePos] = {chapterHref:chapter.href, chapterText:chapter.label.trim()};
 		  });
 		});
 		Book.ready.all.then(function(){
@@ -176,6 +176,7 @@ var VBOOK = (function(){
 				}else{
 					// default to apply smart images
 					window.localStorage.setItem("vbook-apply-smartimage", "true");
+					window.localStorage.setItem("vbook-zoom-image", "true");
 				}
 				
 				if (vbook_skin.mode.smartmedia == "false"){
@@ -320,18 +321,21 @@ var VBOOK = (function(){
 			// default to apply smart images and media
 			window.localStorage.setItem("vbook-apply-smartimage", "true");
 			window.localStorage.setItem("vbook-apply-smartmedia", "true");
+			window.localStorage.setItem("vbook-zoom-image", "true");
 			
 			header = document.getElementById('book-reader-header');
 			header.style.display = "block";
 			header.innerHTML = '<div id="book-reader-bookName"><span id="book-reader-bookTitle">Book Title</span></div>'
 				+ '<div id="book-reader-chapterName"><span id="book-reader-chapterLabel">Chapter Name</span></div>';
 			setting.headerHeight = 20;
+			header.style.height = setting.headerHeight+ "px";
 			
 			footer = document.getElementById('book-reader-footer');
 			footer.style.display = "block";
 			footer.innerHTML = '<div id="book-reader-CurrentTime"><span id="book-reader-Clock">Time</span></div>'
 				+ '<div id="book-reader-pageLabel"><span id="book-reader-Pagination">Page</span></div>';
 			setting.footerHeight = 20;
+			footer.style.height = setting.footerHeight+ "px";
 			
 			area = document.getElementById('book-reader-area');
 			//options = {storage:"filesystem", fromStorage:true};
@@ -339,7 +343,7 @@ var VBOOK = (function(){
 			options.height = (doch - setting.headerHeight - setting.footerHeight
 					- setting.marginTop - setting.marginBottom);
 			options.width = (docw - setting.marginLeft - setting.marginRight);
-			
+			console.log("options:" + options.width + "," + options.height);
 			area.style.height = options.height + "px";
 			area.style.width = options.width + "px";
 			setting.width = options.width;
@@ -519,6 +523,7 @@ var VBOOK = (function(){
 			var itemhtml = template('book-reader-bookmark-template', bookmark);
 			$('#'+bookmarkList).append(itemhtml);
 		});
+		$('#bookmarkListView-bookname').text(vReader.setting.currentBookName);
 		$('#'+bookmarkPage).page();
 		$('#'+bookmarkList).listview('refresh');
 	}

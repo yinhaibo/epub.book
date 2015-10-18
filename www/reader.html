@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Reader</title>
+</head>
+<body>
+<div data-role="page" id="book-reader" data-theme="b" class="child-page" data-dom-cache="true">
+	<div data-enhance="false">
+		<div id="book-reader-header">
+			<div id="book-reader-bookName"><span id="book-reader-bookTitle">Book Title</span></div>
+			<div id="book-reader-chapterName"><span id="book-reader-chapterLabel">Chapter Name</span></div>
+		</div>
+		<div id="book-reader-area"></div>
+		<div id="book-reader-footer">
+			<div id="book-reader-CurrentTime"><span id="book-reader-Clock">Time</span></div>
+			<div id="book-reader-pageLabel"><span id="book-reader-Pagination">Page</span></div>
+		</div>
+		<div id="book-reader-loader"><img src="img/loader.gif"></div>
+		<!-- Root element of PhotoSwipe. Must have class pswp. -->
+		<div data-role="none" class="pswp" tabindex="-1" role="dialog" aria-hidden="true" data-enhance="false" data-ajax="false">
+			<div class="pswp__bg"></div>
+			<div class="pswp__scroll-wrap">
+				<div class="pswp__container">
+					<div class="pswp__item"></div>
+					<div class="pswp__item"></div>
+					<div class="pswp__item"></div>
+				</div>
+
+				<div class="pswp__ui pswp__ui--hidden">
+					<div class="pswp__top-bar">
+						<div class="pswp__counter"></div>
+						<button data-role="none" class="pswp__button pswp__button--close" title="Close (Esc)" data-enhance="false" data-ajax="false"></button>
+						<button data-role="none" class="pswp__button pswp__button--fs" title="Toggle fullscreen" data-enhance="false" data-ajax="false"></button>
+						<button data-role="none" class="pswp__button pswp__button--zoom" title="Zoom in/out" data-enhance="false" data-ajax="false"></button>
+
+						<div class="pswp__preloader">
+							<div class="pswp__preloader__icn">
+							  <div class="pswp__preloader__cut">
+								<div class="pswp__preloader__donut"></div>
+							  </div>
+							</div>
+						</div>
+					</div>
+
+					<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+						<div class="pswp__share-tooltip"></div> 
+					</div>
+
+					<button data-role="none" class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+					</button>
+
+					<button data-role="none" class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+					</button>
+
+					<div class="pswp__caption">
+						<div class="pswp__caption__center"></div>
+					</div>
+				  </div>
+				</div>
+		</div>
+	</div>
+	<div data-role="footer" id="reader-footer" data-position="fixed" data-fullscreen="true"
+		data-theme="d" class="child-page-footer">
+			<div id="reader-booknav">
+				<a class="reader-booknav-chapter" href="#" onclick="VBOOK.Book.prevChapter()">上一章</a>
+				<input type="range" name="reader-booknav-page-progress" id="reader-booknav-page-progress" 
+					data-highlight="true" data-track-theme="b" data-theme="b" min="0" max="100" value="50">
+				<a  class="reader-booknav-chapter" href="#" onclick="VBOOK.Book.nextChapter()">下一章</a>
+			</div>
+			<div id="reader-setting">
+				<a href="index.html#vbook-bookshelf" id="reader-setting-back" data-role="back" data-transition="slidefade" data-direction="reverse"
+					onclick="showGlobalNavBar();"></a>
+				<a href="#" onclick="" id="reader-setting-screen-brightness"></a>
+				<a href="#" onclick="toggleBookmark()" id="reader-setting-bookmark"></a>
+				<a href="#" onclick="" id="reader-setting-book-search"></a>
+				<a href="#" onclick="gotoBookReaderTocPage()" id="reader-setting-book-toc"></a>
+			</div>
+	</div><!-- /footer -->
+</div>
+</body>
+</html>

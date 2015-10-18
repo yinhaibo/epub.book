@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Reader Toc</title>
+<link rel="stylesheet" href="libs/jquerymobile/jquery.mobile-1.4.5.min.css" />
+<link rel="stylesheet" href="css/childpage.css" />
+<link rel="stylesheet" href="css/readertoc.css" />
+<script src="libs/jquery/jquery-2.1.4.min.js"></script>
+<script src="libs/jquerymobile/jquery.mobile-1.4.5.min.js"></script>
+</head>
+<body>
+<div data-role="page" class="child-page" id="book-reader-toc">
+	<div data-role="header" class="child-page-header">
+		<a href="#"  data-role="back" data-transition="slidefade" data-direction="reverse"
+			onclick="backBookReaderPage();"></a>
+		<p>目录</p>
+	</div>
+	<!-- /header -->
+	<div data-role="content">
+		<ul id="tocListView" data-role="listview" data-filter="true" data-filter-placeholder="搜索" >  
+		</ul>
+   </div><!-- /content -->
+	<div data-role="footer" class="reader-toc-footer child-page-footer" data-position="fixed" data-theme="d">
+			<div class="reader-toc-setting">
+				<a href="#" class="reader-toc-back" data-role="back" data-transition="slidefade" data-direction="reverse"
+					onclick="backBookReaderPage();">返回阅读</a>
+				<a href="readertoc.html" class="reader-toc-btn-list btn-active">目录</a>
+				<a href="readerbookmark.html" class="reader-toc-btn-bookmark">书签</a>
+				<a href="readernote.html" class="reader-toc-btn-note">笔记</a>
+			</div>
+	</div><!-- /footer -->
+</div>
+</body>
+</html>

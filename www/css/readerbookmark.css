@@ -1,0 +1,37 @@
+@CHARSET "UTF-8";
+
+.ui-listview p.book-reader-bookmark-item-chapter{
+	font-weight: bold;
+	font-size: 1.2em;
+	margin: 0.2em 0;
+}
+
+.ui-listview p.book-reader-bookmark-item-time{
+	display: inline-block;
+	width: 50%;
+	color: #ccc;
+	margin: 0.2em 0;
+}
+
+.ui-listview p.book-reader-bookmark-item-page{
+	display: inline-block;
+	width: 50%;
+	text-align: right;
+	padding-right: 100px;
+	color: #ccc;
+	margin: 0.2em 0;
+}
+
+.ui-listview p.book-reader-bookmark-item-brief{
+	
+}
+
+.bookmark-listview li .ui-btn-icon-right:after{
+	display:none;
+}
+
+#bookmarkListView-bookname{
+	padding-bottom: 20px;
+	text-align: center;
+	margin: 5px -16px;
+}
