@@ -32,7 +32,9 @@ function vbookLoadBook(){
 }
 
 function vbookShowBook(){
-	StatusBar.hide();
+	if (isApp){
+		StatusBar.hide();
+	}
 	actionBookHeaderAndFooter("hide");
 	VBOOK.show(); // 仅在重新显示时需要调用
 }
@@ -125,6 +127,51 @@ VBOOK.updateBookmarkStatus = function(cfi){
 	}
 }
 
+function getCurrentPageBrief(){
+	var bgettext = false;
+	var range, textNode, offset;
+	var briefText;
+	var bookdoc = VBOOK.Book.renderer.doc;
+	
+	// standard
+    if (bookdoc.caretPositionFromPoint) {
+        range = bookdoc.caretPositionFromPoint(0, 0);
+        textNode = range.offsetNode;
+        offset = range.offset;
+        
+    // WebKit
+    } else if (bookdoc.caretRangeFromPoint) {
+        range = bookdoc.caretRangeFromPoint(0, 0);
+        textNode = range.startContainer;
+        offset = range.startOffset;
+    }
+    
+	do{
+		if (textNode.textContent.length > 3){
+		    // only TEXT_NODEs
+		    //if (textNode.nodeType == 3) {
+		    	
+		    	briefText = textNode.textContent.substring(offset, offset + 50);
+		    	if (offset > 0){
+		    		briefText = "..." + briefText;
+		    	}
+		    	if (textNode.textContent.length > offset + 50){
+		    		briefText += "...";
+		    	}
+		    	bgettext = true;
+		   // }
+		}else{
+			textNode = textNode.nextSibling;
+			briefText = "...";
+			if (textNode == null){
+				bgettext = true;
+				break;
+			}
+		}
+	}while(!bgettext);
+	
+	return briefText;
+}
 
 /**
  * 切换页面书签
@@ -136,7 +183,7 @@ function toggleBookmark(){
 	if(bookmarked === -1) { //-- Add bookmark
 		// 书签数据
 		var bookmarkdata = {cfi:cfi, page:0, breif:''};
-		VBOOK.addBookmark(cfi);
+		VBOOK.addBookmark(cfi, getCurrentPageBrief());
 		$('#reader-setting-bookmark').addClass("btn-active"); 
 	} else { //-- Remove Bookmark
 		VBOOK.removeBookmark(cfi);
@@ -144,32 +191,7 @@ function toggleBookmark(){
 	}
 }
 
-function getCurrentPageBrief(){
-	var bgettext = false;
-	var range, textNode, offset;
-	do{
-		// standard
-	    if (document.caretPositionFromPoint) {
-	        range = document.caretPositionFromPoint(0, 0);
-	        textNode = range.offsetNode;
-	        offset = range.offset;
-	        
-	    // WebKit
-	    } else if (document.caretRangeFromPoint) {
-	        range = document.caretRangeFromPoint(0, 0);
-	        textNode = range.startContainer;
-	        offset = range.startOffset;
-	    }
-	
-	    // only split TEXT_NODEs
-	    if (textNode.nodeType == 3) {
-	    	if (offset > 0){
-	    		textNode.textContent.substring(offset, 100);
-	    	}
-	    	bgettext = true;
-	    }
-	}while(bgettext);
-}
+
 //
 //For image zoom
 //

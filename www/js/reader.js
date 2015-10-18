@@ -14,32 +14,25 @@ var VBOOK = (function(){
 	
 	vReader.Book = null;
 	/*公开的设置值，与私有变量不一样*/
-	vReader.setting = {bookmarks:[]};
+	vReader.setting = {chapterHref2Name:[], bookmarks:[], currentPage:1, currentBookName:"", currentChapterName:""};
 	vReader.updateBookmarkStatus = null; // function for update bookmark status
 	/////////////////////////////////////////////////
 	//Private
 	/////////////////////////////////////////////////
-	
-	var chapterHref2Name = [];
 
 	var needSavePageList = true;
 	function initializeBookEventBind(){
 		Book.getMetadata().then(function(meta){
 			$('#book-reader-bookTitle').text(meta.bookTitle);
 			document.title = meta.bookTitle+" - "+meta.creator;
+			vReader.setting.currentBookName = meta.bookTitle;
 		});
 		
-		/*Book.getToc().then(function(toc){
+		Book.getToc().then(function(toc){
 		  toc.forEach(function(chapter) {
-			$('#tocListView').append('<li><a href="#book" onclick="VBOOK.locateBookUrl(\'' 
-					+ chapter.href + '\');" data-ajax="false">' 
-					+ chapter.label.trim() + '</a></li>');
-			// add chapter href 2 name
-			chapterHref2Name[chapter.spinePos] = chapter.label.trim();
+			  //vReader.setting.chapterHref2Name[chapter.spinePos] = {chapterHref:chapter.href, chapterText:chapter.label.trim()};
 		  });
-		  $('#tocPage').page();
-		  $('#tocListView').listview('refresh');
-		});*/
+		});
 		Book.ready.all.then(function(){
 		  document.getElementById("book-reader-loader").style.display = "none";
 		  
@@ -74,8 +67,8 @@ var VBOOK = (function(){
 		});
 		
 		Book.on('book:pageChanged', function(location){
+			vReader.setting.currentPage = location.anchorPage;
 			updatePageLabel(location.anchorPage, Book.pagination.lastPage);
-			console.log(location.pageRange);
 		});
 		
 		Book.on('renderer:chapterDisplayed', VBOOK.chapterChange);
@@ -98,6 +91,7 @@ var VBOOK = (function(){
 	function openEPUBBook(book){
 		setting.screenOrientation = undefined;
 		setting.zoom = undefined;
+		vReader.setting = {chapterHref2Name:[], bookmarks:[], currentPage:1, currentBookName:"", currentChapterName:""};
 		bookURL = book;
 		if (window.resolveLocalFileSystemURL == undefined){
 			if (Book != null){
@@ -152,7 +146,7 @@ var VBOOK = (function(){
 							}
 							console.log("docw,doch:" + docw + ", " + doch);
 							setting.screenOrientation = vbook_skin.mode.screen;
-							screen.lockOrientation('portrait-primary');
+							screen.lockOrientation('landscape-primary');
 						}
 					}else if (vbook_skin.mode.screen == "portrait"){
 						if (screen.orientation.substring(0,8) != "portrait"){
@@ -178,6 +172,7 @@ var VBOOK = (function(){
 				
 				if (vbook_skin.mode.smartimage == "false"){
 					window.localStorage.setItem("vbook-apply-smartimage", "false");
+					window.localStorage.setItem("vbook-zoom-image", "false");
 				}else{
 					// default to apply smart images
 					window.localStorage.setItem("vbook-apply-smartimage", "true");
@@ -466,37 +461,37 @@ var VBOOK = (function(){
 		var bookname = window.localStorage.getItem("vbook-book");
 		var booknametoc = window.localStorage.getItem("vbook-book-toc");
 		if (bookname != booknametoc){
-			chapterHref2Name = [];
-			// 目录数据与书籍数据不匹配，重新加载
-			VBOOK.Book.getToc().then(function(toc){
-				  toc.forEach(function(chapter) {
-					$('#'+tocList).append('<li><a href="#" onclick="gotoBookReaderPageChapter(\'' 
-							+ chapter.href + '\');" data-ajax="true">' 
-							+ chapter.label.trim() + '</a></li>');
-					// add chapter href 2 name
-					chapterHref2Name[chapter.spinePos] = chapter.label.trim();
-				  });
-				  $('#'+tocPage).page();
-				  $('#'+tocList).listview('refresh');
-			});
+			var href2name = vReader.setting.chapterHref2Name;
+			var length = href2name.length;
+			$('#'+tocList).empty();
+			for(var chapter in href2name){
+				$('#'+tocList).append('<li><a href="#" onclick="gotoBookReaderPageChapter(\'' 
+						+ href2name[chapter].chapterHref + '\');" data-ajax="true">' 
+						+ href2name[chapter].chapterText + '</a></li>');
+			}
+			$('#'+tocPage).page();
+			$('#'+tocList).listview('refresh');
 		}
 	}
 	
 	////////////////////////////////////////////
 	//Bookmark
-	var createBookmarkItem = function(cfi) {			
-		var itemStr = '<li id="' + "reader-bookmark-idx-" + counter + '"><a href="#book" onclick="VBOOK.Book.gotoCfi(\'' 
-			+ cfi + '\');" data-ajax="false">' + cfi + '</a></li>';
-		counter++;
-		
-		return itemStr;
-	};
+	function getCurrentTimeStr(){
+		var d = new Date();
+		return d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate() + " "
+			+ d.getHours() + ":" + d.getMinutes();
+	}
 
-	vReader.addBookmark = function (cfi) {
+	
+	vReader.addBookmark = function (cfi, briefText) {
 		var present = vReader.isBookmarked(cfi);
 		if(present > -1 ) return;
 
-		this.setting.bookmarks.push(cfi);
+		this.setting.bookmarks.push({epubcfi:cfi, brief:briefText, 
+			page:this.setting.currentPage, 
+			chapterName:this.setting.currentChapterName,
+			addTime:getCurrentTimeStr()
+			});
 
 	};
 
@@ -518,10 +513,11 @@ var VBOOK = (function(){
 	};
 	
 	vReader.loadBookBookmarkData = function(bookmarkList, bookmarkPage, readerPage){
-		this.setting.bookmarks.forEach(function(cfi) {
-			$('#'+bookmarkList).append('<li><a href="#' + "readerPage" + '" onclick="VBOOK.Book.gotoCfi(\'' 
-				+ cfi + '\');" data-ajax="true">' 
-				+ cfi + '</a></li>');
+		$('#'+bookmarkList).empty();
+		this.setting.bookmarks.forEach(function(bookmark) {
+			// 通过页面定义的模版，用json对象替换生成html页面
+			var itemhtml = template('book-reader-bookmark-template', bookmark);
+			$('#'+bookmarkList).append(itemhtml);
 		});
 		$('#'+bookmarkPage).page();
 		$('#'+bookmarkList).listview('refresh');
@@ -543,21 +539,23 @@ var VBOOK = (function(){
 	
 	vReader.chapterChange = function(e){
 		var chapterIdx = null;
-		for (var idx in chapterHref2Name){
+		var href2name = vReader.setting.chapterHref2Name;
+		for (var idx in href2name){
 			if (chapterIdx == null){ chapterIdx = idx;}
 			if (idx > e.spinePos) break;
 			if (idx <= e.spinePos){chapterIdx = idx;}
 		}
 		if (chapterIdx != null){
+			vReader.setting.currentChapterName = href2name[chapterIdx].chapterText;
 			var chapterLabel = document.getElementById('book-reader-chapterLabel');
 			if (chapterLabel == undefined){
 				if (document.getElementById('headerIFM') != undefined && 
 					document.getElementById('headerIFM').contentWindow.document.getElementById('chapterLabel') != undefined){
 					document.getElementById('headerIFM').contentWindow.document.getElementById('chapterLabel').innerHTML
-						= chapterHref2Name[chapterIdx];
+						= href2name[chapterIdx].chapterText;
 				}
 			}else{
-				chapterLabel.innerHTML = chapterHref2Name[chapterIdx];
+				chapterLabel.innerHTML = href2name[chapterIdx].chapterText;
 			}
 		}
 		// set audio event listener

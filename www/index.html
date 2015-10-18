@@ -16,8 +16,8 @@
 	
 	<script type="text/javascript" src="cordova.js"></script>
 	
-	<script src="libs/jquery/jquery-2.1.4.min.js"></script>
-	<script src="libs/jquerymobile/jquery.mobile-1.4.5.min.js"></script>
+	<script src="libs/jquery/jquery-2.1.4.js"></script>
+	<script src="libs/jquerymobile/jquery.mobile-1.4.5.js"></script>
 	<script src="js/index.js"></script>
 	
 	<script src="libs/epub/libs/underscore/underscore.js"></script>
@@ -61,19 +61,29 @@
 
 	<!-- PhotoSwipe UI JS file -->
 	<script src="libs/photoswipe/photoswipe-ui-default.js"></script> 
-	
+	<!-- 模版引擎 -->
+	<script src="libs/template.js"></script>
 	<!-- VBOOK reader-->
 	<script src="js/utils.js"></script> 
 	<script src="js/reader.js"></script> 
 	<script src="js/readhelp.js"></script> 
 	<script>
 		var bookReload = true;
+		var documentLoad = false;
+		var isApp = true;
 		$(document).on('mobileinit', function () {
 			$.mobile.ignoreContentEnabled = true;
 		});	
 		$(function(){
 			$( "[data-role='navbar']" ).navbar();
 			$( "[data-role='header'], [data-role='footer']" ).toolbar();
+			
+			documentLoad = true;
+			var _os = detectOS();
+			
+			if (_os == "Windows" || _os == "Mac"){
+				isApp = false;
+			}
 		});
 		// Update the contents of the toolbars
 		$(document).on("pageshow", "[data-role='page']", function () {
@@ -93,17 +103,23 @@
 		    }); 
 		    
 		    // Process other
-		    if (this.id == 'book-reader'){
-		    	if (bookReload == true){
-			    	bookReload = false;
-			    	vbookLoadBook();
-			    }else{
-			    	vbookShowBook();
+		    if (documentLoad){
+			    if (this.id == 'vbook-bookshelf' || this.id == 'vbook-personal' || this.id == 'vbook-store'){
+			    	if ($('#main-footer').length > 0){
+			    		$('#main-footer').toolbar().toolbar('show');
+			    	}
+			    }else if (this.id == 'book-reader'){
+			    	if (bookReload == true){
+				    	bookReload = false;
+				    	vbookLoadBook();
+				    }else{
+				    	vbookShowBook();
+				    }
+			    }else if(this.id == 'book-reader-toc'){
+			    	VBOOK.loadBookTocData('tocListView', 'book-reader-toc', 'book-reader');
+			    }else if(this.id == 'book-reader-bookmark'){
+			    	VBOOK.loadBookBookmarkData('bookmarkListView', 'book-reader-bookmark', 'book-reader');
 			    }
-		    }else if(this.id == 'book-reader-toc'){
-		    	VBOOK.loadBookTocData('tocListView', 'book-reader-toc', 'book-reader');
-		    }else if(this.id == 'book-reader-bookmark'){
-		    	VBOOK.loadBookBookmarkData('bookmarkListView', 'book-reader-bookmark', 'book-reader');
 		    }
 		});
 		
@@ -129,6 +145,7 @@
 				window.localStorage.setItem("vbook-book", bookname);
 			}
 			$('#main-footer').toolbar('hide');
+			//$("#main-footer").toolbar({ updatePagePadding: false,fullscreen:true });
 			$(':mobile-pagecontainer').pagecontainer("change", "reader.html", {transition:"slidefade"});
 		}
 		
@@ -145,14 +162,38 @@
 			VBOOK.locateBookUrl(chapurl);
 		}
 		
+		function gotoBookReaderPageCfi(cfi){
+			backBookReaderPage();
+			VBOOK.Book.gotoCfi(cfi);
+		}
+		
 		function showGlobalNavBar(){
+			if (isApp){
+				StatusBar.show();
+				screen.lockOrientation('portrait');
+			}
 			$('#main-footer').toolbar('show');
-			screen.lockOrientation('portrait');
+			//$("#main-footer").toolbar({ updatePagePadding: true,fullscreen:false });
 		}
 		
 		window.addEventListener("orientationchange", function(){
 		    console.log('Orientation changed to ' + screen.orientation);
 		});
+		
+		//添加回退按钮事件
+		document.addEventListener("backbutton",onBackKeyDown,false);  
+		//BackButton按钮
+		function onBackKeyDown(){ 
+			if($.mobile.activePage.is('#vbook-bookshelf')){
+				$('#main-footer').toolbar('show');
+				navigator.app.exitApp(); 
+			}else if($.mobile.activePage.is('#book-reader')){
+				$(':mobile-pagecontainer').pagecontainer("change", $("#vbook-bookshelf"), {transition:"slidefade"});
+				showGlobalNavBar();
+			}else{
+				navigator.app.backHistory(); 
+			}
+		}
 		
 		optimizeSpeed();
 	</script>
@@ -236,14 +277,16 @@
 				<div><img src="./books/cyjcsyx.png" alt="柴油机的测试及运行管理" class="ui-li-thumb"/></div>
 				<p class="booktitle">柴油机的测试及运行管理</p>
 				</a></div></li>  -->
-				<li><div><a href="#" onclick="gotoBookReaderPage('books/testbook.epub');">
+				<li><div><a href="#" onclick="gotoBookReaderPage('books/testbook/');">
 				<div><img src="./books/testbook-corver.png" alt="贷款实地调查" class="ui-li-thumb"/></div>
 				<p class="booktitle">贷款实地调查</p>
 				<p class="vbook-new">新书首发</p>
 				</a></div></li> 
               </ul>
 		</div><!-- /content -->
-
+		<div data-role="popup" id="exitAppPopup">
+		<p>再按一次推出程序</p>
+		</div>
 	</div><!-- /page -->
 
 	<div data-role="page" id="vbook-personal" data-title="个人">
@@ -283,7 +326,7 @@
 	<div data-role="page" id="vbook-userinfo" data-title="用户信息">
 	</div>
 	
-	<div data-role="footer" id="main-footer" data-tap-toggle="false" data-theme="d" data-position="fixed">
+	<div data-role="footer" id="main-footer" data-tap-toggle="false" data-theme="d" data-position="fixed" data-fullscreen="true">
 		<div data-role="navbar" data-theme="d">
 			<ul>
 			<li id="library"><a href="#vbook-store" data-theme="d">书库</a></li>

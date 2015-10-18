@@ -15,7 +15,7 @@ EPUBJS.Hooks.register("beforeChapterDisplay").swipeDetection = function(callback
 		
         //-- Load jQuery into iframe header
         EPUBJS.core.addScripts([getBaseUrl() + "libs/jquery/jquery-2.1.4.min.js",
-								getBaseUrl() + "libs/jquery/plugins/jquery.touchSwipe.min.js",
+								getBaseUrl() + "libs/jquery/plugins/jquery.touchSwipe.js",
 								getBaseUrl() + "libs/epub/hooks/extensions/swipepageex.js"],
 								null, renderer.doc.head);
 		
