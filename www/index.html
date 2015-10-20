@@ -109,6 +109,16 @@
 			    	if ($('#main-footer').length > 0){
 			    		$('#main-footer').toolbar().toolbar('show');
 			    	}
+			    	if (this.id == 'vbook-store'){
+			    		//$(':mobile-pagecontainer').pagecontainer("change", "http://101.200.73.55/mobile/index.php", {transition:"slidefade"});
+			    		//$.mobile.loadPage("http://www.baidu.com/");
+			    		//$('#vbook-store-iframe').href="http://101.200.73.55/mobile/index.php";
+			    		//$.get("http://101.200.73.55/mobile/index.php", {}, function (data) {
+			            //    $("#vbook-store").html(data);
+			            //});
+			    		document.getElementById('vbook-store-iframe').style.height = (document.height - document.getElementById('main-footer').clientHeight) + "px";
+			    		//src="http://101.200.73.55/mobile/index.php"
+			    	}
 			    }else if (this.id == 'book-reader'){
 			    	if (bookReload == true){
 				    	bookReload = false;
@@ -322,6 +332,7 @@
 		</div>
 	</div>
 	<div data-role="page" id="vbook-store" data-title="书库">
+	<iframe id="vbook-store-iframe" src="http://101.200.73.55/mobile/index.php"></iframe>
 	</div>
 	
 	<div data-role="page" id="vbook-userinfo" data-title="用户信息">

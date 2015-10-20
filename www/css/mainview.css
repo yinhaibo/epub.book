@@ -452,3 +452,10 @@ div.vbook-shelf-list .ui-listview  p.vbook-new {
 .ui-popup-arrow-container.ui-popup-arrow-r .ui-popup-arrow-background {
     background-position: 15px 0;
 }
+
+#vbook-store-iframe{
+	width:100%;
+	height:100%;
+	border: none;
+	visibility: visible;
+}
