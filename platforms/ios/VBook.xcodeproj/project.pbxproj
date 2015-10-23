@@ -34,6 +34,7 @@
 		3A4C3E5468164A2C88D51269 /* ZipPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D0D1AE2DF5D4F1F88995F66 /* ZipPlugin.m */; };
 		51877AD457AC4C899836DD51 /* CDVLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 058BAFA6FE144BC9A570E784 /* CDVLogger.m */; };
 		5B1594DD16A7569C00FEF299 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B1594DC16A7569C00FEF299 /* AssetsLibrary.framework */; };
+		5EC21E0D916B436394B38B5E /* YoikScreenOrientation.m in Sources */ = {isa = PBXBuildFile; fileRef = E9255320CE3942CF9E2DF2EE /* YoikScreenOrientation.m */; };
 		7E7966DE1810823500FA85AD /* icon-40.png in Resources */ = {isa = PBXBuildFile; fileRef = 7E7966D41810823500FA85AD /* icon-40.png */; };
 		7E7966DF1810823500FA85AD /* icon-40@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7E7966D51810823500FA85AD /* icon-40@2x.png */; };
 		7E7966E01810823500FA85AD /* icon-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 7E7966D61810823500FA85AD /* icon-50.png */; };
@@ -54,7 +55,6 @@
 		D4A0D8761607E02300AEF8BB /* Default-568h@2x~iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = D4A0D8751607E02300AEF8BB /* Default-568h@2x~iphone.png */; };
 		D888493671EC4999BD53B08C /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A5FC24F0540F41348DA36DD8 /* libz.dylib */; };
 		F320BF233D09493EA2C5AA51 /* CDVLocalFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 57162AEA1C60439AA07BAD84 /* CDVLocalFilesystem.m */; };
-		5EC21E0D916B436394B38B5E /* YoikScreenOrientation.m in Sources */ = {isa = PBXBuildFile; fileRef = E9255320CE3942CF9E2DF2EE /* YoikScreenOrientation.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -104,6 +104,7 @@
 		30C1856519D5FC0A00212699 /* icon-60@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-60@3x.png"; sourceTree = "<group>"; };
 		30FC414816E50CA1004E6F35 /* icon-72@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon-72@2x.png"; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* VBook-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "VBook-Prefix.pch"; sourceTree = "<group>"; };
+		4489294418D5431280C31FC2 /* YoikScreenOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YoikScreenOrientation.h; path = "cordova-plugin-screen-orientation/YoikScreenOrientation.h"; sourceTree = "<group>"; };
 		4CA3334FB4784B989C59759D /* CDVFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVFile.h; path = "cordova-plugin-file/CDVFile.h"; sourceTree = "<group>"; };
 		4FD23AF106D049D19553ECBF /* zip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zip.h; path = "cordova-plugin-zip/Plugins/minizip/zip.h"; sourceTree = "<group>"; };
 		501E9D35163148F8AC43458C /* SSZipArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SSZipArchive.h; path = "cordova-plugin-zip/Plugins/minizip/SSZipArchive.h"; sourceTree = "<group>"; };
@@ -140,6 +141,7 @@
 		DC188F6EA37A47B38545D67B /* CDVAssetLibraryFilesystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVAssetLibraryFilesystem.h; path = "cordova-plugin-file/CDVAssetLibraryFilesystem.h"; sourceTree = "<group>"; };
 		E1A24B6B2AC24DDCA9E45373 /* ioapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = unknown; name = ioapi.c; path = "cordova-plugin-zip/Plugins/minizip/ioapi.c"; sourceTree = "<group>"; };
 		E8FEEC8346F946E8B59C99F0 /* unzip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = unzip.h; path = "cordova-plugin-zip/Plugins/minizip/unzip.h"; sourceTree = "<group>"; };
+		E9255320CE3942CF9E2DF2EE /* YoikScreenOrientation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YoikScreenOrientation.m; path = "cordova-plugin-screen-orientation/YoikScreenOrientation.m"; sourceTree = "<group>"; };
 		EB87FDF21871DA7A0020F90C /* merges */ = {isa = PBXFileReference; lastKnownFileType = folder; name = merges; path = ../../merges; sourceTree = "<group>"; };
 		EB87FDF31871DA8E0020F90C /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; name = www; path = ../../www; sourceTree = "<group>"; };
 		EB87FDF41871DAF40020F90C /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = config.xml; path = ../../config.xml; sourceTree = "<group>"; };
@@ -148,8 +150,6 @@
 		F840E1F0165FE0F500CFE078 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = config.xml; path = VBook/config.xml; sourceTree = "<group>"; };
 		F8577C0C043C4E6D95CBA275 /* CDVLocalFilesystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVLocalFilesystem.h; path = "cordova-plugin-file/CDVLocalFilesystem.h"; sourceTree = "<group>"; };
 		FE46E42B117A4C7C89AF99EB /* CDVSplashScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVSplashScreen.h; path = "cordova-plugin-splashscreen/CDVSplashScreen.h"; sourceTree = "<group>"; };
-		E9255320CE3942CF9E2DF2EE /* YoikScreenOrientation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "YoikScreenOrientation.m"; path = "cordova-plugin-screen-orientation/YoikScreenOrientation.m"; sourceTree = "<group>"; fileEncoding = 4; };
-		4489294418D5431280C31FC2 /* YoikScreenOrientation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "YoikScreenOrientation.h"; path = "cordova-plugin-screen-orientation/YoikScreenOrientation.h"; sourceTree = "<group>"; fileEncoding = 4; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -362,7 +362,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 510;
+				LastUpgradeCheck = 700;
 				TargetAttributes = {
 					1D6058900D05DD3D006BFB54 = {
 						DevelopmentTeam = W7M86XP723;
@@ -527,6 +527,7 @@
 					"-weak-lSystem",
 					"-ObjC",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = cn.vbook;
 				PRODUCT_NAME = VBook;
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -559,6 +560,7 @@
 					"-weak-lSystem",
 					"-ObjC",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = cn.vbook;
 				PRODUCT_NAME = VBook;
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -576,6 +578,7 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = "";

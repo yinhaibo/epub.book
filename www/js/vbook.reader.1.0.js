@@ -15,7 +15,8 @@ var fn = {
 		vbook_swipeLeft:null,
 		vbook_swipeRight:null,
 		vbook_click:null,
-		swipeEnable:true
+		swipeEnable:true,
+		dragEnable:false
 		};
 
 // 缺省的左滑屏处理
@@ -70,15 +71,15 @@ $(document).swipe( {
 	swipeStatus : function(event, phase, direction, distance, duration, fingerCount, fingerData ){
 		if (phase == "start"){
 			vbook_startDrag = true;
-			if (vbook_startDrag && fn.vbook_dragstart != null){
+			if (fn.dragEnable && vbook_startDrag && fn.vbook_dragstart != null){
 				fn.vbook_dragstart(event, distance);
 			}
 		}else if (phase == "move"){
-			if (vbook_startDrag && fn.vbook_dragmove != null){
+			if (fn.dragEnable && vbook_startDrag && fn.vbook_dragmove != null){
 				fn.vbook_dragmove(event, distance);
 			}
 		}else if (phase == "end"){
-			if (vbook_startDrag && fn.vbook_dragend != null){
+			if (fn.dragEnable && vbook_startDrag && fn.vbook_dragend != null){
 				fn.vbook_dragend(event, distance);
 			}
 			if (distance < 5){
