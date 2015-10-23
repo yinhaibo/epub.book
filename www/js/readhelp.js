@@ -53,6 +53,10 @@ function swipeRightHandler(){
 	VBOOK.prevPage();
 }
 
+function log(msg){
+	console.log(msg)
+}
+
 function actionBookHeaderAndFooter(action){
 	$("#reader-footer").toolbar( action );
 }

@@ -52,6 +52,7 @@ $(document).swipe( {
 				parent.swipeRightHandler();
 			}
 		}
+		parent.log("swipe event trigger:" + direction + "," + distance);
 	},
 	threshold:0,
 	excludedElements:"label, button, input, select, textarea, a, audio, video, .noSwipe"

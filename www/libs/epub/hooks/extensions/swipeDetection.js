@@ -3,6 +3,7 @@ EPUBJS.Hooks.register("beforeChapterDisplay").swipeDetection = function(callback
 			if(callback) callback();
 			return;
 		}
+		
 		function getBaseUrl() {
 			var re = new RegExp(/^.*\//);
 			var base = window.location.href;
@@ -16,7 +17,7 @@ EPUBJS.Hooks.register("beforeChapterDisplay").swipeDetection = function(callback
         //-- Load jQuery into iframe header
         EPUBJS.core.addScripts([getBaseUrl() + "libs/jquery/jquery-2.1.4.min.js",
 								getBaseUrl() + "libs/jquery/plugins/jquery.touchSwipe.js",
-								getBaseUrl() + "libs/epub/hooks/extensions/swipepageex.js"],
+								getBaseUrl() + "js/vbook.reader.1.0.js"],
 								null, renderer.doc.head);
 		
         if(callback) callback();
