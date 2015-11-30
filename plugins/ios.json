@@ -39,6 +39,14 @@
                         {
                             "xml": "<feature name=\"YoikScreenOrientation\"><param name=\"ios-package\" value=\"YoikScreenOrientation\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Clipboard\"><param name=\"ios-package\" value=\"CDVClipboard\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"LongPressFix\"><param name=\"ios-package\" value=\"LongPressFix\" /><param name=\"onload\" value=\"true\" /></feature>",
+                            "count": 1
                         }
                     ],
                     "/widget": [
@@ -102,6 +110,12 @@
             "PACKAGE_NAME": "cn.vbook"
         },
         "cordova-plugin-screen-orientation": {
+            "PACKAGE_NAME": "cn.vbook"
+        },
+        "com.verso.cordova.clipboard": {
+            "PACKAGE_NAME": "cn.vbook"
+        },
+        "cordova-plugin-ios-longpress-fix": {
             "PACKAGE_NAME": "cn.vbook"
         }
     },

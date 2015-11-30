@@ -31,6 +31,10 @@
                         {
                             "xml": "<feature name=\"YoikScreenOrientation\"><param name=\"android-package\" value=\"net.yoik.cordova.plugins.screenorientation.YoikScreenOrientation\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Clipboard\"><param name=\"android-package\" value=\"com.verso.cordova.clipboard.Clipboard\" /></feature>",
+                            "count": 1
                         }
                     ],
                     "/widget": [
@@ -76,6 +80,12 @@
             "PACKAGE_NAME": "cn.vbook"
         },
         "cordova-plugin-screen-orientation": {
+            "PACKAGE_NAME": "cn.vbook"
+        },
+        "com.verso.cordova.clipboard": {
+            "PACKAGE_NAME": "cn.vbook"
+        },
+        "cordova-plugin-ios-longpress-fix": {
             "PACKAGE_NAME": "cn.vbook"
         }
     },

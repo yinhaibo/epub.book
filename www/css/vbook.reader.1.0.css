@@ -1,0 +1,34 @@
+@CHARSET "UTF-8";
+/*VBOOK 书籍样式表*/
+
+/*笔记演示*/
+/*缺省样式：红色下划线*/
+span.noteinner.style_a {
+    color: black;
+}
+span.noteinner.style_b,
+span.noteinner.style_c,
+span.noteinner.style_d,
+span.noteinner.style_e,
+span.noteinner.style_f{
+	/*继承noteouter样式*/
+}
+span.noteouter.style_a {
+    color: red;
+    text-decoration: underline;
+}
+span.noteouter.style_b{
+	background-color: #feea74;
+}
+span.noteouter.style_c{
+	background-color: #c1eb79;
+}
+span.noteouter.style_d{
+	background-color: #aed9fd;
+}
+span.noteouter.style_e{
+	background-color: #fdb1ca;
+}
+span.noteouter.style_f{
+	background-color: #d8b4fd;
+}

@@ -19,6 +19,7 @@ EPUBJS.Hooks.register("beforeChapterDisplay").swipeDetection = function(callback
 								getBaseUrl() + "libs/jquery/plugins/jquery.touchSwipe.js",
 								getBaseUrl() + "js/vbook.reader.1.0.js"],
 								null, renderer.doc.head);
-		
+        EPUBJS.core.addCss(getBaseUrl() + "css/vbook.reader.1.0.css",
+							null, renderer.doc.head);
         if(callback) callback();
 }

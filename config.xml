@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="cn.vbook" version="0.0.7" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="cn.vbook" version="0.0.9" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>VBook</name>
     <description>
         VBook, An electric text book reader and share platform.
@@ -23,7 +23,7 @@
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
         <preference name="StatusBarOverlaysWebView" value="false" />
-        <preference name="StatusBarBackgroundColor" value="#22ad95" />
+        <preference name="StatusBarBackgroundColor" value="#059674" />
         <preference name="StatusBarStyle" value="lightcontent" />
         <preference name="DisallowOverscroll" value="true" />
     </platform>

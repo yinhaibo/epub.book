@@ -2,7 +2,16 @@
 
 
 .ui-page { -webkit-backface-visibility:hidden; }
-
+#prompt_msg{
+  	background-color: rgb(204, 204, 204);
+	border-radius: 5px;
+	line-height: 20px;
+	padding: 10px 10px;
+	z-index:1000;
+	color:#fff;
+	background-color:#888;
+	display:none;
+}
 .vbook-show{
 	display:block;
 }
@@ -10,15 +19,22 @@
 .vbook-hide{
 	display:none;
 }
+
+div.ui-footer{
+	background-color:#333333;
+	border:none;
+}
+
 div.ui-footer .ui-navbar ul li a {
 	background: transparent; 
 	padding:30px 0 0 0; 
+    border-width: 0px;
 	font-size:12px;
 	font-family:PingHei, STHeitiSC-Light, 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 div.ui-header{
-	background: url(../images/navbg.png);
+	background-color: #059674;
 	background-size: auto contain;
 	border-width:0px;
 }
@@ -32,38 +48,61 @@ div.ui-header p{
 	text-align:center;
 }
 
+div.ui-header .search-container{
+	display: inline-block;
+	right: 20px;
+	top: 12px;
+	position: fixed;
+}
+
+div.ui-header .ui-input-search{
+	box-shadow: none;
+	border-radius: 10px;
+	margin-bottom: 11px;
+	margin-top: 11px;
+	width: 100px;
+}
+
+div.ui-header input{
+	line-height: 13px;
+	font-size: 13px;
+	min-height: 13px;
+	padding-bottom: 2px;
+	padding-top: 3px;
+}
+
 /*主页－个人菜单活动状态下背景和颜色*/
 div.ui-footer .ui-navbar ul li#personal a.my-btn-active {
-    background: url(../images/ico-person-active.png) 50% 20% no-repeat;
+    background: url(../images/icon_person_active.png) 50% 20% no-repeat;
     background-size:25px;
     color:#ffffff;
 }
 /*主页－个人菜单正常状态下背景和颜色*/
 div.ui-footer .ui-navbar ul li#personal a {
-    background: url(../images/ico-person.png) 50% 20% no-repeat;
+    background: url(../images/icon_person.png) 50% 20% no-repeat;
     background-size:24px;
     color:#cccccc;
 }
 
 /*主页－我的教材导航栏*/
 div.ui-footer .ui-navbar ul li#bookshelf a.my-btn-active {
-    background: url(../images/ico-mybook-active.png) 50% 20% no-repeat;
+    background: url(../images/icon_books_active.png) 50% 20% no-repeat;
     background-size: 30px;
     color:#ffffff;
 }
 div.ui-footer .ui-navbar ul li#bookshelf a {
-    background: url(../images/ico-mybook.png) 50% 20% no-repeat;
+    background: url(../images/icon_books.png) 50% 20% no-repeat;
     background-size: 30px;
     color:#cccccc;
 }
 /*主页－教材库导航栏*/
 div.ui-footer .ui-navbar ul li#library a.my-btn-active {
-    background: url(../images/ico-books-active.png) 50% 20% no-repeat;
+    background: url(../images/icon_store_active.png) 50% 20% no-repeat;
     background-size: 30px;
     color:#ffffff;
 }
 div.ui-footer .ui-navbar ul li#library a {
-    background: url(../images/ico-books.png) 50% 20% no-repeat;
+    background: url(../images/icon_store.png) 50% 20% no-repeat;
     background-size: 30px;
     color:#cccccc;
 }
@@ -81,6 +120,32 @@ div.vbook-shelf-list{
 	padding:0 10px 0em 10px;
 }
 
+.vbook-bookshelf-logo
+{
+	width: 150px;
+	height: 51px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 40px;
+	display: inline-block;
+}
+
+
+.vbook-store-search-container{
+	position:fixed;
+	top:10px;
+	right:100px;
+	line-height:16px;	
+}
+
+
+.vbook-store-search-container input,
+.vbook-store-search-container div{
+	padding:0px;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+	min-height:1em;
+}
 /*
  * VBook 书架封面模式, 书架列表模式
  */

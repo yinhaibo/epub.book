@@ -55,6 +55,8 @@
 		D4A0D8761607E02300AEF8BB /* Default-568h@2x~iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = D4A0D8751607E02300AEF8BB /* Default-568h@2x~iphone.png */; };
 		D888493671EC4999BD53B08C /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A5FC24F0540F41348DA36DD8 /* libz.dylib */; };
 		F320BF233D09493EA2C5AA51 /* CDVLocalFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 57162AEA1C60439AA07BAD84 /* CDVLocalFilesystem.m */; };
+		F749FC306C394B8A9816086D /* CDVClipboard.m in Sources */ = {isa = PBXBuildFile; fileRef = F841AE2089D24D80B8B4EF21 /* CDVClipboard.m */; };
+		1E9C581F630C4745A0B867B0 /* LongPressFix.m in Sources */ = {isa = PBXBuildFile; fileRef = A4B98D4B0BDB4F09BE513809 /* LongPressFix.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -150,6 +152,10 @@
 		F840E1F0165FE0F500CFE078 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = config.xml; path = VBook/config.xml; sourceTree = "<group>"; };
 		F8577C0C043C4E6D95CBA275 /* CDVLocalFilesystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVLocalFilesystem.h; path = "cordova-plugin-file/CDVLocalFilesystem.h"; sourceTree = "<group>"; };
 		FE46E42B117A4C7C89AF99EB /* CDVSplashScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDVSplashScreen.h; path = "cordova-plugin-splashscreen/CDVSplashScreen.h"; sourceTree = "<group>"; };
+		F841AE2089D24D80B8B4EF21 /* CDVClipboard.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "CDVClipboard.m"; path = "com.verso.cordova.clipboard/CDVClipboard.m"; sourceTree = "<group>"; fileEncoding = 4; };
+		14BF964C4AF944DDAFEC4E7D /* CDVClipboard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CDVClipboard.h"; path = "com.verso.cordova.clipboard/CDVClipboard.h"; sourceTree = "<group>"; fileEncoding = 4; };
+		A4B98D4B0BDB4F09BE513809 /* LongPressFix.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "LongPressFix.m"; path = "cordova-plugin-ios-longpress-fix/LongPressFix.m"; sourceTree = "<group>"; fileEncoding = 4; };
+		81BE8D200BA645F3A9E275AE /* LongPressFix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "LongPressFix.h"; path = "cordova-plugin-ios-longpress-fix/LongPressFix.h"; sourceTree = "<group>"; fileEncoding = 4; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -281,6 +287,10 @@
 				5645F531F7064EEDA52BC57E /* CDVStatusBar.h */,
 				E9255320CE3942CF9E2DF2EE /* YoikScreenOrientation.m */,
 				4489294418D5431280C31FC2 /* YoikScreenOrientation.h */,
+				F841AE2089D24D80B8B4EF21 /* CDVClipboard.m */,
+				14BF964C4AF944DDAFEC4E7D /* CDVClipboard.h */,
+				A4B98D4B0BDB4F09BE513809 /* LongPressFix.m */,
+				81BE8D200BA645F3A9E275AE /* LongPressFix.h */,
 			);
 			name = Plugins;
 			path = VBook/Plugins;
@@ -485,6 +495,8 @@
 				AE7FDA989B294454AE4989B3 /* ioapi.c in Sources */,
 				101480AFECE24010B8B8E623 /* CDVStatusBar.m in Sources */,
 				5EC21E0D916B436394B38B5E /* YoikScreenOrientation.m in Sources */,
+				F749FC306C394B8A9816086D /* CDVClipboard.m in Sources */,
+				1E9C581F630C4745A0B867B0 /* LongPressFix.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -506,7 +518,7 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
+				COPY_PHASE_STRIP = YES;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -527,10 +539,10 @@
 					"-weak-lSystem",
 					"-ObjC",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = cn.vbook;
+				PRODUCT_BUNDLE_IDENTIFIER = com.weixunkj.weixunv2;
 				PRODUCT_NAME = VBook;
-				PROVISIONING_PROFILE = "";
-				TARGETED_DEVICE_FAMILY = "1,2";
+				PROVISIONING_PROFILE = "9605aa44-4df3-407b-bf7c-fa3f3305377a";
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Debug;
 		};
@@ -560,10 +572,10 @@
 					"-weak-lSystem",
 					"-ObjC",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = cn.vbook;
+				PRODUCT_BUNDLE_IDENTIFIER = com.weixunkj.weixunv2;
 				PRODUCT_NAME = VBook;
-				PROVISIONING_PROFILE = "";
-				TARGETED_DEVICE_FAMILY = "1,2";
+				PROVISIONING_PROFILE = "9605aa44-4df3-407b-bf7c-fa3f3305377a";
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Release;
 		};
@@ -577,6 +589,7 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: xiang jiao (W7M86XP723)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
@@ -622,7 +635,9 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: xiang jiao (W7M86XP723)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = "";
@@ -637,6 +652,7 @@
 					"\"$(BUILT_PRODUCTS_DIR)\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-weak_framework",
 					CoreFoundation,

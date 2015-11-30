@@ -3,24 +3,33 @@
 .ui-header .ui-btn{
 	background-color:transparent;
 }
-
+div.child-page-header,
+div.child-page-header.ui-bar-inherit{
+	background-color: #059674;
+}
 div.child-page-header a,
+div.child-page-header a.ui-btn,
 div.child-page-footer a.backhome{
-	background-color:transparent;
-	background:url("../images/ico-btn-back.png") no-repeat center;
+	background:url("../images/icon-vbook-back.png") no-repeat center;
 	background-size:24px 24px;
 	width:28px;
 	height:28px;
 	top:0px;
 	border: 0px;
-	padding: 5px;
+	padding: 21px;
 	box-shadow:none;
 }
 
+div.child-page-header a.ui-btn,
+div.child-page-header a.ui-btn:hover,
+div.child-page-footer a.ui-btn,
+div.child-page-footer a.ui-btn:hover{
+	background-color:transparent;
+}
 div.child-page-header p{
 	text-align:center;
 	line-height:28px;
-	padding:5px 5px;
+	padding:21px 5px;
 	margin:0;
 }
 
@@ -44,4 +53,12 @@ div.child-page a:active,
 div.child-page a:hover{
 	color: #000;
 	text-decoration: none;
+}
+
+div.child-page-footer,
+div.child-page-footer.ui-fixed-hidden{
+	background-color:#272727;
+	text-align:center;
+	border:none;
+	padding: 10px 0px;
 }

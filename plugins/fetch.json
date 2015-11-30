@@ -70,5 +70,22 @@
         },
         "is_top_level": true,
         "variables": {}
+    },
+    "com.verso.cordova.clipboard": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/VersoSolutions/CordovaClipboard",
+            "subdir": "."
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-plugin-ios-longpress-fix": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-ios-longpress-fix"
+        },
+        "is_top_level": true,
+        "variables": {}
     }
 }

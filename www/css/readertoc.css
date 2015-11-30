@@ -7,26 +7,17 @@
 	text-align:center;
 	border:none;
 }
-.reader-toc-back{
-	background-image: url("../images/ico-btn-reader-back.png");
-}
 
-.reader-toc-btn-bookmark{
-	background-image: url("../images/ico-btn-reader-bookmark.png");
-}
 
-.reader-toc-btn-note{
-	background-image: url("../images/ico-btn-reader-bookmark.png");
-}
 
-.reader-toc-setting a{
+.reader-toc-footer a{
 	background-repeat: no-repeat;
 	background-position:left center;
 	background-size: 24px 24px;
 	background-color:transparent;
-	width:24%;
 	line-height:28px;
-	margin:5px 0;
+	width:16%;
+	margin:10px 0;
 	padding:0px;
 	height:28px;
 	border:none;
@@ -36,14 +27,18 @@
 	font-weight:normal;
 }
 
+.reader-toc-footer a.reader-toc-back{
+	width: 42%;
+	text-align: left;
+	padding-left: 25px;
+}
 
-.reader-toc-setting a:link,
-.reader-toc-setting a:visited{
+
+.reader-toc-footer a:link,
+.reader-toc-footer a:visited{
 	color:#fff !important;
 	text-decoration: none;
 }
 
 
-.reader-toc-btn-list{
-	background-image: url("../images/ico-btn-reader-toc.png");
-}
+

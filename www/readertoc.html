@@ -11,10 +11,14 @@
 </head>
 <body>
 <div data-role="page" class="child-page" id="book-reader-toc">
-	<div data-role="header" class="child-page-header">
-		<a href="#"  data-role="back" data-transition="slidefade" data-direction="reverse"
-			onclick="backBookReaderPage();"></a>
-		<p>目录</p>
+	<div data-role="header" class="child-page-header" data-theme="d" >
+		<div class="reader-func-container">
+			<div class="reader-func-title">
+				<div class="btn-active">目录</div>
+				<div>书签</div>
+				<div>笔记</div>
+			</div>
+		</div>
 	</div>
 	<!-- /header -->
 	<div data-role="content">
@@ -22,13 +26,11 @@
 		</ul>
    </div><!-- /content -->
 	<div data-role="footer" class="reader-toc-footer child-page-footer" data-position="fixed" data-theme="d">
-			<div class="reader-toc-setting">
 				<a href="#" class="reader-toc-back" data-role="back" data-transition="slidefade" data-direction="reverse"
 					onclick="backBookReaderPage();">返回阅读</a>
 				<a href="readertoc.html" class="reader-toc-btn-list btn-active">目录</a>
 				<a href="readerbookmark.html" class="reader-toc-btn-bookmark">书签</a>
 				<a href="readernote.html" class="reader-toc-btn-note">笔记</a>
-			</div>
 	</div><!-- /footer -->
 </div>
 </body>

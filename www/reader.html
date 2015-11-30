@@ -6,6 +6,14 @@
 </head>
 <body>
 <div data-role="page" id="book-reader" data-theme="b" class="child-page" data-dom-cache="true">
+	<div data-role="header" id="reader-header" data-position="fixed" data-fullscreen="true"
+		data-theme="d" class="child-page-header">
+				<a href="index.html#vbook-bookshelf" id="reader-header-back" data-role="back" data-transition="slidefade" data-direction="reverse"
+					onclick="showGlobalNavBar();">返回阅读</a>
+				<div class="search-container">
+					<input results="s" type="search" placeholder="搜微训"></input>
+				</div>
+	</div><!-- /header -->
 	<div data-enhance="false">
 		<div id="book-reader-header">
 			<div id="book-reader-bookName"><span id="book-reader-bookTitle">Book Title</span></div>
@@ -62,21 +70,30 @@
 	</div>
 	<div data-role="footer" id="reader-footer" data-position="fixed" data-fullscreen="true"
 		data-theme="d" class="child-page-footer">
-			<div id="reader-booknav">
 				<a class="reader-booknav-chapter" href="#" onclick="VBOOK.Book.prevChapter()">上一章</a>
 				<input type="range" name="reader-booknav-page-progress" id="reader-booknav-page-progress" 
 					data-highlight="true" data-track-theme="b" data-theme="b" min="0" max="100" value="50">
 				<a  class="reader-booknav-chapter" href="#" onclick="VBOOK.Book.nextChapter()">下一章</a>
-			</div>
-			<div id="reader-setting">
-				<a href="index.html#vbook-bookshelf" id="reader-setting-back" data-role="back" data-transition="slidefade" data-direction="reverse"
-					onclick="showGlobalNavBar();"></a>
-				<a href="#" onclick="" id="reader-setting-screen-brightness"></a>
 				<a href="#" onclick="toggleBookmark()" id="reader-setting-bookmark"></a>
-				<a href="#" onclick="" id="reader-setting-book-search"></a>
 				<a href="#" onclick="gotoBookReaderTocPage()" id="reader-setting-book-toc"></a>
-			</div>
 	</div><!-- /footer -->
+	<!-- 笔记窗口 -->
+	<div id="note-window">
+		<div class="note-style">
+			<a id="note-window-style-a" class="text-style selected" href="#" onclick="vbook_reader_note_style_set('a');"></a>
+			<a id="note-window-style-b" class="color-style" href="#" onclick="vbook_reader_note_style_set('b');"></a>
+			<a id="note-window-style-c" class="color-style" href="#" onclick="vbook_reader_note_style_set('c');"></a>
+			<a id="note-window-style-d" class="color-style" href="#" onclick="vbook_reader_note_style_set('d');"></a>
+			<a id="note-window-style-e" class="color-style" href="#" onclick="vbook_reader_note_style_set('e');"></a>
+			<a id="note-window-style-f" class="color-style" href="#" onclick="vbook_reader_note_style_set('f');"></a>
+		</div>
+		<div class="note-button">
+			<a id="note-window-copy" href="#" onclick="vbook_reader_note_copy();">复制</a>
+			<a id="note-window-note" href="#" onclick="vbook_reader_note_note();">笔记</a>
+			<a id="note-window-share" href="#" onclick="vbook_reader_note_share();">分享</a>
+			<a id="note-window-del" href="#" onclick="vbook_reader_note_del();">删除</a>
+		</div>
+	</div>
 </div>
 </body>
 </html>

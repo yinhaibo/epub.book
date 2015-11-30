@@ -4,6 +4,15 @@
 	<meta charset="utf-8">
 	<meta name="format-detection"content="telephone=no"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- Good default declaration:
+	    * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+	    * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+	    * Disables use of eval() and inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+	        * Enable inline JS: add 'unsafe-inline' to default-src
+	        * Enable eval(): add 'unsafe-eval' to default-src
+	
+	<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: gap: https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *">
+	-->
 	<title>VBook</title>
 	<link rel="shortcut icon" href="../favicon.ico">
 	<link rel="stylesheet" href="libs/jquerymobile/jquery.mobile-1.4.5.css">
@@ -12,8 +21,6 @@
 	<link rel="stylesheet" href="css/personal.css">
 	<link rel="stylesheet" href="css/userprofile.css">
 	<link rel="stylesheet" href="css/reader.css">
-	<link rel="stylesheet" href="css/readertoc.css" />
-	<link rel="stylesheet" href="css/readerbookmark.css" />
 	
 	<script type="text/javascript" src="cordova.js"></script>
 	
@@ -116,7 +123,14 @@
 			    		//$.get("http://101.200.73.55/mobile/index.php", {}, function (data) {
 			            //    $("#vbook-store").html(data);
 			            //});
-			    		document.getElementById('vbook-store-iframe').style.height = (document.height - document.getElementById('main-footer').clientHeight) + "px";
+			    		var docH = document.height || document.documentElement.clientHeight;
+			    		if (docH != undefined){
+			    			document.getElementById('vbook-store-iframe').style.height = (docH - $('#main-footer').outerHeight()) + "px";
+			    		}else{
+			    			document.getElementById('vbook-store-iframe').style.height = (screen.height - $('#main-footer').outerHeight()) + "px";
+			    		}
+			    		//document.getElementById('vbook-store-iframe').location = "http://101.200.73.55/mobile/index.php";
+			    		$('#vbook-store-iframe').attr('src', "http://101.200.73.55/mobile/index.php");
 			    		//src="http://101.200.73.55/mobile/index.php"
 			    	}
 			    }else if (this.id == 'book-reader'){
@@ -211,14 +225,17 @@
 	
 </head>
 <body>
-	<div data-role="page" id="vbook-bookshelf" data-title="我的图书" data-quicklinks="true" data-theme="d">
+	<div data-role="page" id="vbook-bookshelf" data-title="我的教材" data-quicklinks="true" data-theme="d">
 		<div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme="d" role="banner" 
 			class="ui-header ui-bar-a ui-header-fixed slidedown">
-			<p>微训</p>
+			<img src ="images/ico-logo.png" class="vbook-bookshelf-logo"></img>
+			<div class="search-container">
+					<input results="s" type="search" placeholder="搜微训"></input>
+				</div>
 		</div><!-- /header -->
 		<div class="vbook-books-toolbar">
 			<div class="ui-filterable vbook-search-bar">
-				<input id="vbook-books-search" data-type="search" placeholder="搜索">
+				<input id="vbook-books-search" data-type="search" placeholder="搜书架">
 			</div>
 			<div id="vbook-books-menu" class="vbook-menu-right">
 				<a href="#" onclick="openGroupMenu();" data-rel="popup" data-transition="pop">
@@ -296,11 +313,11 @@
               </ul>
 		</div><!-- /content -->
 		<div data-role="popup" id="exitAppPopup">
-		<p>再按一次推出程序</p>
+		<p>再按一次退出程序</p>
 		</div>
 	</div><!-- /page -->
 
-	<div data-role="page" id="vbook-personal" data-title="个人">
+	<div data-role="page" id="vbook-personal" data-title="我的信息">
 		<div class="perinfo">
 			<div class="userpic"><a href="#"  onclick="gotoUserProfilePage();"><img src="images/user.png"></a></div>
 			<div class="usernametxt">岁月如歌</div>
@@ -331,8 +348,8 @@
 			</ul>
 		</div>
 	</div>
-	<div data-role="page" id="vbook-store" data-title="书库">
-	<iframe id="vbook-store-iframe" src="http://101.200.73.55/mobile/index.php"></iframe>
+	<div data-role="page" id="vbook-store" data-title="教材库">
+	<iframe id="vbook-store-iframe"></iframe>
 	</div>
 	
 	<div data-role="page" id="vbook-userinfo" data-title="用户信息">
@@ -341,13 +358,13 @@
 	<div data-role="footer" id="main-footer" data-tap-toggle="false" data-theme="d" data-position="fixed" data-fullscreen="true">
 		<div data-role="navbar" data-theme="d">
 			<ul>
-			<li id="library"><a href="#vbook-store" data-theme="d">书库</a></li>
-			<li id="bookshelf"><a href="#vbook-bookshelf"  data-theme="d">我的图书</a></li>
-			<li id="personal"><a href="#vbook-personal" data-theme="d">个人</a></li>
+			<li id="library"><a href="#vbook-store" data-theme="d">教材库</a></li>
+			<li id="bookshelf"><a href="#vbook-bookshelf"  data-theme="d">我的教材</a></li>
+			<li id="personal"><a href="#vbook-personal" data-theme="d">我的信息</a></li>
 		</ul>
 		</div>
 	</div><!-- /footer -->
-
+	<div id="prompt_msg"></div>
 </body>
 </html>
 
