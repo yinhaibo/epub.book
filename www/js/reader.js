@@ -7,6 +7,56 @@ var VBOOK = (function(){
 	var Book = null;
 	var bookURL = null; // EPUB unzip file directory path
 	var vbook_skin = null; // VBook user defined skin configure
+	var vbook_note = null; // VBook user defined note content information
+	vbook_note = [{
+			"noteid": "ea2ece58-6631-cc31-c34d-9e9349c6b864",
+			"notetime": 1451613484609,
+			"cfiBase": "/6/6[html69]",
+			"chapter": "Getting Start",
+			"notecfi": [{
+				"cfi": "epubcfi(/6/6[html69]!4/6/1:50)",
+				"length": 27,
+				"content": "eep every version of an ima"
+			}],
+			"stylemode": "a"
+		},
+		{
+			"noteid": "ea2ece58-6631-cc31-c34d-9e9349c6b866",
+			"notetime": 1451613484609,
+			"cfiBase": "/6/6[html69]",
+			"chapter": "Getting Start",
+			"notecfi": [{
+				"cfi": "epubcfi(/6/6[html69]!4/6/1:100)",
+				"length": 27,
+				"content": "xxxxxxxxxxx"
+			}],
+			"stylemode": "b"
+		},
+		{
+			"noteid": "9d2f6c09-0d1c-67c1-5e89-31690b209558",
+			"notetime": 1451702726040,
+			"cfiBase": "/6/4[html70]",
+			"chapter": "Getting Start",
+			"notecfi": [{
+				"cfi": "epubcfi(/6/4[html70]!4/4/1:5)",
+				"length": 15,
+				"content": "chapter will be"
+			}],
+			"stylemode": "a"
+		},
+		{
+			"noteid": "3edf26e8-38fc-6efc-a7f5-47ce5cb9813f",
+			"notetime": 1451702771119,
+			"cfiBase": "/6/4[html70]",
+			"chapter": "Getting Start",
+			"notecfi": [{
+				"cfi": "epubcfi(/6/4[html70]!4/4/1:75)",
+				"length": 23,
+				"content": "beginning by explaining"
+			}],
+			"stylemode": "a"
+		}];
+			
 	var vbook_toc_load = false;
 	var setting = {marginLeft:10, marginRight:10, marginTop:20, marginBottom:20,
 			headerHeight:20, footerHeight:20, width:"100%", height:"100%", fixedLayout : true,
@@ -34,24 +84,31 @@ var VBOOK = (function(){
 		  });
 		});
 		Book.ready.all.then(function(){
-		  document.getElementById("book-reader-loader").style.display = "none";
+			document.getElementById("book-reader-loader").style.display = "none";
+
+			actionBookHeaderAndFooter("hide");
+			//
+			updateClock();
+			setInterval('updateClock()', 1000);
+			$('#book-reader-pageLabel').text('分页中...');
+			//Pagination
+			// check pagenation file
+			readFileFromBookDir("page_list.json", function(data){
+				console.log("read pagination file success.");
+				needSavePageList = false;
+				Book.loadPagination(data)
+			}, function(flag, error){
+				console.log("Read page_list.json file failed:" + error);
+				console.log(setting);
+				Book.generatePagination();
+			});
 		  
-		  actionBookHeaderAndFooter("hide");
-		  //
-		  updateClock();
-		  setInterval('updateClock()', 1000);
-		  $('#book-reader-pageLabel').text('分页中...');
-		  //Pagination
-		  // check pagenation file
-		  readFileFromBookDir("page_list.json", function(data){
-			  console.log("read pagination file success.");
-			  needSavePageList = false;
-			  Book.loadPagination(data)
-		  }, function(flag, error){
-			  console.log("Read page_list.json file failed:" + error);
-			  console.log(setting);
-			  Book.generatePagination();
-		  });
+			// Load book note information
+			readFileFromBookDir("vbook_note.json", function(data){
+				vbook_note = JSON.parse(data);
+				// Apply note data to book after chapter loaded.
+			});
+			
 		});
 		Book.renderTo("book-reader-area");
 
@@ -73,6 +130,7 @@ var VBOOK = (function(){
 		
 		Book.on('renderer:chapterDisplayed', VBOOK.chapterChange);
 		Book.on('renderer:locationChanged', VBOOK.locationChange);
+		
 	}
 	
 	function updatePageLabel(curPage, totalPage){
@@ -97,7 +155,7 @@ var VBOOK = (function(){
 			if (Book != null){
 				Book.destroy();
 			}
-			vReader.Book = Book = ePub(bookURL, {width:(document.width - 40), height:(document.height - 60)});
+			vReader.Book = Book = ePub(bookURL, {width:(document.documentElement.clientWidth - 40), height:(document.documentElement.clientHeight - 60)});
 			initializeBookEventBind();
 		}else{
 			loadVBookSkin(function(options){
@@ -366,6 +424,11 @@ var VBOOK = (function(){
 	 * @param data file data, text data
 	 */
 	function writeFileToBookDir(filename, data){
+		if (window.resolveLocalFileSystemURL == undefined){
+			console.log("Cannot support local file system:" + filename);
+			console.log((data));
+			return;
+		}
 		window.resolveLocalFileSystemURL(bookURL, function(fileDirEntry){
 			fileDirEntry.getFile(filename, {create:true, exclusive:false}, function(fileEntry){
 				console.log("reading to write/update " + fileEntry.fullPath);
@@ -429,6 +492,50 @@ var VBOOK = (function(){
 			  if (errorCallback) errorCallback(0, "readFileFromBookDir: File does not exist:" + fullfilename);
 		  });
 	}
+	
+	function vbookNoteSave(noteItem){
+		if (noteItem != null && noteItem.noteid != null){
+			var found = false;
+			if (vbook_note == null){
+				vbook_note = [];
+			}
+			for (var i = 0; i < vbook_note.length; i++){
+				if (vbook_note[i].noteid == noteItem.noteid){
+					vbook_note[i] = noteItem;
+					found = true;
+				}
+			}
+			if (!found){
+				vbook_note.push(noteItem);
+			}
+		}
+		writeFileToBookDir("vbook_note.json", JSON.stringify(vbook_note));
+	}
+	
+	function vbookNoteQuery(guid){
+		if (vbook_note == null){
+			return null;
+		}
+		for (var i = 0; i < vbook_note.length; i++){
+			if (vbook_note[i].noteid == guid){
+				return vbook_note[i];
+			}
+		}
+		return null;
+	}
+	
+	function vbookNoteDel(guid){
+		if (vbook_note == null){
+			return null;
+		}
+		for (var i = 0; i < vbook_note.length; i++){
+			if (vbook_note[i].noteid == guid){
+				vbook_note.splice(i, 1);
+			}
+		}
+		writeFileToBookDir("vbook_note.json", JSON.stringify(vbook_note));
+		return null;
+	}
 
 	/////////////////////////////////////////////////
 	// Public
@@ -482,8 +589,7 @@ var VBOOK = (function(){
 	//Bookmark
 	function getCurrentTimeStr(){
 		var d = new Date();
-		return d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate() + " "
-			+ d.getHours() + ":" + d.getMinutes();
+		return formatDate(new Date(), 'yyyy-MM-dd hh:mm:ss');
 	}
 
 	
@@ -516,6 +622,8 @@ var VBOOK = (function(){
 		this.settings.bookmarks = [];
 	};
 	
+	
+	// 通过模板加载书签数据，模板通过JS定义在页面中
 	vReader.loadBookBookmarkData = function(bookmarkList, bookmarkPage, readerPage){
 		$('#'+bookmarkList).empty();
 		this.setting.bookmarks.forEach(function(bookmark) {
@@ -526,6 +634,34 @@ var VBOOK = (function(){
 		$('#bookmarkListView-bookname').text(vReader.setting.currentBookName);
 		$('#'+bookmarkPage).page();
 		$('#'+bookmarkList).listview('refresh');
+	}
+	
+	// 通过模板加载笔记数据，模板通过JS定义在页面中
+	vReader.loadBookNoteData = function(booknoteList, booknotePage, readerPage){
+		$('#'+booknoteList).empty();
+		vbook_note.forEach(function(noteobj) {
+			var noteitem = {};
+			noteitem.epubcfi = noteobj.notecfi[0].cfi; // 使用第一个CFI对象的标签定位
+			noteitem.mode = noteobj.stylemode;
+			noteitem.chapter = noteobj.chapter;
+			noteitem.time = formatDate(new Date(noteobj.notetime), 'yyyy-MM-dd HH:mm:ss');
+			noteitem.content = '';
+			for(var i = 0; i < noteobj.notecfi.length; i++){
+				noteitem.content += noteobj.notecfi[i].content;
+			}
+			noteitem.comment = '';
+			if (noteitem.comment.length == 0){
+				noteitem.commentvisible = "hidden";
+			}else{
+				noteitem.commentvisible="";
+			}
+			// 通过页面定义的模版，用json对象替换生成html页面
+			var itemhtml = template('book-reader-note-template', noteitem);
+			$('#'+booknoteList).append(itemhtml);
+		});
+		$('#noteListView-bookname').text(vReader.setting.currentBookName);
+		$('#'+booknotePage).page();
+		$('#'+booknoteList).listview('refresh');
 	}
 	
 	//有外部的Hooks调用
@@ -539,6 +675,57 @@ var VBOOK = (function(){
 	vReader.locationChange = function(){
 		if (vReader.updateBookmarkStatus != null){
 			vReader.updateBookmarkStatus(Book.getCurrentLocationCfi());
+		}
+	}
+	
+	// 加载笔记
+	vReader.loadNote = function(note){
+		// Apply note to doc
+		if (vbook_note != null){
+			var cfiBase = Book.renderer.currentChapterCfiBase;
+			var ranges = [];
+			for (var i = 0; i < vbook_note.length; i++){
+				if (vbook_note[i].cfiBase == cfiBase){
+					// note is current chapter
+					for (var j = 0; j < vbook_note[i].notecfi.length; j++){
+						// 获取CFI尾部的便宜量
+						var offset = parseInt(/:([0-9]+)\)/.exec(vbook_note[i].notecfi[j].cfi)[1]);
+						// 使用EPUB.js库获得CFI指向的文本节点
+						var range = Book.renderer.epubcfi.generateRangeFromCfi(vbook_note[i].notecfi[j].cfi, Book.renderer.doc);
+						// 可能存在CFI指向的位置已经有笔记的内容已经加载，通过CFI获得Range对象就存在问题
+						// 即开始位置与实际偏移存在偏差，需要通过计算节点偏移，找到笔记的真实位置
+						if (range.startOffset < offset){
+							// 实际的笔记内容不在该节点，需要找到笔记内容的节点
+							var container = range.startContainer;
+							var curEndOffset = range.startContainer.length;
+							while(curEndOffset < offset){
+								container = container.nextSibling;
+								if (container != null){
+									curEndOffset += container.textContent.length;
+								}else{
+									// 笔记节点偏移错误
+									console.log("笔记节点偏移错误：" + vbook_note[i].notecfi[j].cfi);
+									break;
+								}
+							}
+							if (curEndOffset >= offset){
+								range.setStart(container, offset - (curEndOffset - container.textContent.length));
+								range.setEnd(container, range.startOffset + vbook_note[i].notecfi[j].length);
+								note.recreateBookNoteObj(range.startContainer, range.startOffset, 
+									vbook_note[i].notecfi[j].length, vbook_note[i].noteid, vbook_note[i].stylemode);
+								ranges.push(range);
+							}
+						}else{
+							range.setEnd(range.startContainer, range.startOffset + vbook_note[i].notecfi[j].length);
+							// 调用vbook.reader库中的笔记函数，建立笔记对象
+							note.recreateBookNoteObj(range.startContainer, range.startOffset, 
+								vbook_note[i].notecfi[j].length, vbook_note[i].noteid, vbook_note[i].stylemode);
+							ranges.push(range);
+						}
+					}
+				}
+			}
+			console.log(ranges);
 		}
 	}
 	
@@ -565,6 +752,9 @@ var VBOOK = (function(){
 		}
 		// set audio event listener
 		//initAllAudioElement();
+		// Apply user defined note content to chapter
+		
+		
 	}
 	
 	//
@@ -642,6 +832,22 @@ var VBOOK = (function(){
 		if (closeHandler != null){
 			gallery.listen("close", closeHandler);
 		}
+	}
+	
+	///////////////////////////////////////////////////////
+	// Note
+	
+	// update a note object
+	vReader.updateBookNoteContent = function(noteItem){
+		vbookNoteSave(noteItem);
+	}
+	
+	vReader.getBookNoteObj = function(noteid){
+		return vbookNoteQuery(noteid);
+	}
+	
+	vReader.removeBookNote = function(noteid){
+		return vbookNoteDel(noteid);
 	}
 
 	// Build book directory from book url and user information.

@@ -6,11 +6,26 @@
 <link rel="stylesheet" href="libs/jquerymobile/jquery.mobile-1.4.5.min.css" />
 <link rel="stylesheet" href="css/childpage.css" />
 <link rel="stylesheet" href="css/readertoc.css" />
+<link rel="stylesheet" href="css/readernote.css" />
 <script src="libs/jquery/jquery-2.1.4.min.js"></script>
 <script src="libs/jquerymobile/jquery.mobile-1.4.5.min.js"></script>
 </head>
 <body>
-<div data-role="page" class="child-page" id="book-reader-bookmark">
+<div data-role="page" class="child-page" id="book-reader-note">
+<script id="book-reader-note-template" type="text/html">
+	<li><a href="#" onclick="gotoBookReaderPageCfi('{{epubcfi}}');" class="book-reader-note-item" data-ajax="true">
+	<div class="booknote-note-item">
+		<div class="booknote-note-title">
+			<div class="booknote-note-style booknote-note-style-{{mode}}"></div>
+			<div class="booknote-note-chapter">{{chapter}}</div>
+			<div class="booknote-note-time">{{time}}</div>
+		</div>
+		<div class="booknote-note-content">{{content}}</div>
+		<div class="booknote-note-comment {{commentvisible}}">{{comment}}</div>
+	</div>
+	</a></li>
+</script>
+
 	<div data-role="header" class="child-page-header" data-theme="d">
 		<div class="reader-func-container">
 			<div class="reader-func-title">
@@ -22,7 +37,8 @@
 	</div>
 	<!-- /header -->
 	<div data-role="content">
-		<ul id="tocListView" data-role="listview" data-filter="true" data-filter-placeholder="搜索" >  
+		<p id="noteListView-bookname"></p>
+		<ul id="noteListView" data-role="listview" data-filter="true" data-filter-placeholder="搜索" >
 		</ul>
    </div><!-- /content -->
 	<div data-role="footer" class="reader-toc-footer child-page-footer" data-position="fixed" data-theme="d">

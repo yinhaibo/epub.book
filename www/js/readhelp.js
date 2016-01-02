@@ -21,7 +21,11 @@ function vbookLoadBook(){
 	var _os = detectOS();
 	
 	if (_os == "Windows" || _os == "Mac"){
-		VBOOK.open(bookURI);
+		if (bookURI.slice(-5) == ".epub"){
+			alert("Cannot open epub zip format, please unzip epub file.");
+		}else{
+			VBOOK.open(bookURI);
+		}
 	}else{
 		if (fDeviceReady){
 			vbookLoadBookImpl();
@@ -88,21 +92,33 @@ function showTip(msg){
 
 /***********笔记窗口功能实现*************/
 var noteWindow = {
-		noteObj:null,
+		note:null,
+		arrNodes:null,
 		selectedStyleObj:"#note-window-style-a"
 	};
+
 // 打开笔记窗口
-function showNoteWindow(noteObj, clientX, clientY){
-	noteWindow.noteObj = noteObj;
+function showNoteWindow(note, arrNodes, clientX, clientY){
+	noteWindow.note = note;
+	noteWindow.arrNodes = arrNodes;
+	if(noteWindow.arrNodes && noteWindow.arrNodes.length > 0){
+		var guids = /([0-9a-z-]+)/.exec(noteWindow.arrNodes[0].className);
+		if (guids.length >= 2){
+			noteWindow.noteid = guids[1];
+		}
+	}	
+		
 	setDivMousePosition("#note-window", clientX, clientY);
-	var styleList = noteObj.className.match('style_[a-z]');
-	if (styleList && styleList.length > 0){
-		// 取得当前笔记的样式，并通过笔记窗口的选中样式
-		var styleMode = styleList[0].substring(styleList[0].length-1);
-		if (styleMode != noteWindow.selectedStyleObj.substring(noteWindow.selectedStyleObj.length-1)){
-			$(noteWindow.selectedStyleObj).removeClass("selected");
-			noteWindow.selectedStyleObj = '#note-window-style-'+styleMode;
-			$(noteWindow.selectedStyleObj).addClass("selected");
+	if (arrNodes && arrNodes.length > 0){
+		var styleList = arrNodes[0].className.match('style_[a-z]');
+		if (styleList && styleList.length > 0){
+			// 取得当前笔记的样式，并通过笔记窗口的选中样式
+			var styleMode = styleList[0].substring(styleList[0].length-1);
+			if (styleMode != noteWindow.selectedStyleObj.substring(noteWindow.selectedStyleObj.length-1)){
+				$(noteWindow.selectedStyleObj).removeClass("selected");
+				noteWindow.selectedStyleObj = '#note-window-style-'+styleMode;
+				$(noteWindow.selectedStyleObj).addClass("selected");
+			}
 		}
 	}
 	$("#note-window").fadeIn(300);
@@ -110,33 +126,54 @@ function showNoteWindow(noteObj, clientX, clientY){
 // 关闭笔记窗口
 function closeNoteWindow(){
 	$("#note-window").fadeOut(500);
-	noteWindow.noteObj = null;
+	noteWindow.arrNodes = null;
 }
 
 function vbook_reader_note_style_set(mode){
 	// 改变笔记
-	if (noteWindow.noteObj != null){
+	if (noteWindow.arrNodes != null && noteWindow.arrNodes.length > 0){
 		// 修改笔记的样式
 		var oldMode = noteWindow.selectedStyleObj.substring(noteWindow.selectedStyleObj.length-1);
-		$(noteWindow.noteObj).removeClass("style_" + oldMode).addClass("style_" + mode);
-		
+		noteWindow.arrNodes.each(function(){
+			$(this).removeClass("style_" + oldMode).addClass("style_" + mode);
+		});
 		// 通过笔记窗口的选中
 		$(noteWindow.selectedStyleObj).removeClass("selected");
 		noteWindow.selectedStyleObj = '#note-window-style-' + mode;
 		$(noteWindow.selectedStyleObj).addClass("selected");
+		// 修改笔记对象的值，并保存到文件
+		var noteJson = VBOOK.getBookNoteObj(noteWindow.noteid);
+		if (noteJson != null && noteJson.stylemode != mode){
+			noteJson.stylemode = mode;
+			VBOOK.updateBookNoteContent(noteJson);
+		}
+		
 	}
 }
 
 function vbook_reader_note_copy(){
-	if (noteWindow.noteObj){
-		cordova.plugins.clipboard.copy(noteWindow.noteObj.textContent);
+	if (noteWindow.arrNodes != null && noteWindow.arrNodes.length > 0){
+		var content = "";
+		noteWindow.arrNodes.each(function(){
+			if (content.length > 0){
+				content = content + "\n";
+			}
+			content = content + $(this).textContent;
+		});
+		cordova.plugins.clipboard.copy(content);
 		closeNoteWindow();
 		showTip("成功复制到剪贴板");
 	}
 }
 
 function vbook_reader_note_del(){
-	//todo:
+	if (noteWindow.arrNodes != null && noteWindow.arrNodes.length > 0){
+			VBOOK.removeBookNote(noteWindow.noteid);
+			noteWindow.arrNodes.each(function(){
+				noteWindow.note.removeBookNoteObj(this);
+			});
+		closeNoteWindow();
+	}
 }
 
 function vbook_reader_note_share(){
@@ -145,6 +182,38 @@ function vbook_reader_note_share(){
 
 function vbook_reader_note_note(){
 	//todo: 打开笔记页面，编写笔记
+	
+}
+
+// 保存笔记
+function vbook_reader_note_save(note, arrNodes)
+{
+	var noteJson = {};
+	noteJson.noteid = note.noteid;
+	noteJson.notetime = $.now();
+	noteJson.cfiBase = VBOOK.Book.currentChapter.cfiBase;
+	noteJson.chapter = this.setting.currentChapterName;
+	noteJson.notecfi = [];
+	var styleList = arrNodes[0].note.className.match('style_[a-z]');
+	if (styleList && styleList.length > 0){
+		// 取得当前笔记的样式，并通过笔记窗口的选中样式
+		noteJson.stylemode = styleList[0].substring(styleList[0].length-1);
+	}else{
+		noteJson.stylemode = "a";
+	}
+	
+	var range = document.createRange();
+	$(arrNodes).each(function(){
+		var cfiItem = {};
+		range.setStart(this.note.parentNode, 1);
+		range.setEnd(this.note.parentNode, 1);
+		cfiItem.cfi = VBOOK.Book.currentChapter.cfiFromRange(range);
+		cfiItem.cfi = cfiItem.cfi.replace(/:[0-9]+/,':' + this.offset);
+		cfiItem.length = this.length;
+		cfiItem.content = this.content;
+		noteJson.notecfi.push(cfiItem);
+	});
+	VBOOK.updateBookNoteContent(noteJson);
 }
 /*********笔记窗口功能实现结束***********/
 
@@ -354,6 +423,7 @@ function imgZoomViewInChapter(target, closeHandler){
 		 // history & focus options are disabled on CodePen        
 		history: false,
 		focus: false,
+		fullscreenEl: false,
 
 		showAnimationDuration: 0,
 		hideAnimationDuration: 0

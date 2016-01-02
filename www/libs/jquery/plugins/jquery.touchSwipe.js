@@ -1050,7 +1050,7 @@
 				
 				//Fire the callback
 				if (options.swipeStatus) {
-					if (event.pageX <= 0 || event.pageY <= 0){
+					if (event.pageX == undefined || event.pageX <= 0 || event.pageY <= 0){
 						var evt = event.touches ? event.touches[0] : event;
 						if (evt != undefined){
 							event = evt;

@@ -1,0 +1,75 @@
+@CHARSET "UTF-8";
+
+#noteListView-bookname{
+	padding-bottom: 20px;
+	text-align: center;
+	margin: 5px -16px;
+}
+
+div.booknote-note-item{
+	margin-bottom:10px;
+}
+
+div.booknote-note-title div{
+	display:inline-block;
+	vertical-align: top;
+	color:#663300;
+	line-height:20px;
+}
+
+div.booknote-note-style{
+	width: 20px;
+    height: 20px;
+    border-radius: 10px;
+}
+
+
+div.booknote-note-time{
+	right: 50px;
+    position: absolute;
+}
+
+div.booknote-note-content{
+	margin-left:30px;
+}
+
+div.booknote-note-comment{
+	margin-left:50px;
+	border-style:solid;
+	border-width:1px;
+	border-color:#663300;
+	background-color:#ffffcc;
+}
+
+div.booknote-note-comment.hidden{
+	display: none;
+}
+
+div.booknote-note-title div.booknote-note-style-a{
+	background-color:#fff;
+	border-color:#fff;
+	background-image:url(../images/note-text-style.png);
+	background-position:center;
+	background-size:18px;
+}
+div.booknote-note-title div.booknote-note-style-b{
+	background-color:#feea74;
+	border-color:#feea74;
+}
+div.booknote-note-title div.booknote-note-style-c{
+	background-color:#c1eb79;
+	border-color:#c1eb79;
+}
+div.booknote-note-title div.booknote-note-style-d{
+	background-color:#aed9fd;
+	border-color:#aed9fd;
+}
+div.booknote-note-title div.booknote-note-style-e{
+	background-color:#fdb1ca;
+	border-color:#fdb1ca;
+}
+div.booknote-note-title div.booknote-note-style-f{
+	background-color:#d8b4fd;
+	border-color:#d8b4fd;
+}
+

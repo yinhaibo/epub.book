@@ -6,7 +6,7 @@
 </head>
 <body>
 <div data-role="page" id="book-reader" data-theme="b" class="child-page" data-dom-cache="true">
-	<div data-role="header" id="reader-header" data-position="fixed" data-fullscreen="true"
+	<div data-role="header" id="reader-header" data-position="fixed" data-fullscreen="true" data-tap-toggle="false"
 		data-theme="d" class="child-page-header">
 				<a href="index.html#vbook-bookshelf" id="reader-header-back" data-role="back" data-transition="slidefade" data-direction="reverse"
 					onclick="showGlobalNavBar();">返回阅读</a>
@@ -68,7 +68,7 @@
 				</div>
 		</div>
 	</div>
-	<div data-role="footer" id="reader-footer" data-position="fixed" data-fullscreen="true"
+	<div data-role="footer" id="reader-footer" data-position="fixed" data-fullscreen="true" data-tap-toggle="false"
 		data-theme="d" class="child-page-footer">
 				<a class="reader-booknav-chapter" href="#" onclick="VBOOK.Book.prevChapter()">上一章</a>
 				<input type="range" name="reader-booknav-page-progress" id="reader-booknav-page-progress" 
@@ -90,7 +90,6 @@
 		<div class="note-button">
 			<a id="note-window-copy" href="#" onclick="vbook_reader_note_copy();">复制</a>
 			<a id="note-window-note" href="#" onclick="vbook_reader_note_note();">笔记</a>
-			<a id="note-window-share" href="#" onclick="vbook_reader_note_share();">分享</a>
 			<a id="note-window-del" href="#" onclick="vbook_reader_note_del();">删除</a>
 		</div>
 	</div>

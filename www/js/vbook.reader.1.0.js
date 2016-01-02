@@ -63,7 +63,7 @@ function guid() {
 }
 
 var note = {
-		orgRange:null,
+		noteObjs:new Array(),
 		curRange:null,
 		orgOffset:null,
 		noteNode:null,
@@ -117,7 +117,32 @@ note.createBookNoteObj = function(element, offset, guid){
 	nextNode = element.splitText(offset);
 	element.parentNode.insertBefore(vnoteouter, nextNode);
 	
+	// 建立一个笔记对象，保存当前笔记的节点的信息
+	var noteItem = new Object();
+	noteItem.node = this.orgNode;
+	noteItem.offset = this.orgOffset;
+	noteItem.length = 0;
+	noteItem.note = vnoteouter;
+	this.noteObjs.push(noteItem);
+	
 	return vnoteouter;
+}
+
+/**
+ * 新建一个笔记对象
+ */
+note.recreateBookNoteObj = function(element, offset, len, guid, mode){
+	var vnote = this.createBookNoteObj(element, offset, guid);
+	this.addTextToNoteObj(vnote, vnote.nextSibling, len);
+	var styleList = vnote.className.match('style_[a-z]');
+	if (styleList && styleList.length > 0){
+		// 取得当前笔记的样式，并通过笔记窗口的选中样式
+		var oldMode = styleList[0].substring(styleList[0].length-1);
+		$(vnote).removeClass("style_" + oldMode).addClass("style_" + mode);
+	}else{
+		$(vnote).addClass("style_" + mode);
+	}
+	
 }
 
 /**
@@ -126,10 +151,15 @@ note.createBookNoteObj = function(element, offset, guid){
 note.removeBookNoteObj = function(note){
 	var prev = note.previousSibling;
 	
-	prev.textContent = prev.textContent + note.textContent + (note.nextSibling != null ? note.nextSibling.textContent : "");
-	if (note.nextSibling != null){
-		prev.parentNode.removeChild(note.nextSibling);
-	}
+	if (prev != null){
+		prev.textContent = prev.textContent + note.textContent 
+			+ (note.nextSibling != null ? note.nextSibling.textContent : "");
+			
+		if (note.nextSibling != null){
+			prev.parentNode.removeChild(note.nextSibling);
+		}
+	}	
+	
 	note.parentNode.removeChild(note);
 }
 
@@ -189,11 +219,19 @@ note.removeTextFromNoteObj = function(note, element, offset, dir){
 }
 
 note.swipeStart = function(event){
-	this.curRange = document.caretRangeFromPoint(event.pageX, event.pageY);
+	if (document.caretRangeFromPoint){
+		this.curRange = document.caretRangeFromPoint(event.pageX, event.pageY);
+	}else if(document.caretPositionFromPoint){
+		this.curRange = document.caretPositionFromPoint(event.pageX, event.pageY);
+	}else{
+		console.log("Cannot support caretRangeFromPoint or caretPositionFromPoint in current browser.");
+	}
 	this.orgNode = this.curRange.startContainer;
 	this.orgOffset = this.curRange.startOffset;
 	this.noteid = guid();
 	this.noteNode = this.createBookNoteObj(this.orgNode, this.orgOffset, this.noteid);
+	this.noteObjs.slice(0, this.length);
+	
 	this.orgX = event.clientX || event.pageX;
 	this.orgY = event.clientY || event.pageY;
 }
@@ -201,7 +239,11 @@ note.swipeStart = function(event){
 note.swipeMove = function(event){
 	var X = event.clientX || event.pageX,
 	    Y = event.clientY || event.pageY;
-	this.curRange = document.caretRangeFromPoint(X, Y);
+	if (document.caretRangeFromPoint){
+		this.curRange = document.caretRangeFromPoint(event.pageX, event.pageY);
+	}else if(document.caretPositionFromPoint){
+		this.curRange = document.caretPositionFromPoint(event.pageX, event.pageY);
+	}
 	if(this.noteNode && this.curRange.startContainer.parentNode == this.noteNode.parentNode){
 		// 当前节点与笔记节点在同一父节点下
 		// 当前节点在笔记节点前面
@@ -247,26 +289,40 @@ note.swipeMove = function(event){
 		this.orgNode = this.curRange.startContainer;
 		
 		// 结束当前容器的选择，开始下一容器的开始位置和选择
-		if (Y < this.orgY || (X < orgX && Math.abs(Y - this.orgY) < 10)){
+		if (Y < this.orgY || (X < this.orgX && Math.abs(Y - this.orgY) < 10)){
 			// 当前节点前面
 			if (this.noteNode.previousSibling != null){
 				this.addTextToNoteObj(this.noteNode, this.noteNode.previousSibling, this.noteNode.previousSibling.textContent.length, 0);
+				if (this.noteNode.textContent.length > 0){
+					// 把笔记对象信息更新到笔记对象中
+					this.updateNoteObjInfo();
+				}else{
+					this.removeBookNoteObj(this.noteNode);
+					this.noteObjs.splice(this.noteObjs.length-2, 1);
+				}
 			}
 			
 			this.orgOffset = this.orgNode.textContent.length;
-			this.noteNode = createBookNoteObj(this.orgNode, this.orgOffset, this.noteid);
+			this.noteNode = this.createBookNoteObj(this.orgNode, this.orgOffset, this.noteid);
 			
 			if (this.noteNode.previousSibling != null){
 				this.addTextToNoteObj(this.noteNode, this.noteNode.previousSibling, this.curRange.startOffset, 0);
 			}
-		}else if(Y > this.orgY || (X > orgX && Math.abs(Y - this.orgY) < 10)){
+		}else if(Y > this.orgY || (X > this.orgX && Math.abs(Y - this.orgY) < 10)){
 			// 当前节点后面
 			if (this.noteNode.nextSibling != null){
 				this.addTextToNoteObj(this.noteNode, this.noteNode.nextSibling, this.noteNode.nextSibling.textContent.length, 1);
+				if (this.noteNode.textContent.length > 0){
+					// 把笔记对象信息更新到笔记对象中
+					this.updateNoteObjInfo();
+				}else{
+					this.removeBookNoteObj(this.noteNode);
+					this.noteObjs.splice(this.noteObjs.length-2, 1);
+				}
 			}
 			
 			this.orgOffset = 0;
-			this.noteNode = createBookNoteObj(this.orgNode, this.orgOffset, this.noteid);
+			this.noteNode = this.createBookNoteObj(this.orgNode, this.orgOffset, this.noteid);
 			if (this.noteNode.nextSibling != null){
 				this.addTextToNoteObj(this.noteNode, this.noteNode.nextSibling, this.curRange.startOffset, 1);
 			}
@@ -277,7 +333,35 @@ note.swipeMove = function(event){
 note.swipeEnd = function(event){
 	if (this.noteNode && this.noteNode.textContent.length == 0){
 		this.removeBookNoteObj(this.noteNode);
+		this.noteObjs.splice(this.noteObjs.length-2, 1);
+	}else{
+		// 把笔记对象信息更新到笔记对象中
+		this.updateNoteObjInfo();
 	}
+	
+	if(this.noteObjs.length > 0){
+		// 保存笔记（交给父容器实现保存）
+		parent.vbook_reader_note_save(this, this.noteObjs);
+		// 清楚笔记对象
+		this.noteObjs.length = 0;
+	}
+}
+
+note.updateNoteObjInfo = function(){
+	// 把笔记对象信息更新到笔记对象中
+	if (this.noteNode.previousSibling != null){
+		var prevObj = this.noteNode.previousSibling;
+		var offset = 0;
+		while(prevObj != null){
+			offset += prevObj.textContent.length;
+			prevObj = prevObj.previousSibling;
+		}
+		this.noteObjs[this.noteObjs.length-1].offset = offset;
+	}else{
+		this.noteObjs[this.noteObjs.length-1].offset = 0;
+	}
+	this.noteObjs[this.noteObjs.length-1].content = this.noteNode.textContent;
+	this.noteObjs[this.noteObjs.length-1].length = this.noteNode.textContent.length;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -308,7 +392,12 @@ function vbook_processBookObjClick(clientX, clientY, target){
 	if (fn.note){
 		var noteObj = fn.note.getBookNoteObj(target);
 		if (noteObj != null){
-			parent.showNoteWindow(noteObj, clientX, clientY);
+			// 取得所有相同guid的笔记对象
+			var guids = /([0-9a-z-]+)/.exec(noteObj.className);
+			if (guids.length >= 2){
+				var arrNodes = $('.' + guids[1]);
+			}
+			parent.showNoteWindow(fn.note, arrNodes, clientX, clientY);
 			noteWindowVisible = true;
 			return true;
 		}else if(noteWindowVisible){
@@ -370,6 +459,7 @@ $(document).swipe( {
 				if (startNote){
 					fn.note.swipeEnd(event);
 					swipeCancel = true;
+					startNote = false;
 				}
 			}
 			if (!swipeCancel && distance < 5){
@@ -389,6 +479,9 @@ $(document).swipe( {
 	},
 	swipeLeft:function(event, direction, distance, duration, fingerCount, fingerData ){
 		if (fn.swipeEnable && !swipeCancel){
+			if(fn.noteEnable && noteWindowVisible){
+				parent.closeNoteWindow();
+			}
 			if (fn.vbook_swipeLeft != null){
 				fn.vbook_swipeLeft(event.target, distance);
 			}else{
@@ -400,6 +493,10 @@ $(document).swipe( {
 	},
 	swipeRight:function(event, direction, distance, duration, fingerCount, fingerData ){
 		if (fn.swipeEnable && !swipeCancel){
+			if(fn.noteEnable && noteWindowVisible){
+				parent.closeNoteWindow();
+			}
+			
 			if (fn.vbook_swipeRight != null){
 				fn.vbook_swipeRight(event.target, distance);
 			}else{
@@ -413,11 +510,12 @@ $(document).swipe( {
 	excludedElements:"label, button, input, select, textarea, a, audio, video, .noSwipe"
  });
 
+ if (parent.VBOOK.loadNote != undefined){parent.VBOOK.loadNote(fn.note);}
 return fn;
 }());
 
 $(function(){
 	try{
-		if (vbook_load != undefined){vbook_load();}
+		if (vbook_load != undefined){vbook_load();}		
 	}catch(e){}
 });

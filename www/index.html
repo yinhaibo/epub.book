@@ -21,6 +21,7 @@
 	<link rel="stylesheet" href="css/personal.css">
 	<link rel="stylesheet" href="css/userprofile.css">
 	<link rel="stylesheet" href="css/reader.css">
+	<link rel="stylesheet" href="css/readernote.css">
 	
 	<script type="text/javascript" src="cordova.js"></script>
 	
@@ -132,7 +133,22 @@
 			    		//document.getElementById('vbook-store-iframe').location = "http://101.200.73.55/mobile/index.php";
 			    		$('#vbook-store-iframe').attr('src', "http://101.200.73.55/mobile/index.php");
 			    		//src="http://101.200.73.55/mobile/index.php"
-			    	}
+			    	}else if(this.id == "vbook-personal"){
+						$.ajax(
+							{
+								type:'post',
+								url : 'http://101.200.73.55/webservice.php',
+								data:'act=signin' + '&username=licheng&password=123456',
+								dataType : 'jsonp',
+								success  : function(data) {
+									alert("Login success："+ data);
+								},
+								error : function() {
+									alert('fail');
+								}
+							}
+						);
+					}
 			    }else if (this.id == 'book-reader'){
 			    	if (bookReload == true){
 				    	bookReload = false;
@@ -144,6 +160,8 @@
 			    	VBOOK.loadBookTocData('tocListView', 'book-reader-toc', 'book-reader');
 			    }else if(this.id == 'book-reader-bookmark'){
 			    	VBOOK.loadBookBookmarkData('bookmarkListView', 'book-reader-bookmark', 'book-reader');
+			    }else if(this.id == 'book-reader-note'){
+			    	VBOOK.loadBookNoteData('noteListView', 'book-reader-note', 'book-reader');
 			    }
 		    }
 		});
