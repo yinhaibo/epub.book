@@ -266,6 +266,47 @@ div.vbook-shelf .ui-listview  p{
 div.vbook-shelf .ui-listview div{
 	text-align:center;
 }
+
+div.vbook-shelf .ui-listview div.download{
+	position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 80%;
+    vertical-align: middle;
+    text-align: center;
+    background-color: #000;
+    opacity: 0.7;
+}
+
+div.vbook-shelf .ui-listview div.download-none{
+	display:none;
+}
+
+/*书ID*/
+div.vbook-shelf .ui-listview .bookid{
+	display:none;
+}
+
+div.vbook-shelf .ui-listview div.download img{
+	display: inline-block;
+    bottom: 50px;
+    right: 25px;
+    position: absolute;
+	opacity: 1.0;
+}
+
+div.vbook-shelf .ui-listview div.download .download-progress{
+	position: absolute;
+    bottom: 40px;
+    right: 36px;
+	color:#fff;
+}
+
+div.vbook-shelf .ui-listview div.download .download-progress-none{
+	display:none;
+}
+
 /* 列表模式－书文字标题，位于书的右方 */
 div.vbook-shelf-list .ui-listview  p{
 	margin-left:80px;
@@ -305,7 +346,7 @@ div.vbook-shelf-list .ui-listview  p.bookbrief {
 	white-space:normal;
 }
 /* 新书标签 */
-div.vbook-shelf .ui-listview  p.vbook-new {
+div.vbook-shelf .ui-listview  p.vbook-new-visible {
 	position:absolute;
 	font-size:0.6em;
 	marign:0;
@@ -330,8 +371,12 @@ div.vbook-shelf .ui-listview  p.vbook-new {
 	display:block;
 }
 
+div.vbook-shelf .ui-listview  p.vbook-new-none {
+	display:none;
+}
 
-div.vbook-shelf-list .ui-listview  p.vbook-new {
+
+div.vbook-shelf-list .ui-listview  p.vbook-new-visible {
 	position:absolute;
 	margin-left:0px;
 	margin-top:0px;
@@ -354,7 +399,9 @@ div.vbook-shelf-list .ui-listview  p.vbook-new {
 	border-bottom-right-radius: 0;
 	text-shadow:0 0px 0;
 }
-
+div.vbook-shelf-list .ui-listview  p.vbook-new-none{
+	display:none;
+}
 
 
 /*设置搜索栏宽度，给菜单栏留点位置*/

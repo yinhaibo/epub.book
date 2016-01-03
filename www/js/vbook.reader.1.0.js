@@ -158,7 +158,7 @@ note.removeBookNoteObj = function(note){
 		if (note.nextSibling != null){
 			prev.parentNode.removeChild(note.nextSibling);
 		}
-	}	
+	}
 	
 	note.parentNode.removeChild(note);
 }

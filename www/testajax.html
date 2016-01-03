@@ -1,0 +1,66 @@
+<html>
+<meta charset="utf-8">
+<head>
+<script src="libs/jquery/jquery-2.1.4.js"></script>
+<script type="text/javascript">
+
+function getUserProfile()
+{
+	$.ajax(
+	{
+		type:'post',
+		url : 'http://101.200.73.55/webservice.php',
+		data:'act=default',
+		dataType : 'jsonp',
+		success  : function(data) {
+			alert("getUserProfile："+ JSON.stringify(data));
+			getBookInfoList();
+		},
+		error : function() {
+			alert('fail');
+		}
+	}
+	);
+}
+
+function getBookInfoList(){
+	$.ajax(
+	{
+		type:'post',
+		url : 'http://101.200.73.55/webservice.php',
+		data:'act=bookinfo',
+		dataType : 'jsonp',
+		success  : function(data) {
+			alert("getBookInfoList："+ JSON.stringify(data));
+		},
+		error : function() {
+			alert('fail');
+		}
+	}
+	);
+}
+
+$(function(){
+$.ajax(
+{
+	type:'post',
+	url : 'http://101.200.73.55/webservice.php',
+	data:'act=signin' + '&username=licheng&password=123456',
+	dataType : 'jsonp',
+	success  : function(data) {
+		alert("Login success："+ JSON.stringify(data));
+		if(data.ret == "0" || data.ret == "2"){
+			getUserProfile();
+		}
+	},
+	error : function() {
+		alert('fail');
+	}
+}
+);
+});
+</script>
+</head>
+<body>
+</body>
+</html>

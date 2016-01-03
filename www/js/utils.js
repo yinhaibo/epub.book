@@ -1,4 +1,4 @@
-// ¼ì²é²Ù×÷ÏµÍ³Ãû³Æ
+// æ£€æŸ¥æ“ä½œç³»ç»Ÿåç§°
 function detectOS() {
     var sUserAgent = navigator.userAgent;
     var isWin = (navigator.platform == "Win32") || (navigator.platform == "Windows");
@@ -24,11 +24,11 @@ function getBaseUrl() {
 	return re.exec(base);
 }
 
-//»ñÈ¡urlÖĞµÄ²ÎÊı
+//è·å–urlä¸­çš„å‚æ•°
 function getUrlParam(name) {
-	var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //¹¹ÔìÒ»¸öº¬ÓĞÄ¿±ê²ÎÊıµÄÕıÔò±í´ïÊ½¶ÔÏó
-	var r = window.location.search.substr(1).match(reg);  //Æ¥ÅäÄ¿±ê²ÎÊı
-	if (r != null) return unescape(r[2]); return null; //·µ»Ø²ÎÊıÖµ
+	var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //æ„é€ ä¸€ä¸ªå«æœ‰ç›®æ ‡å‚æ•°çš„æ­£åˆ™è¡¨è¾¾å¼å¯¹è±¡
+	var r = window.location.search.substr(1).match(reg);  //åŒ¹é…ç›®æ ‡å‚æ•°
+	if (r != null) return unescape(r[2]); return null; //è¿”å›å‚æ•°å€¼
 }
 
 function formatDate(date, format) {   
@@ -59,4 +59,42 @@ function formatDate(date, format) {
     return format.replace(/(yyyy|MM?|dd?|HH?|ss?|mm?)/g, function() {   
         return dict[arguments[0]];   
     });                   
+}
+
+////////////////////////////////////////////
+// Depends: Cordova Crypto Helper Plugin
+
+function cryptoHelper_generateKeyPair(successCallback){
+	cordova.exec(
+		function(result){
+			if (successCallback) successCallback(result);
+		}, null, 'cryptoHelper', 'generateKeyPair', []);
+}
+
+function cryptoHelper_getRandomValue(successCallback){
+	cordova.exec(
+		function(result){
+			if (successCallback) successCallback(result);
+		}, null, 'cryptoHelper', 'getRandomValue', [{length:32}]);
+}
+
+function cryptoHelper_encrypt(data, successCallback){
+	cryptoHelper_generateKeyPair(function(keypair){
+		var options = keypair;
+		cryptoHelper_getRandomValue(function(value){
+			options.nonce = value;
+			options.data = data;
+			cordova.exec(function(result){
+				options.nonce = value;
+				options.key = result;
+				if (successCallback) successCallback(options);
+			}, null, 'cryptoHelper', 'encrypt', [options]);
+		});
+	});
+}
+
+function cryptoHelper_decrypt(options, successCallback){
+	cordova.exec(function(result){
+		if (successCallback) successCallback(result);
+	}, null, 'cryptoHelper', 'decrypt', [options]);
 }

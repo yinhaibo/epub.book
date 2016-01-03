@@ -74,6 +74,7 @@
 	<script src="libs/template.js"></script>
 	<!-- VBOOK reader-->
 	<script src="js/utils.js"></script> 
+	<script src="js/fileutils.js"></script> 
 	<script src="js/reader.js"></script> 
 	<script src="js/readhelp.js"></script> 
 	<script>
@@ -93,6 +94,9 @@
 			if (_os == "Windows" || _os == "Mac"){
 				isApp = false;
 			}
+			
+			VBOOK.loadUserConfig();
+			VBOOK.loadUserBook("bookListView");
 		});
 		// Update the contents of the toolbars
 		$(document).on("pageshow", "[data-role='page']", function () {
@@ -134,20 +138,9 @@
 			    		$('#vbook-store-iframe').attr('src', "http://101.200.73.55/mobile/index.php");
 			    		//src="http://101.200.73.55/mobile/index.php"
 			    	}else if(this.id == "vbook-personal"){
-						$.ajax(
-							{
-								type:'post',
-								url : 'http://101.200.73.55/webservice.php',
-								data:'act=signin' + '&username=licheng&password=123456',
-								dataType : 'jsonp',
-								success  : function(data) {
-									alert("Login success："+ data);
-								},
-								error : function() {
-									alert('fail');
-								}
-							}
-						);
+						VBOOK.loadUserProfile("user-profile", "user-login");
+					}else if(this.id == "vbook-bookshelf"){
+						VBOOK.loadUserBook("bookListView");
 					}
 			    }else if (this.id == 'book-reader'){
 			    	if (bookReload == true){
@@ -190,6 +183,11 @@
 			$('#main-footer').toolbar('hide');
 			//$("#main-footer").toolbar({ updatePagePadding: false,fullscreen:true });
 			$(':mobile-pagecontainer').pagecontainer("change", "reader.html", {transition:"slidefade"});
+		}
+		
+		function toggleDownloadBook(bookid, bookepub){
+			showTip("开始下载书籍中......");
+			VBOOK.downloadBook(bookid, bookepub, "bookListView");
 		}
 		
 		function backBookReaderPage(){
@@ -244,6 +242,21 @@
 </head>
 <body>
 	<div data-role="page" id="vbook-bookshelf" data-title="我的教材" data-quicklinks="true" data-theme="d">
+		<script id="index-book-shelf-template" type="text/html">
+			<li><div><a href="#" onclick="gotoBookReaderPage('{{bookuri}}');">
+			<div>
+				<img src="{{bookimg}}" alt="{{booktitle}}" class="ui-li-thumb"/>
+				<a href="#" onclick="toggleDownloadBook('{{bookid}}','{{bookuri}}');">
+					<div class="download download-{{needdownload}}"><img src="./images/cloud_download.png" alt="cloud_download">
+					<span id="testbook-download-progress-{{bookid}}" class="download-progress-none">0%</span></div>
+				</a>
+			</div>
+			<p class="booktitle">{{booktitle}}</p>
+			<p class="vbook-new vbook-new-{{newbook}}">新书首发</p>
+			<span class="bookid">{{bookid}}</span>
+			</a>
+			</div></li> 
+		</script>
 		<div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme="d" role="banner" 
 			class="ui-header ui-bar-a ui-header-fixed slidedown">
 			<img src ="images/ico-logo.png" class="vbook-bookshelf-logo"></img>
@@ -278,99 +291,19 @@
 			</div>
 		</div>
 		<div role="main" id="vbook-shelf-main" class="ui-content vbook-shelf">
-    		<ul data-role="listview" data-inset="true" data-filter="true" data-input="#vbook-books-search">
-            	<li><div>
-            		<a href="#" onclick="gotoBookReaderPage('books/progit.epub');">
-	            	<div><img src="./books/progit.png" alt="ProGit" class="ui-li-thumb"></div>
-	            	<p class="booktitle">ProGit</p>
-	            	<p class="bookauthor">Scott Chacon and Ben Straub</p>
-	            	<p class="bookbrief">Pro Git second edition, an open source book on Git.</p>
-	            	<p class="vbook-new">新书首发</p>
-            		</a>
-            	</div></li> 
-            	<!-- 
-				<li><div><a href="bookread.html?book=books/jsty.epub">
-				<div><img src="./books/jsty.png" alt="警世通言" class="ui-li-thumb"/></div>
-				<p class="booktitle">警世通言</p>
-				<p class="bookauthor">冯梦龙</p>
-            	<p class="bookbrief">《警世通言》，白话短篇小说集。明末冯梦龙纂辑。完成于1624年（明天启四年）。其题材或来自民间传说，或来自史传和小说。故事描述的时代包括宋、元、明三代。</p>
-				</a></div></li> 
-				<li><div><a href="bookread.html?book=books/mcnxse.epub">
-				<div><img src="./books/mcnxse.png" alt="明朝那些事儿" class="ui-li-thumb"/></div>
-				<p class="booktitle">明朝那些事儿</p>
-				<p class="bookauthor">当年明月</p>
-            	<p class="bookbrief">《明朝那些事儿》[1]  ，网络连载历史小说，作者是当年明月，本名石悦，广东顺德海关公务员。2006年3月在天涯社区首次发表，2009年3月21日连载完毕，边写作边集结成书出版发行，一共7本 。</p>
-				</a></div></li> 
-				<li><div><a href="bookread.html?book=books/ydys.epub">
-				<div><img src="./books/ydys.png" alt="元代野史" class="ui-li-thumb"/></div>
-				<p class="booktitle">元代野史</p>
-				<p class="bookauthor">田腾蛟</p>
-            	<p class="bookbrief">元之先世，本号蒙古，其国在女真之北，以奇渥温三字为姓。有始祖母曰阿兰氏，寡居在极北沙漠。屡有光明耀腹，后一侞而生三子。季子曰孛端义儿，魁梧奇伟，沉毅寡言。其后子孙蕃盛，不相统属。......</p>
-				</a></div></li> 
-				<li><div><a href="bookread.html?book=books/ysmy.epub">
-				<div><img src="./books/ysmy.png" alt="喻世明言" class="ui-li-thumb"/></div>
-				<p class="booktitle">喻世明言</p>
-            	<p class="bookauthor">冯梦龙</p>
-            	<p class="bookbrief">《喻世明言》，白话短篇小说集，初刻用名《古今小说》，又称《全像古今小说》。明末冯梦龙纂辑。部分为宋元话本旧作，也有明人拟作。文字可能经过纂修者的加工。题材多来自民间，也有根据历史小说和前人小说改编改写的。</p>
-				</a></div></li> 
-				<li><div><a href="bookread.html?book=books/mobydick.epub">
-				<div><img src="./books/mobydick.png" alt="Moby Dick" class="ui-li-thumb"/></div>
-				<p class="booktitle">Moby Dick</p>
-				<p class="bookauthor">Herman Melville</p>
-            	<p class="bookbrief">A century and a half after its publication, "Moby-Dick" still stands as a literary classic. A novel of adventure the story of a madman pursuing an unholy war against a creature as vast and dangerous as the sea, it is also an important social commentary populated with several of the most unforgettable characters in literature. This edition features French flaps and deluxe packag...</p>
-				</a></div></li> 
-				<li><div><a href="#" onclick="gotoBookReaderPage('books/zyx/');">
-				<div><img src="./books/cyjcsyx.png" alt="柴油机的测试及运行管理" class="ui-li-thumb"/></div>
-				<p class="booktitle">柴油机的测试及运行管理</p>
-				</a></div></li>  -->
-				<li><div><a href="#" onclick="gotoBookReaderPage('books/testbook.epub');">
-				<div><img src="./books/testbook-corver.png" alt="贷款实地调查" class="ui-li-thumb"/></div>
-				<p class="booktitle">贷款实地调查</p>
-				<p class="vbook-new">新书首发</p>
-				</a></div></li> 
+    		<ul data-role="listview" id="bookListView" data-inset="true" data-filter="true" data-input="#vbook-books-search">
+            	
               </ul>
 		</div><!-- /content -->
 		<div data-role="popup" id="exitAppPopup">
 		<p>再按一次退出程序</p>
 		</div>
 	</div><!-- /page -->
-
-	<div data-role="page" id="vbook-personal" data-title="我的信息">
-		<div class="perinfo">
-			<div class="userpic"><a href="#"  onclick="gotoUserProfilePage();"><img src="images/user.png"></a></div>
-			<div class="usernametxt">岁月如歌</div>
-			<div class="usernameinfo">书币 0 &nbsp;&nbsp;&nbsp;等级：LV0</div>
-		</div>
-		<div data-role="none" class="read-profile" id="tab-news">	
-	        <ul class="fix">
-	            <li ><div class=pernavinfo><span class="pernavtxt">90</span><br>阅历</div></li>
-	            <li><div class=pernavinfo><span class="pernavtxt">115</span><br>笔记</div></li>
-	            <li><div class=pernavinfo style="border:0px;"><span class="pernavtxt">6</span><br>收藏</div></li>
-	        </ul>
-		</div>
-		<div class="profile-toolbar" id="profile-toolbar">
-	   		<ul>
-	           	<li><a href=""><img src="images/cz.png" alt=""><br>充值</a></li> 
-	               <li><a href=""><img src="images/qd.png" alt=""><br>签到</a></li>
-	           	<li><a href=""><img src="images/set.png" alt=""><br>设置</a></li>
-	           </ul>
-		</div>
-		<div class="profile-ads" id="profile-ads" >
-			<ul >
-				<li class="ads-grift"><div class="profile-ads-title-hot"><a href="">礼品中心</a><img src="images/ico-hot-rect.png"/><span class="hot-new">新</span></div>
-				<div class="profile-ads-more"><a><img src="images/ico-btn-more.png" class="profile-ads-more-ico"/><span class="hot-msg">全民阅读，百万豪礼等你来拿！</span></a></div></li>
-				<li class="ads-actives"><div class="profile-ads-title-hot"><a href="">活动中心</a><img src="images/ico-hot-rect.png"/><span class="hot-new">新</span></div>
-				<div class="profile-ads-more"><a><img src="images/ico-btn-more.png" class="profile-ads-more-ico"><span class="hot-msg">限时免费，猛戳即可得到！</span></a></div></li>
-				<li class="ads-tasks"><div class="profile-ads-title-hot"><a href="">任务中心</a><img src="images/ico-hot-rect.png"/><span class="hot-new">新</span></div>
-				<div class="profile-ads-more"><a><img src="images/ico-btn-more.png" class="profile-ads-more-ico"><span class="hot-msg">24小时，根本停不下来!</span></a></div></li>
-			</ul>
-		</div>
-	</div>
 	<div data-role="page" id="vbook-store" data-title="教材库">
 	<iframe id="vbook-store-iframe"></iframe>
 	</div>
 	
-	<div data-role="page" id="vbook-userinfo" data-title="用户信息">
+	<div data-role="page" id="vbook-personal" data-title="用户信息">
 	</div>
 	
 	<div data-role="footer" id="main-footer" data-tap-toggle="false" data-theme="d" data-position="fixed" data-fullscreen="true">

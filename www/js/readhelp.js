@@ -192,7 +192,7 @@ function vbook_reader_note_save(note, arrNodes)
 	noteJson.noteid = note.noteid;
 	noteJson.notetime = $.now();
 	noteJson.cfiBase = VBOOK.Book.currentChapter.cfiBase;
-	noteJson.chapter = this.setting.currentChapterName;
+	noteJson.chapter = VBOOK.setting.currentChapterName;
 	noteJson.notecfi = [];
 	var styleList = arrNodes[0].note.className.match('style_[a-z]');
 	if (styleList && styleList.length > 0){

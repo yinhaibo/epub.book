@@ -3,12 +3,15 @@
 // @since 2015.8
 
 var VBOOK = (function(){
-	var vReader = {};
+	var vReader = {
+			config:{userID:"default"},
+			books:[{"bookid":"ZL001","booktitle":"ProGit","bookuri":"books/progit.epub","bookauthor":"Scott Chacon and Ben Straub","bookbrief":"Pro Git second edition, an open source book on Git.","newbook":"visible","bookimg":"./books/progit.png","needdownload":"none","downloadprogress":"none"},{"bookid":"ZL002","booktitle":"贷款实地调查","bookuri":"data/feedbackimg/testbook.epub","bookauthor":"","bookbrief":"","newbook":"visible","bookimg":"./books/testbook-corver.png","needdownload":"visible","downloadprogress":"none"}]
+		};
 	var Book = null;
 	var bookURL = null; // EPUB unzip file directory path
 	var vbook_skin = null; // VBook user defined skin configure
 	var vbook_note = null; // VBook user defined note content information
-	vbook_note = [{
+	/*vbook_note = [{
 			"noteid": "ea2ece58-6631-cc31-c34d-9e9349c6b864",
 			"notetime": 1451613484609,
 			"cfiBase": "/6/6[html69]",
@@ -55,7 +58,7 @@ var VBOOK = (function(){
 				"content": "beginning by explaining"
 			}],
 			"stylemode": "a"
-		}];
+		}];*/
 			
 	var vbook_toc_load = false;
 	var setting = {marginLeft:10, marginRight:10, marginTop:20, marginBottom:20,
@@ -542,7 +545,7 @@ var VBOOK = (function(){
 	/////////////////////////////////////////////////
 	vReader.open = function(bookURI){
 		if (bookURI.slice(-5) == ".epub"){
-			buildBookDirStruct("default", bookURI, checkSDCardEPUBFile);
+			buildBookDirStruct(this.config.userID, bookURI, checkSDCardEPUBFile);
 		}else{
 			// open directly
 			openEPUBBook(bookURI);
@@ -583,6 +586,192 @@ var VBOOK = (function(){
 			$('#'+tocPage).page();
 			$('#'+tocList).listview('refresh');
 		}
+	}
+	
+	vReader.loadUserProfile = function(userProfilePage, loginPage){
+		
+		// 读出程序根目录下是否存在当前已登录用户
+		// 如果有，读取用户信息
+		this.loadUserConfig(function(){
+			$(':mobile-pagecontainer').pagecontainer("change", "userprofile.html");
+		},function(){
+			$(':mobile-pagecontainer').pagecontainer("change", "login.html");
+		});
+		// 下拉刷新用户信息
+	}
+	
+	vReader.loadUserConfig = function(successCallback, errorCallback){
+		readConfigFile("config.json", function(data){
+			// 读取用户信息
+			var newconfig = JSON.parse(data);
+			if (newconfig != null && newconfig.userID != null){
+				vReader.config = newconfig;
+				if (successCallback) successCallback();
+			}else{
+				if (errorCallback) errorCallback();
+			}
+		}, function(){
+			// 需要登录
+			if (errorCallback) errorCallback();
+		});
+	}
+	
+	vReader.loadUserBook = function(bookList){
+		var userID = this.config.userID;
+		// 先加载现有的书籍
+		readUserDataFile(userID, "vbook_books.json", function(data){
+			this.books = JSON.parse(data);
+			vReader.refreshBookList(bookList);
+			vReader.syncCloudBook(userID, bookList);
+		}, function(){});
+	}
+	
+	vReader.syncCloudBook = function(userID, bookList){
+		// 同步云端书籍
+		var books = this.books;
+		$.ajax({
+			type:'post',
+			url : 'http://101.200.73.55/webservice.php',
+			data:'act=bookinfo',
+			dataType : 'jsonp',
+			success  : function(data) {
+				console.log("----------loadUserBook--------");
+				console.log(data);
+				var found = 0;
+				if (data && (data.ret == "1")){
+					// 用户没有登录，可以看演示书籍
+				}else if(data && (data.ret == "2")){
+					// 显示用户书籍和演示书籍
+					for (var i = 0; i < data.good_list.length; i++){
+						for (var j = 0; j < books.length; j++){
+							var book = books[j];
+							// 下载书籍加”DL“前缀
+							if ('DL' + data.good_list[i].goods_id == book.bookid){
+								found = 1;
+							}
+						};
+						if (found == 0){
+							// 下载书籍图片
+							// IIFE 技术把参数传递到函数中
+							(function(bookID, remotefile,booktitle,bookuri){
+								createDir(getExternalDir() + userID + "/", bookID, function(){
+									var extname = /[.](jpg|jpeg|gif|png)/.exec(remotefile);
+									if (extname.length > 1){
+										extname = extname[1];
+									}
+									remotefile = "http://101.200.73.55/" + remotefile;
+									var localfile = getExternalDir() + userID + "/" + bookID + "_corver." + extname;
+									fileUtil_Download(localfile, remotefile, 
+										function(){
+											var book = {};
+											book.bookid = bookID;
+											book.booktitle = booktitle;
+											book.bookimg = localfile;
+											book.bookuri = bookuri;
+											book.newbook = "visible";
+											book.needdownload = "visible";
+											book.downloadprogress = "none";
+											book.bookauthor = "";
+											book.bookbrief = "";
+											books.push(book);
+											
+											// 保存书籍信息
+											writeUserDataFile(userID, "vbook_books.json", JSON.stringify(books), 
+												function(){
+													showTip("云书库同步成功");
+													vReader.refreshBookList(bookList);
+												},
+												function(){showTip("云书库同步失败")}
+											);
+										}, 
+										function(){
+											console.log("Corver download error:" + localfile + "," + remotefile);
+										}
+									);
+								});
+							})("DL" + data.good_list[i].goods_id, data.good_list[i].goods_thumb,
+							   data.good_list[i].goods_name,data.good_list[i].file_url);
+							
+							
+						}
+					}
+				}
+			},
+			error : function() {
+				showTip("登陆失败，稍后再试");
+			}
+		});
+	}
+	
+	// 刷新书架列表
+	vReader.refreshBookList = function(bookList){
+		var books = this.books;
+		$('#'+bookList).empty();
+		books.forEach(function(book) {
+			// 通过页面定义的模版，用json对象替换生成html页面
+			var itemhtml = template('index-book-shelf-template', book);
+			$('#'+bookList).append(itemhtml);
+			$('#'+bookList).listview('refresh');
+		});
+	}
+	
+	vReader.downloadBook = function(bookid, srvpath, bookList){
+		var books = this.books;
+		var userID = this.config.userID;
+		var localfile = getExternalDir() + userID + "/" + bookid + ".epub";
+		var remotefile = "http://101.200.73.55/" + srvpath;
+		console.log("download file from " + remotefile + " to " + localfile);
+		$('#testbook-download-progress-' + bookid).removeClass('download-progress-none').addClass('download-progress');
+		fileUtil_Download(localfile, remotefile, 
+				function(){
+					
+					for(var i = 0; i < books.length; i++){
+						if (books[i].bookid == bookid){
+							books[i].bookuri = localfile;
+							books[i].needdownload = "none";
+							
+							vReader.refreshBookList(bookList);
+							// 保存书籍信息
+							writeUserDataFile(userID, "vbook_books.json", JSON.stringify(books), 
+								function(){
+									showTip("书籍下载成功");
+									vReader.refreshBookList(bookList);
+								},
+								function(){}
+							);
+							break;
+						}
+					}
+				},
+				function(){showTip("书籍下载失败");},
+				function(precent){
+					// 下载进度
+					$('#testbook-download-progress-' + bookid).html(precent + '%');
+					if (precent >= 100){
+						$('#testbook-download-progress-' + bookid).removeClass('download-progress').addClass('download-progress-none');
+					}
+				});
+	}
+	
+	// 更新和保存用户配置信息
+	// 主要保存当前登录的用户信息（ID和加密信息）
+	vReader.update_user_config = function(userKeyInfo, successCallback, errorCallback){
+		this.config.userID = userKeyInfo.userID;
+		this.config.publicKey = userKeyInfo.publicKey;
+		this.config.privateKey = userKeyInfo.privateKey;
+		this.config.nonce = userKeyInfo.nonce;
+		this.config.password = userKeyInfo.password;
+		
+		writeConfigFile("config.json", JSON.stringify(this.config),
+			successCallback, errorCallback);
+			
+		var targetDir;
+		if (device.platform == "Android"){
+			targetDir = cordova.file.externalDataDirectory;
+		}else{
+			targetDir = cordova.file.dataDirectory;
+		}
+		createDir(targetDir, this.config.userID, successCallback, errorCallback);
 	}
 	
 	////////////////////////////////////////////
@@ -855,13 +1044,7 @@ var VBOOK = (function(){
 	// @bookURL 书籍的URL
 	// @param cbfun 回掉函数，参数为DirectoryEntry对象
 	function buildBookDirStruct(userName, bookURL, cbfun){
-		var targetDir;
-		if (device.platform == "Android"){
-			targetDir = cordova.file.externalDataDirectory;
-		}else{
-			targetDir = cordova.file.dataDirectory;
-		}
-		window.resolveLocalFileSystemURL(targetDir, 
+		window.resolveLocalFileSystemURL(getExternalDir(), 
 			function(dir){
 				dir.getDirectory(userName, {create:true}, 
 					function(dir){								
@@ -921,12 +1104,170 @@ var VBOOK = (function(){
 				openEPUBBook(destDirEntry.nativeURL + bookName + "/");
 			}, function(e){
 				entryUnzipProcess(destDirEntry.nativeURL + bookName + ".epub", 
-						destDirEntry.nativeURL + "/", openEPUBBook);
+						destDirEntry.nativeURL + bookName + "/", openEPUBBook);
 			});
 		}, function(e){
 			// no epub file exist, just copy to current directory
 			copyFileToSDCard(bookURL, destDirEntry);
 		});
+	}
+	
+	function readConfigFile(filename, successCallback, errorCallback){
+		if (window.resolveLocalFileSystemURL == undefined){
+			console.log("Cannot support local file system:" + filename);
+			if (errorCallback) errorCallback();
+			return;
+		}
+		
+		window.resolveLocalFileSystemURL(getExternalDir(), function(dir){
+			window.resolveLocalFileSystemURL(dir.nativeURL + filename, function(fileEntry){
+				console.log("reading to read " + fileEntry.fullPath);
+				fileEntry.file(function(file){
+					var reader = new FileReader();
+					reader.onloadend = function(event){
+						if (successCallback) successCallback(event.target.result)
+					};
+					reader.readAsText(file);
+				}, function(error){
+					console.error("failed to read file in user directory:" + filename);
+					if (errorCallback) errorCallback();
+				});
+			},function(evt){
+				console.error("failed to get file in user directory:" + filename);
+				if (errorCallback) errorCallback();
+			});
+		});
+	}
+	
+	function writeConfigFile(filename, data, successCallback, errorCallback){
+		if (window.resolveLocalFileSystemURL == undefined){
+			console.log("Cannot support local file system:" + filename);
+			if (errorCallback) errorCallback();
+			return;
+		}
+		
+		window.resolveLocalFileSystemURL(getExternalDir(), function(fileDirEntry){
+			fileDirEntry.getFile(filename, {create:true, exclusive:false}, function(fileEntry){
+				console.log("reading to read " + fileEntry.fullPath);
+				fileEntry.createWriter(function(writer){
+					var rewrite = false;
+					writer.onwrite = function(evt){
+						if (rewrite){
+							writer.write(data);
+							rewrite = false;
+						}
+						console.log("Write " + filename + " file success.");
+						if (successCallback) successCallback();
+					};
+					
+					if (writer.length > 0){
+						console.log("Clear " + filename + " file data.");
+						rewrite = true;
+						writer.truncate(0);
+					}else{							
+						writer.write(data);
+					}
+				},function(error){
+					console.log("create write for " + filename + " failed:" + error.code);
+					if (errorCallback) errorCallback(3);
+				});
+			},function(evt){
+				console.error("failed to get file in user directory:" + filename);
+				if (errorCallback) errorCallback();
+			});
+		});
+	}
+	
+	// 读用户目录下文件
+	function readUserDataFile(userID, filename, successCallback, errorCallback){
+		if (window.resolveLocalFileSystemURL == undefined){
+			console.log("Cannot support local file system:" + filename);
+			return;
+		}
+		
+		window.resolveLocalFileSystemURL(getExternalDir(), function(dir){
+				dir.getDirectory(userID, {create:true}, 
+					function(dirEntry){								
+						console.log("build user directory ok:" + dirEntry.nativeURL);						
+						window.resolveLocalFileSystemURL(dirEntry.nativeURL + filename, function(fileEntry){
+							console.log("reading to read " + fileEntry.fullPath);
+							fileEntry.file(function(file){
+								var reader = new FileReader();
+								reader.onloadend = function(event){
+									if (successCallback) successCallback(event.target.result)
+								};
+								reader.readAsText(file);
+							}, function(error){
+								console.error("failed to read file in user directory:" + filename);
+								if (errorCallback) errorCallback(4);
+							});
+						},function(evt){
+							console.error("failed to get file in user directory:" + filename);
+							if (errorCallback) errorCallback(3);
+						});
+					}, 
+					function(e){
+						console.error("create user dir error:" + e.code);
+						if (errorCallback) errorCallback(2);
+					}
+				);
+			}, function(e){
+				console.error("create user dir error:" + e.code);
+				if (errorCallback) errorCallback(1);
+			}
+		);
+	}
+	
+	// 写数据到用户目录下文件
+	function writeUserDataFile(userID, filename, data, successCallback, errorCallback){
+		if (window.resolveLocalFileSystemURL == undefined){
+			console.log("Cannot support local file system:" + filename);
+			console.log((data));
+			return;
+		}
+		
+		window.resolveLocalFileSystemURL(getExternalDir(), function(dir){
+				dir.getDirectory(userID, {create:true}, 
+					function(dirEntry){								
+						console.log("build user directory ok:" + dirEntry.nativeURL);
+						dirEntry.getFile(filename, {create:true, exclusive:false}, function(fileEntry){
+							fileEntry.createWriter(function(writer){
+								var rewrite = false;
+								writer.onwrite = function(evt){
+									if (rewrite){
+										writer.write(data);
+										rewrite = false;
+									}
+									console.log("Write " + filename + " file success.");
+									if (successCallback) successCallback();
+								};
+								
+								if (writer.length > 0){
+									console.log("Clear " + filename + " file data.");
+									rewrite = true;
+									writer.truncate(0);
+								}else{							
+									writer.write(data);
+								}
+							},function(error){
+								console.log("create write for " + filename + " failed:" + error.code);
+								if (errorCallback) errorCallback(3);
+							});
+						},function(error){
+							console.log("create write for " + filename + " failed:" + error.code);
+							if (errorCallback) errorCallback(3);
+						});
+					}, 
+					function(e){
+						console.error("create user dir error:" + e.code);
+						if (errorCallback) errorCallback(2);
+					}
+				);
+			}, function(e){
+				console.error("create user dir error:" + e.code);
+				if (errorCallback) errorCallback(1);
+			}
+		);
 	}
 	
 	return vReader;

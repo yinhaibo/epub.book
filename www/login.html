@@ -1,0 +1,239 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VBook-User Profile</title>
+<link rel="shortcut icon" href="../favicon.ico">
+<link rel="stylesheet" href="libs/jquerymobile/jquery.mobile-1.4.5.css">
+<link rel="stylesheet" href="css/childpage.css">
+<link rel="stylesheet" href="css/userprofile.css">
+
+<script src="libs/jquery/jquery-2.1.4.min.js"></script>
+<script src="libs/jquerymobile/jquery.mobile-1.4.5.min.js"></script>
+</head>
+<body>
+	<div data-role="page" id="user-login" data-theme="d" class="child-page">
+	<style >
+div.child-page-header a, div.child-page-header a.ui-btn, div.child-page-footer a.backhome {
+    background: url("images/ico-logo.png") no-repeat center;
+    background-size: 150px 51px;
+    width:178px;
+   
+    top: 0px;
+    border: 0px;  
+    box-shadow: none;
+}
+.form {
+    width: 282px;
+    margin: 0 auto;
+    padding: 50px 19px;
+    overflow: hidden;
+}
+div#user-profile .ui-content li {
+    overflow: hidden;
+    clear: both;
+    padding: 0;
+    border-bottom: 0px;
+    background: #ffffff;
+}
+body {
+    font-family: Helvetica,STHeiti STXihei,Microsoft JhengHei,Microsoft YaHei,Tohoma,Arial;
+    font-size: 14px;
+    line-height: 1.5;
+ 
+}
+ol, ul {
+    list-style: none;
+}
+body, h1, h2, h3, p, dl, dd, ol, ul, th, td, form, fieldset, input, button, textarea {
+    margin: 0;
+    padding: 0;
+}
+ol, ul {
+    list-style: none;
+}
+body, h1, h2, h3, h4, h5, h6, hr, menu, p, blockquote, ol, ul, dl, dd, td, th, figure, pre, button, input, textarea {
+    margin: 0;
+    padding: 0;
+}
+user agent stylesheetul, menu, dir {
+    display: block;
+    list-style-type: disc;
+    -webkit-margin-before: 1em;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    -webkit-padding-start: 40px;
+}
+.user-info.name {
+    margin-bottom: 10px;
+   
+}
+.user-info.pwd {
+    margin-bottom: 14px;
+   
+}
+.login .enter input {
+    width: 280px;
+    height: 40px;
+    margin: 0 auto 24px;
+    
+}
+
+div#user-profile .ui-content li {
+    overflow: hidden;
+    clear: both;
+    padding: 0;
+    border-bottom: 0px;
+    
+}
+.user-info {
+    width: 282px;
+    height: 42px;
+   
+}
+li, img, label, input {
+    vertical-align: middle;
+}
+user agent stylesheetli {
+    display: list-item;
+    text-align: -webkit-match-parent;
+}
+.user-info input {
+    width: 241px;
+    height: 32px;
+    padding-left: 41px;
+    font-size: 14px;
+    color: #afafaf;
+    background-color: transparent;
+    line-height: 22px;
+}
+.form .tipInput {
+    width: 100%;
+}
+input[type=submit], input[type=button], input[type=text], input[type=password] {
+    -webkit-appearance: none;
+    box-sizing: content-box;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+label, button, input[type="button"], input[type="reset"], input[type="submit"]{
+    cursor: pointer;
+}
+input#username {
+    vertical-align: middle;
+}
+a, input, textarea {
+    text-decoration: none;
+    outline: 0;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+.form .tipInput {
+    width: 240px;
+    border:0px;
+}
+
+.ui-body-d, .ui-page-theme-d .ui-body-inherit, html .ui-bar-d .ui-body-inherit, html .ui-body-d .ui-body-inherit, html body .ui-group-theme-d .ui-body-inherit, html .ui-panel-page-container-d {
+      background-color: transparent;
+    border-color: #dddddd /*{d-body-border}*/;
+    color: #333333 /*{d-body-color}*/;
+    text-shadow: 0 /*{d-body-shadow-x}*/ 0px /*{d-body-shadow-y}*/ 0 /*{d-body-shadow-radius}*/ #f3f3f3 /*{d-body-shadow-color}*/;
+}
+.ui-input-text, .ui-input-search {
+    margin: 0 0;
+    border-width: 1px;
+    border-style: solid;
+}
+.footer {
+    border-top: .1em solid gainsboro;
+    padding: 2.5em 0;
+    text-align: center;
+}
+
+</style>
+<script>
+function save_user_info(username, userpwd){
+	var _os = detectOS();
+	
+	if (_os == "Windows" || _os == "Mac"){
+		// For PC browser testing
+		VBOOK.config.userID = username;
+		$(':mobile-pagecontainer').pagecontainer("change", "userprofile.html");
+	}else{
+		cryptoHelper_encrypt(userpwd, function(options){
+			var userKeyInfo = {
+				userID:username, 
+				publicKey:options.publicKey,
+				privateKey:options.privateKey,
+				nonce:options.nonce,
+				password:options.key
+			};
+			VBOOK.update_user_config(userKeyInfo, function(){
+					showTip("登录成功");
+				},function(){
+					showTip("保存登陆信息失败，请重试");
+				}
+			);
+		});
+	}
+}
+function do_user_login(){
+	$.ajax(
+	{
+		type:'post',
+		url : 'http://101.200.73.55/webservice.php',
+		data:'act=signin' + '&username=' + $('#login-username').val() + '&password=' + $('#login-userpwd').val(),
+		dataType : 'jsonp',
+		success  : function(data) {
+			if (data && (data.ret == "0" || data.ret == "2")){
+				save_user_info($('#login-username').val(), $('#login-userpwd').val());
+			}else{
+				showTip("用户名或密码错误，请重试");
+			}
+		},
+		error : function() {
+			showTip("登陆失败，请重试");
+		}
+	}
+	);
+}
+</script>
+		<div data-role="header" class="child-page-header">
+			<a href="index.html#vbook-personal"  data-role="back" data-transition="slidefade" data-direction="reverse"
+				onclick="showGlobalNavBar();"></a>
+			<p>登录</p>
+		</div>
+		<!-- /header -->
+		<div role="main" class="ui-content child-page-content" data-role="none">
+			<div class="form">
+   
+      <ul>
+        <li class="user-info name" style="background: url(images/login.png);background-position: -19px -113px;">
+          <input id="login-username" class="tipInput" tiptext="用户名" type="text" placeholder="" value="" name="username" id="username">
+        </li>
+       <li class="user-info pwd" style="background: url(images/login.png);background-position: -19px -165px">
+         
+          <input id="login-userpwd" type="password" value="" name="pwd">
+        </li>
+        <li class="enter" style="background:none;">
+          <a href="javascript:do_user_login();"><img src="images/btn.png" style="cursor:pointer;"></a>
+        </li>
+       
+      </ul>
+      <div id="alipay" style="display: none"></div>
+  
+  </div>
+<div id="footer" class="footer">
+				<div class="row g_3">
+					<p>©2016 微训</p>
+				</div>
+			</div>
+		</div>
+		<!-- /content -->
+
+	</div>
+	<!-- /page -->
+</body>
+</html>

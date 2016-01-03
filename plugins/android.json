@@ -87,6 +87,15 @@
         },
         "cordova-plugin-ios-longpress-fix": {
             "PACKAGE_NAME": "cn.vbook"
+        },
+        "cordova-safe": {
+            "PACKAGE_NAME": "cn.vbook"
+        },
+        "de.datawerk.cordova.plugin.cryptohelper": {
+            "PACKAGE_NAME": "cn.vbook"
+        },
+        "cordova-plugin-file-transfer": {
+            "PACKAGE_NAME": "cn.vbook"
         }
     },
     "dependent_plugins": {}

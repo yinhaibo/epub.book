@@ -87,5 +87,39 @@
         },
         "is_top_level": true,
         "variables": {}
+    },
+    "cordova-safe": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-safe"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "es6-promise-plugin": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/vstirbu/PromisesPlugin.git",
+            "subdir": "."
+        },
+        "is_top_level": false,
+        "variables": {}
+    },
+    "de.datawerk.cordova.plugin.cryptohelper": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/datawerk/cordova-plugin-crypto-helper.git",
+            "subdir": "."
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-plugin-file-transfer": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-file-transfer"
+        },
+        "is_top_level": true,
+        "variables": {}
     }
 }
