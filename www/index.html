@@ -22,6 +22,7 @@
 	<link rel="stylesheet" href="css/userprofile.css">
 	<link rel="stylesheet" href="css/reader.css">
 	<link rel="stylesheet" href="css/readernote.css">
+	<link rel="stylesheet" href="css/readerprofile.css">
 	
 	<script type="text/javascript" src="cordova.js"></script>
 	
@@ -77,10 +78,11 @@
 	<script src="js/fileutils.js"></script> 
 	<script src="js/reader.js"></script> 
 	<script src="js/readhelp.js"></script> 
+	<script src="js/vbook.init.js"></script>
+	<script src="js/vbook.service.js"></script>
 	<script>
 		var bookReload = true;
 		var documentLoad = false;
-		var isApp = true;
 		$(document).on('mobileinit', function () {
 			$.mobile.ignoreContentEnabled = true;
 		});	
@@ -89,17 +91,44 @@
 			$( "[data-role='header'], [data-role='footer']" ).toolbar();
 			
 			documentLoad = true;
-			var _os = detectOS();
+			console.log("jquery load success.");
 			
-			if (_os == "Windows" || _os == "Mac"){
-				isApp = false;
-			}
 			
-			VBOOK.loadUserConfig();
-			VBOOK.loadUserBook("bookListView");
+			//$(document).pagecontainer();
+			//console.log($(document).pagecontainer( "getActivePage" ));
+			
 		});
+		$(document).on("mobileinit", function(){
+			console.log("mobileinit");
+		});
+			
+		$(document).on("pageinit","[data-role='page']",function(){
+			console.log("pageinit ->" + this.id);
+			
+		});
+		
+		$(document).on( "pagecontainershow", function( event, ui ) {
+			console.log("pagecontainershow");
+			var fromPage = ui.fromPage?ui.fromPage.attr("id"):'';
+			var toPage = ui.toPage.attr("id");
+			console.log(fromPage + "->" + toPage);
+			if(toPage == "reader-profile"){
+				$('#reader-profile-reader').html(VBOOK.config.userid);
+			}
+		} );
+		$(document).on( "pagecontainerbeforeshow", function( event, ui ) {
+			console.log("pagecontainerbeforeshow");
+			var fromPage = ui.fromPage?ui.fromPage.attr("id"):'';
+			var toPage = ui.toPage.attr("id");
+			console.log(fromPage + "->" + toPage);
+			if(toPage == "reader-profile"){
+				VBOOK.loadUserProfile($("#reader-profile"), "login.html");
+			}
+		} );
 		// Update the contents of the toolbars
 		$(document).on("pageshow", "[data-role='page']", function () {
+			console.log("pageshow ->" + this.id);
+			
 		    // Each of the four pages in this demo has a data-title attribute
 		    // which value is equal to the text of the nav button
 		    // For example, on first page: <div data-role="page" data-title="Info">
@@ -117,10 +146,7 @@
 		    
 		    // Process other
 		    if (documentLoad){
-			    if (this.id == 'vbook-bookshelf' || this.id == 'vbook-personal' || this.id == 'vbook-store'){
-			    	if ($('#main-footer').length > 0){
-			    		$('#main-footer').toolbar().toolbar('show');
-			    	}
+			    if (this.id == 'vbook-bookshelf' || this.id == 'reader-profile' || this.id == 'vbook-store'){
 			    	if (this.id == 'vbook-store'){
 			    		//$(':mobile-pagecontainer').pagecontainer("change", "http://101.200.73.55/mobile/index.php", {transition:"slidefade"});
 			    		//$.mobile.loadPage("http://www.baidu.com/");
@@ -137,10 +163,10 @@
 			    		//document.getElementById('vbook-store-iframe').location = "http://101.200.73.55/mobile/index.php";
 			    		$('#vbook-store-iframe').attr('src', "http://101.200.73.55/mobile/index.php");
 			    		//src="http://101.200.73.55/mobile/index.php"
-			    	}else if(this.id == "vbook-personal"){
-						VBOOK.loadUserProfile("user-profile", "user-login");
+			    	}else if(this.id == "reader-profile"){
+						VBOOK.readerProfileList('readerProfileListView');
 					}else if(this.id == "vbook-bookshelf"){
-						VBOOK.loadUserBook("bookListView");
+						VBOOK.refreshUserBookshelf("bookListView");
 					}
 			    }else if (this.id == 'book-reader'){
 			    	if (bookReload == true){
@@ -149,6 +175,8 @@
 				    }else{
 				    	vbookShowBook();
 				    }
+					// 开始阅读
+					VBOOK.startReading();
 			    }else if(this.id == 'book-reader-toc'){
 			    	VBOOK.loadBookTocData('tocListView', 'book-reader-toc', 'book-reader');
 			    }else if(this.id == 'book-reader-bookmark'){
@@ -156,6 +184,10 @@
 			    }else if(this.id == 'book-reader-note'){
 			    	VBOOK.loadBookNoteData('noteListView', 'book-reader-note', 'book-reader');
 			    }
+				if (this.id != 'book-reader' && this.id != 'book-reader-toc' && this.id != 'book-reader-bookmark'
+					&& this.id != 'book-reader-note'){
+					VBOOK.stopReading();
+				}
 		    }
 		});
 		
@@ -175,10 +207,11 @@
 			$(':mobile-pagecontainer').pagecontainer("change", "userprofile.html", {transition:"slidefade"});
 		}
 		
-		function gotoBookReaderPage(bookname){
+		function gotoBookReaderPage(bookid, bookname){
 			if (bookname != window.localStorage.getItem("vbook-book")){
 				bookReload = true;
 				window.localStorage.setItem("vbook-book", bookname);
+				window.localStorage.setItem("vbook-id", bookid);
 			}
 			$('#main-footer').toolbar('hide');
 			//$("#main-footer").toolbar({ updatePagePadding: false,fullscreen:true });
@@ -208,15 +241,6 @@
 			VBOOK.Book.gotoCfi(cfi);
 		}
 		
-		function showGlobalNavBar(){
-			if (isApp){
-				StatusBar.show();
-				screen.lockOrientation('portrait');
-			}
-			$('#main-footer').toolbar('show');
-			//$("#main-footer").toolbar({ updatePagePadding: true,fullscreen:false });
-		}
-		
 		window.addEventListener("orientationchange", function(){
 		    console.log('Orientation changed to ' + screen.orientation);
 		});
@@ -236,6 +260,20 @@
 			}
 		}
 		
+		// 添加暂停事件
+		document.addEventListener("pause", function() {
+			console.log("pasuse event fired.");
+			VBOOK.pauseReading();
+		});
+		
+		// 添加恢复事件
+		document.addEventListener("resume", function() {
+			setTimeout(function(){
+				console.log("resume event fired.");
+				VBOOK.resumeReading();
+			}, 0);
+		});
+
 		optimizeSpeed();
 	</script>
 	
@@ -243,7 +281,7 @@
 <body>
 	<div data-role="page" id="vbook-bookshelf" data-title="我的教材" data-quicklinks="true" data-theme="d">
 		<script id="index-book-shelf-template" type="text/html">
-			<li><div><a href="#" onclick="gotoBookReaderPage('{{bookuri}}');">
+			<li><div><a href="#" onclick="gotoBookReaderPage('{{bookid}}','{{bookuri}}');">
 			<div>
 				<img src="{{bookimg}}" alt="{{booktitle}}" class="ui-li-thumb"/>
 				<a href="#" onclick="toggleDownloadBook('{{bookid}}','{{bookuri}}');">
@@ -264,17 +302,21 @@
 					<input results="s" type="search" placeholder="搜微训"></input>
 				</div>
 		</div><!-- /header -->
+		
+		<!-- 按焦总要求去掉
 		<div class="vbook-books-toolbar">
 			<div class="ui-filterable vbook-search-bar">
 				<input id="vbook-books-search" data-type="search" placeholder="搜书架">
 			</div>
 			<div id="vbook-books-menu" class="vbook-menu-right">
 				<a href="#" onclick="openGroupMenu();" data-rel="popup" data-transition="pop">
-				<!-- <img src="./images/ico-group-menu.png"/> -->
+				<img src="./images/ico-group-menu.png"/>
 				<img src="./images/icon-carat-down.png"/>
 				</a>
 			</div>
 		</div>
+		-->
+		
 		<div data-role="popup" id="vbook-menu-group"
 			class="vbook-menu-popup ui-popup-container ui-popup-active ui-popup ui-corner-all">
 			<ul data-role="listview" data-inset="true">
@@ -302,16 +344,81 @@
 	<div data-role="page" id="vbook-store" data-title="教材库">
 	<iframe id="vbook-store-iframe"></iframe>
 	</div>
-	
-	<div data-role="page" id="vbook-personal" data-title="用户信息">
+	<div data-role="page" id="reader-profile" data-title="我的信息" data-theme="d" class="child-page">
+		<script id="reader-profile-template" type="text/html">
+			<li data-theme="z">
+				<div class="reader-profile-item" data-enhance="false" data-theme="z">
+					<div class="reader-profile-book">
+						<div>
+							<img src="{{book_corver}}"/>
+						</div>
+					</div>
+					<div class="reader-profile-content">
+						<img src="images/last_reading_time.gif" class="reader-profile-img"/>
+						<span class="content-title">最后阅读时间</span>
+						<span class="content-value">{{last_reading_time}}</span>
+					</div>
+					<div class="reader-profile-content">
+						<img src="images/reading_users.gif"/>
+						<span class="content-title">在读人数</span>
+						<span class="content-value">{{reading_user_number}}</span>
+					</div>
+					<div class="reader-profile-content hideinphone">
+						<img src="images/reading_duration.gif"/>
+						<span class="content-title">总阅读时长</span>
+						<span class="content-value">{{total_reading_time}}</span>
+					</div>
+					<div class="reader-profile-content hideinphone">
+						<img src="images/finished_duration.gif"/>
+						<span class="content-title">读完用时</span>
+						<span class="content-value">{{finished_reading_time}}</span>
+					</div>
+					<div class="reader-profile-content hideinphone">
+						<img src="images/finished_rank.png"/>
+						<span class="content-title">读完用时排名</span>
+						<span class="content-value">{{finished_reading_rank}}</span>
+					</div>
+				</div>
+			</li>
+		</script>
+		<div data-role="header" class="reader-profile-header">
+			<div class="reader-profile-userimg" data-enhance="false">
+				<div>
+					<a href="userprofile.html">
+						<img src="images/user.png">
+					</a>
+				</div>
+				<div class="reader-profile-user">
+					<div>
+						<span id="reader-profile-reader"></span>
+					</div>
+					<div class="reader-profile-detail">
+						<span class="reader-profile-title">书币：</span>
+						<span class="reader-profile-value">0</span>
+						<span class="reader-profile-title">等级：</span>
+						<span class="reader-profile-value">LV0</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /header -->
+		<div role="main" class="ui-content child-page-content" data-role="none">
+			<ul id="readerProfileListView" data-role="listview" data-theme="z">
+				<!-- Replace with template -->
+				<li><div class="reader-profile-empty">
+				<span>您还没有阅读记录，请在选择您喜欢的书开始阅读。</span>
+				</div></li>
+			</ul>
+		</div>
+		<!-- /content -->
+
 	</div>
-	
 	<div data-role="footer" id="main-footer" data-tap-toggle="false" data-theme="d" data-position="fixed" data-fullscreen="true">
 		<div data-role="navbar" data-theme="d">
 			<ul>
 			<li id="library"><a href="#vbook-store" data-theme="d">教材库</a></li>
 			<li id="bookshelf"><a href="#vbook-bookshelf"  data-theme="d">我的教材</a></li>
-			<li id="personal"><a href="#vbook-personal" data-theme="d">我的信息</a></li>
+			<li id="personal"><a href="#reader-profile" data-theme="d">我的信息</a></li>
 		</ul>
 		</div>
 	</div><!-- /footer -->

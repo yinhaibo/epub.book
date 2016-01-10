@@ -1,8 +1,9 @@
 /**
- * VBook Reader Help Java Script
+ * VBook Reader Help Javascript
  */
 "use strict";
 var bookURI;
+var bookID;
 var userName = "default"; // User name, every user has a user directory in externalDataDirectory
 var Book;
 var fDeviceReady = false;
@@ -14,17 +15,18 @@ EPUBJS.Hooks.register("beforeChapterDisplay").reader = function(callback, render
 
 function vbookLoadBookImpl(){
 	StatusBar.hide();
-	VBOOK.open(bookURI);
+	VBOOK.open(bookID, bookURI);
 }
 function vbookLoadBook(){
 	bookURI = window.localStorage.getItem("vbook-book");
+	bookID = window.localStorage.getItem("vbook-id");
 	var _os = detectOS();
 	
 	if (_os == "Windows" || _os == "Mac"){
 		if (bookURI.slice(-5) == ".epub"){
 			alert("Cannot open epub zip format, please unzip epub file.");
 		}else{
-			VBOOK.open(bookURI);
+			VBOOK.open(bookID, bookURI);
 		}
 	}else{
 		if (fDeviceReady){
@@ -36,7 +38,7 @@ function vbookLoadBook(){
 }
 
 function vbookShowBook(){
-	if (isApp){
+	if (VBOOK.isApp){
 		StatusBar.hide();
 	}
 	actionBookHeaderAndFooter("hide");
@@ -225,6 +227,18 @@ function actionBookHeaderAndFooter(action){
 	$("#reader-header").toolbar( action );
 	$("#reader-footer").toolbar( action );
 }
+
+function showGlobalNavBar(){
+	if (VBOOK.isApp){
+		StatusBar.show();
+		screen.lockOrientation('portrait');
+	}
+	if ($('#main-footer').hasClass('ui-fixed-hidden')){
+		$('#main-footer').toolbar('show');
+	}
+	//$("#main-footer").toolbar({ updatePagePadding: true,fullscreen:false });
+}
+		
 ////////////////////////////////////////////////
 // Page Show
 // Time

@@ -4,6 +4,7 @@ EPUBJS.Hooks.register("beforeChapterDisplay").swipeDetection = function(callback
 			return;
 		}
 		
+		var startTime = $.now();
 		function getBaseUrl() {
 			var re = new RegExp(/^.*\//);
 			var base = window.location.href;
@@ -14,12 +15,15 @@ EPUBJS.Hooks.register("beforeChapterDisplay").swipeDetection = function(callback
 			return re.exec(base);
 		}
 		
+		var baseUrl = getBaseUrl();
         //-- Load jQuery into iframe header
-        EPUBJS.core.addScripts([getBaseUrl() + "libs/jquery/jquery-2.1.4.min.js",
-								getBaseUrl() + "libs/jquery/plugins/jquery.touchSwipe.js",
-								getBaseUrl() + "js/vbook.reader.1.0.js"],
+        EPUBJS.core.addScripts([baseUrl + "libs/jquery/jquery-2.1.4.min.js",
+								baseUrl + "libs/jquery/plugins/jquery.touchSwipe.js",
+								baseUrl + "js/vbook.reader.1.0.js"],
 								null, renderer.doc.head);
-        EPUBJS.core.addCss(getBaseUrl() + "css/vbook.reader.1.0.css",
+        EPUBJS.core.addCss(baseUrl + "css/vbook.reader.1.0.css",
 							null, renderer.doc.head);
+							
+		console.log('swipe dection register take:' + ($.now()- startTime));
         if(callback) callback();
 }

@@ -1,0 +1,207 @@
+@CHARSET "UTF-8";
+
+.reader-profile-header{
+	text-align:center;
+}
+div.reader-profile-userimg{
+	height:80px;
+	padding-top:25px;
+	margin-left: auto;
+	margin-right: auto;
+}
+div.reader-profile-header{
+	background-color:#059674 !important;
+}
+
+div.reader-profile-userimg div{
+	display:inline-block;
+}
+
+div.reader-profile-user div{
+	display:block;
+}
+
+
+div.reader-profile-detail span.reader-profile-value{
+	color:#f8b551;
+}
+
+/*阅读阅历项行内div数据样式:行内元素，圆角边框，边距，对齐*/
+div.reader-profile-item div{
+	display:inline-block;
+	border-style: solid;
+	border-color: #ccc;
+	border-radius: 10px;
+	border-width:1px;
+	vertical-align:middle;
+	margin: 0.3em 0.5em 0.3em 0.5em;
+	background-color:#fff;
+	text-align:center;
+	vertical-align:middle;
+}
+/* For iPad, Pad*/
+@media (min-width: 767px) {
+	div.reader-profile-userimg{
+		height: 80px;
+		padding-top: 25px;
+	}
+	div.reader-profile-userimg img{
+		width:60px;
+		height:auto;
+	}
+	.reader-profile-header {
+		height: 120px;
+	}
+	#reader-profile-reader {
+		font-size: 26px;
+	}
+	div.reader-profile-detail{
+	}
+	
+	div.reader-profile-item div{
+		line-height:140px;				
+		height:140px;
+	}
+	div.reader-profile-book div{
+		height:120px;
+		width:100px;
+		padding:5px 5px;
+		margin:0px;
+	}
+	
+	div.reader-profile-item div.reader-profile-content{
+		margin:5px 5px;
+	}
+	
+	/*阅读阅历项阅历数据文字样式:块显示（换行），行高和字体*/
+	div.reader-profile-item div.reader-profile-content span{	
+		line-height: 1.4em;
+		font-size: 0.8em;
+		padding: 2px 0px;
+	}
+	
+	div.reader-profile-book{
+		width:15%;
+	}
+	
+	div.reader-profile-content{
+		width:14%;
+	}
+	
+	div.reader-profile-empty{
+		text-align:center;
+		font-size: 1.8em;
+		line-height: 5em;
+	}
+}
+
+/* For iPhone, Phone*/
+@media (max-width: 767px) {
+	div.reader-profile-userimg{
+		height: 50px;
+		padding-top: 15px;
+	}
+	.reader-profile-header {
+		height: 75px;
+	}
+	
+	div.reader-profile-userimg img{
+		width:40px;
+		height:auto;
+	}
+	
+	.reader-profile-user {
+		font-size: 16px;
+	}
+	div.reader-profile-detail{
+		font-size: 12px;
+	}
+	
+	div.reader-profile-item div.hideinphone{
+		display:none;
+	}
+	div.reader-profile-item div{
+		line-height:110px;				
+		height:110px;
+	}
+	div.reader-profile-book div{
+		height:96px;
+		width:80px;
+		padding:1px 1px;
+		margin:0px;
+	}
+	
+	div.reader-profile-item div.reader-profile-content{
+		margin:3px 1px;
+	}
+	
+	/*阅读阅历项阅历数据文字样式:块显示（换行），行高和字体*/
+	div.reader-profile-item div.reader-profile-content span{	
+		line-height: 1em;
+		font-size: 12px;
+		padding: 2px 0px;
+	}
+	
+	div.reader-profile-book{
+		width:100px;
+	}
+	
+	div.reader-profile-content{
+		width:85px;
+	}
+	
+	div.reader-profile-item div{
+		margin:0px;
+	}
+	div.reader-profile-empty{
+		text-align:center;
+		font-size: 0.6em;
+		line-height: 2em;
+	}
+}
+
+
+
+div.reader-profile-book div{
+	border:none;
+	border-radius:initial;
+}
+
+
+
+div.reader-profile-book div img{
+	width:100%;
+	height:100%;
+}
+
+/*阅读阅历项行内书籍div数据样式:不同的背景和边距*/
+div.reader-profile-item div.reader-profile-content{
+	background-color:#fff;
+}
+
+/*阅读阅历项阅历数据div书籍图片样式:垂直水平居中*/
+div.reader-profile-content img{
+	width:80%;
+	height:auto;
+	border-top-left-radius: initial !important;
+	border-bottom-left-radius: initial !important;
+
+	margin: 0.5em auto;/*auto 保持居中*/
+	display:block;
+}
+/*阅读阅历项阅历数据文字样式:块显示（换行），行高和字体*/
+div.reader-profile-item div.reader-profile-content span{
+	display:block;
+}
+/*阅读阅历项阅历数据说明文字样式:上下边框定义*/
+div.reader-profile-content span.content-title{
+	border-bottom:solid;
+	border-top:solid;
+	border-color:#ccc;
+	border-width:1px;
+}
+/*阅读阅历项阅历数据说明数据样式:颜色和字体*/
+div.reader-profile-content span.content-value{
+	color:#f8b551;
+	font-size:5px;
+}

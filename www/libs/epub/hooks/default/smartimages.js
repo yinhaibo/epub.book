@@ -1,4 +1,5 @@
 EPUBJS.Hooks.register("beforeChapterDisplay").smartimages = function(callback, renderer){
+	var startTime = $.now();
 		var images = renderer.contents.querySelectorAll('img'),
 			items = Array.prototype.slice.call(images),
 			iheight = renderer.height,//chapter.bodyEl.clientHeight,//chapter.doc.body.getBoundingClientRect().height,
@@ -96,7 +97,7 @@ EPUBJS.Hooks.register("beforeChapterDisplay").smartimages = function(callback, r
 			size();
 
 		});
-		
+		console.log('smartimages register take ms:' + ($.now()- startTime));
 		if(callback) callback();
 
 }

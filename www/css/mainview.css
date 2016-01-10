@@ -27,7 +27,7 @@ div.ui-footer{
 
 div.ui-footer .ui-navbar ul li a {
 	background: transparent; 
-	padding:30px 0 0 0; 
+	padding:50px 0 0 0; 
     border-width: 0px;
 	font-size:12px;
 	font-family:PingHei, STHeitiSC-Light, 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -55,13 +55,6 @@ div.ui-header .search-container{
 	position: fixed;
 }
 
-div.ui-header .ui-input-search{
-	box-shadow: none;
-	border-radius: 10px;
-	margin-bottom: 11px;
-	margin-top: 11px;
-	width: 100px;
-}
 
 div.ui-header input{
 	line-height: 13px;
@@ -74,36 +67,36 @@ div.ui-header input{
 /*主页－个人菜单活动状态下背景和颜色*/
 div.ui-footer .ui-navbar ul li#personal a.my-btn-active {
     background: url(../images/icon_person_active.png) 50% 20% no-repeat;
-    background-size:25px;
+    background-size:50px;
     color:#ffffff;
 }
 /*主页－个人菜单正常状态下背景和颜色*/
 div.ui-footer .ui-navbar ul li#personal a {
     background: url(../images/icon_person.png) 50% 20% no-repeat;
-    background-size:24px;
+    background-size:50px;
     color:#cccccc;
 }
 
 /*主页－我的教材导航栏*/
 div.ui-footer .ui-navbar ul li#bookshelf a.my-btn-active {
     background: url(../images/icon_books_active.png) 50% 20% no-repeat;
-    background-size: 30px;
+    background-size: 50px;
     color:#ffffff;
 }
 div.ui-footer .ui-navbar ul li#bookshelf a {
     background: url(../images/icon_books.png) 50% 20% no-repeat;
-    background-size: 30px;
+    background-size: 50px;
     color:#cccccc;
 }
 /*主页－教材库导航栏*/
 div.ui-footer .ui-navbar ul li#library a.my-btn-active {
     background: url(../images/icon_store_active.png) 50% 20% no-repeat;
-    background-size: 30px;
+    background-size: 50px;
     color:#ffffff;
 }
 div.ui-footer .ui-navbar ul li#library a {
     background: url(../images/icon_store.png) 50% 20% no-repeat;
-    background-size: 30px;
+    background-size: 50px;
     color:#cccccc;
 }
 
@@ -119,7 +112,8 @@ div.vbook-shelf-list{
 	/*边距*/
 	padding:0 10px 0em 10px;
 }
-
+/* For iPad, Pad*/
+@media (min-width: 767px) {
 .vbook-bookshelf-logo
 {
 	width: 150px;
@@ -128,6 +122,36 @@ div.vbook-shelf-list{
 	padding-bottom: 10px;
 	padding-left: 40px;
 	display: inline-block;
+}
+
+div.ui-header .ui-input-search{
+	box-shadow: none;
+	border-radius: 10px;
+	margin-bottom: 11px;
+	margin-top: 11px;
+	width: 100px;
+}
+}
+
+/* For iPhone, Phone*/
+@media (max-width: 767px) {
+.vbook-bookshelf-logo
+{
+	width: 150px;
+	height: 51px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 20px;
+	display: inline-block;
+}
+
+div.ui-header .ui-input-search{
+	box-shadow: none;
+	border-radius: 10px;
+	margin-bottom: 11px;
+	margin-top: 11px;
+	width: 80px;
+}
 }
 
 
@@ -406,18 +430,18 @@ div.vbook-shelf-list .ui-listview  p.vbook-new-none{
 
 /*设置搜索栏宽度，给菜单栏留点位置*/
 .vbook-books-toolbar .vbook-search-bar{
-	display:block;
-	position: relative;
-	width:80%;
+	display: inline-block;
+	width: 80%;
+	line-height: 60px;
+	vertical-align: middle;
 }
 /*通过决定定位定位菜单位置*/
 .vbook-books-toolbar .vbook-menu-right {
-	width:20%;
-	position: absolute;
-	right:0px;
-	top:48px;/*相对与页面顶端*/
-	display:block;
-	text-align:center;
+	margin: auto 5px auto auto;
+    display: inline-block;
+    text-align: center;
+    line-height: 60px;
+    vertical-align: middle;
 }
 /*取消菜单的连接下划线*/
 .vbook-books-toolbar .vbook-menu-right a{

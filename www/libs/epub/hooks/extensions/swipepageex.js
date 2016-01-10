@@ -37,11 +37,11 @@ $(document).swipe( {
 					$(document).swipe("disable");
 					parent.imgZoomViewInChapter(event.target, enableSwipeHandler);
 				}
-			}else if (event.target.tagName.toUpperCase() == "AUDIO"){
+			/*}else if (event.target.tagName.toUpperCase() == "AUDIO"){
 				alert("You are click AUDIO object");
 				//$(document).swipe("disable");
 			}else if (event.target.tagName.toUpperCase() == "VIDEO"){
-				alert("You are click VIDEO object");
+				alert("You are click VIDEO object");*/
 			}else if(!event.target.classList.contains('noSwipe')){
 				parent.actionBookHeaderAndFooter("toggle");
 			}

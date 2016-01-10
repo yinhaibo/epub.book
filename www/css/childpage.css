@@ -20,6 +20,15 @@ div.child-page-footer a.backhome{
 	box-shadow:none;
 }
 
+/* For iPhone, Phone*/
+@media (max-width: 767px) {
+	div.child-page-header a,
+	div.child-page-header a.ui-btn,
+	div.child-page-footer a.backhome{
+		padding: 21px 5px;
+	}
+}
+
 div.child-page-header a.ui-btn,
 div.child-page-header a.ui-btn:hover,
 div.child-page-footer a.ui-btn,

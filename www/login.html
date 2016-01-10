@@ -13,7 +13,7 @@
 <script src="libs/jquerymobile/jquery.mobile-1.4.5.min.js"></script>
 </head>
 <body>
-	<div data-role="page" id="user-login" data-theme="d" class="child-page">
+	<div data-role="page" id="user-login" data-theme="d" class="child-page"  data-title="我的信息">
 	<style >
 div.child-page-header a, div.child-page-header a.ui-btn, div.child-page-footer a.backhome {
     background: url("images/ico-logo.png") no-repeat center;
@@ -24,6 +24,13 @@ div.child-page-header a, div.child-page-header a.ui-btn, div.child-page-footer a
     border: 0px;  
     box-shadow: none;
 }
+/* For iPhone, Phone*/
+@media (max-width: 767px) {
+	div.child-page-header a, div.child-page-header a.ui-btn, div.child-page-footer a.backhome {
+		width:120px;
+	}
+}
+
 .form {
     width: 282px;
     margin: 0 auto;
@@ -39,7 +46,7 @@ div#user-profile .ui-content li {
 }
 body {
     font-family: Helvetica,STHeiti STXihei,Microsoft JhengHei,Microsoft YaHei,Tohoma,Arial;
-    font-size: 14px;
+    font-size: 1.2em;
     line-height: 1.5;
  
 }
@@ -156,12 +163,14 @@ a, input, textarea {
 <script>
 function save_user_info(username, userpwd){
 	var _os = detectOS();
-	
+	console.log("save_user_info ..." + username);
 	if (_os == "Windows" || _os == "Mac"){
 		// For PC browser testing
-		VBOOK.config.userID = username;
-		$(':mobile-pagecontainer').pagecontainer("change", "userprofile.html");
+		VBOOK.isLogin = true;
+		VBOOK.config.userid = username;
+		$(':mobile-pagecontainer').pagecontainer("change", $("#reader-profile"));
 	}else{
+		/* --IOS Cannot encrypt, why? Do not known.
 		cryptoHelper_encrypt(userpwd, function(options){
 			var userKeyInfo = {
 				userID:username, 
@@ -176,28 +185,22 @@ function save_user_info(username, userpwd){
 					showTip("保存登陆信息失败，请重试");
 				}
 			);
-		});
+		});*/
+		var userKeyInfo = {userid:username, password:userpwd};
+		
+		VBOOK.update_user_config(userKeyInfo, function(){
+				showTip("登录成功");
+			},function(){
+				showTip("保存登陆信息失败，请重试");
+			}
+		);
+		$(':mobile-pagecontainer').pagecontainer("change", $("#reader-profile"));
 	}
 }
 function do_user_login(){
-	$.ajax(
-	{
-		type:'post',
-		url : 'http://101.200.73.55/webservice.php',
-		data:'act=signin' + '&username=' + $('#login-username').val() + '&password=' + $('#login-userpwd').val(),
-		dataType : 'jsonp',
-		success  : function(data) {
-			if (data && (data.ret == "0" || data.ret == "2")){
-				save_user_info($('#login-username').val(), $('#login-userpwd').val());
-			}else{
-				showTip("用户名或密码错误，请重试");
-			}
-		},
-		error : function() {
-			showTip("登陆失败，请重试");
-		}
-	}
-	);
+	VBookService.login($('#login-username').val(), $('#login-userpwd').val(), function(){
+		save_user_info($('#login-username').val(), $('#login-userpwd').val());
+	});
 }
 </script>
 		<div data-role="header" class="child-page-header">

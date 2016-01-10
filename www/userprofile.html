@@ -16,7 +16,7 @@
 	<div data-role="page" id="user-profile" data-theme="d" class="child-page">
 	<script>
 		function loadUserProfile(){
-			var userID = VBOOK.config.userID;
+			var userID = VBOOK.config.userid;
 			$.ajax(
 			{
 				type:'post',
@@ -47,7 +47,7 @@
 		loadUserProfile();
 	</script>
 		<div data-role="header" class="child-page-header">
-			<a href="index.html#vbook-personal"  data-role="back" data-transition="slidefade" data-direction="reverse"
+			<a href="#reader-profile"  data-role="back" data-transition="slidefade" data-direction="reverse"
 				onclick="showGlobalNavBar();"></a>
 			<p>个人信息</p>
 		</div>

@@ -104,6 +104,8 @@ note.getBookNoteObj = function(element){
  */
 note.createBookNoteObj = function(element, offset, guid){
 	console.log("createBookNoteObj:" + element + "," + offset);
+	if (element.nodeType != 3) return null;
+	
 	// 为实现下话下，需要使用两个span来实现
 	var nextNode;
 	var vnoteinner = document.createElement("span");
@@ -133,6 +135,7 @@ note.createBookNoteObj = function(element, offset, guid){
  */
 note.recreateBookNoteObj = function(element, offset, len, guid, mode){
 	var vnote = this.createBookNoteObj(element, offset, guid);
+	if (vnote == null) return;
 	this.addTextToNoteObj(vnote, vnote.nextSibling, len);
 	var styleList = vnote.className.match('style_[a-z]');
 	if (styleList && styleList.length > 0){
@@ -230,7 +233,9 @@ note.swipeStart = function(event){
 	this.orgOffset = this.curRange.startOffset;
 	this.noteid = guid();
 	this.noteNode = this.createBookNoteObj(this.orgNode, this.orgOffset, this.noteid);
-	this.noteObjs.slice(0, this.length);
+	if (this.noteNode){
+		this.noteObjs.slice(0, this.length);
+	}
 	
 	this.orgX = event.clientX || event.pageX;
 	this.orgY = event.clientY || event.pageY;
@@ -331,12 +336,14 @@ note.swipeMove = function(event){
 }
 
 note.swipeEnd = function(event){
-	if (this.noteNode && this.noteNode.textContent.length == 0){
-		this.removeBookNoteObj(this.noteNode);
-		this.noteObjs.splice(this.noteObjs.length-2, 1);
-	}else{
-		// 把笔记对象信息更新到笔记对象中
-		this.updateNoteObjInfo();
+	if (this.noteNode){
+		if (this.noteNode.textContent.length == 0){
+			this.removeBookNoteObj(this.noteNode);
+			this.noteObjs.splice(this.noteObjs.length-2, 1);
+		}else{
+			// 把笔记对象信息更新到笔记对象中
+			this.updateNoteObjInfo();
+		}
 	}
 	
 	if(this.noteObjs.length > 0){
@@ -450,6 +457,7 @@ $(document).swipe( {
 				}
 			}
 		}else if (phase == "end"){
+			if (!startNote) clearTimeout(longTapTimer);
 			if (fn.dragEnable && vbook_startDrag && fn.vbook_dragend != null){
 				fn.vbook_dragend(event, distance);
 			}

@@ -4,8 +4,13 @@
 
 var VBOOK = (function(){
 	var vReader = {
-			config:{userID:"default"},
-			books:[{"bookid":"ZL001","booktitle":"ProGit","bookuri":"books/progit.epub","bookauthor":"Scott Chacon and Ben Straub","bookbrief":"Pro Git second edition, an open source book on Git.","newbook":"visible","bookimg":"./books/progit.png","needdownload":"none","downloadprogress":"none"},{"bookid":"ZL002","booktitle":"贷款实地调查","bookuri":"data/feedbackimg/testbook.epub","bookauthor":"","bookbrief":"","newbook":"visible","bookimg":"./books/testbook-corver.png","needdownload":"visible","downloadprogress":"none"}]
+			isApp:true,
+			config:{userid:"default", bookid:null},
+			readerProfiles:[],
+			books:[{"bookid":"ZL001","booktitle":"ProGit","bookuri":"books/progit.epub","bookauthor":"Scott Chacon and Ben Straub","bookbrief":"Pro Git second edition, an open source book on Git.","newbook":"visible","bookimg":"./books/progit.png","needdownload":"none","downloadprogress":"none"}],
+			profile:null,
+			isLogin:false,
+			deviceReady:false
 		};
 	var Book = null;
 	var bookURL = null; // EPUB unzip file directory path
@@ -129,6 +134,10 @@ var VBOOK = (function(){
 		Book.on('book:pageChanged', function(location){
 			vReader.setting.currentPage = location.anchorPage;
 			updatePageLabel(location.anchorPage, Book.pagination.lastPage);
+			if (location.anchorPage == Book.pagination.lastPage){
+				// 阅读完成
+				vReader.finishedReading();
+			}
 		});
 		
 		Book.on('renderer:chapterDisplayed', VBOOK.chapterChange);
@@ -543,9 +552,11 @@ var VBOOK = (function(){
 	/////////////////////////////////////////////////
 	// Public
 	/////////////////////////////////////////////////
-	vReader.open = function(bookURI){
+	vReader.open = function(bookid, bookURI){
+		// 设置打开书籍ID
+		this.config.bookid = bookid;
 		if (bookURI.slice(-5) == ".epub"){
-			buildBookDirStruct(this.config.userID, bookURI, checkSDCardEPUBFile);
+			buildBookDirStruct(this.config.userid, bookURI, checkSDCardEPUBFile);
 		}else{
 			// open directly
 			openEPUBBook(bookURI);
@@ -588,23 +599,80 @@ var VBOOK = (function(){
 		}
 	}
 	
+	/**
+	 * 初始化VBook基本配置: 加载配置，确定用户ID，加载用户ID下的书籍信息(vbook_books)，
+	 * 阅读信息(vbook_reaer_profile)
+	 * author: yinhaibo
+	 * date:2016.1.10
+	 */
+	vReader.initBaseConfigureData = function(successCallback, errorCallback){
+		var vbook = this;
+		
+		// 加载用户书架数据
+		function loadReaderBooks(userid, successCallback, errorCallback){
+			readUserDataFile(userid, "vbook_books.json", function(data){
+				vbook.books = JSON.parse(data);
+				console.log("Success to load user books configure:" + data);
+				if (successCallback) successCallback();
+			}, function(){
+				console.log("[WARN] No user reading data.");
+				if (errorCallback) errorCallback();
+			});
+		}
+		// 加载用户阅读数据
+		function loadReaderProfile(userid, successCallback, errorCallback){
+			readUserDataFile(userid, "vbook_reader_profile.json", function(data){
+				vbook.readerProfiles = JSON.parse(data);
+				console.log("Success to load user reading profile configure.");
+				if (successCallback) successCallback();
+			}, function(){
+				console.log("[WARN] No user reading profile data.");
+				if (errorCallback) errorCallback();
+			});
+		}
+		this.loadUserConfig(function(){
+				// 加载用户配置成功
+				var userid = vbook.config.userid;				
+				console.log("Success to load user configure:" + vbook.config.userid);
+				// 加载用户书架数据和用户阅读数据
+				loadReaderBooks(userid,
+					// 失败也没有关系
+					function(){loadReaderProfile(userid, successCallback, errorCallback);}, 
+					function(){loadReaderProfile(userid, successCallback, errorCallback);}
+				);
+		},function(){
+				// 加载用户配置失败
+				console.log("No user configure data exist.");
+				if (errorCallback) errorCallback();
+		});
+	}
+	
 	vReader.loadUserProfile = function(userProfilePage, loginPage){
 		
-		// 读出程序根目录下是否存在当前已登录用户
-		// 如果有，读取用户信息
-		this.loadUserConfig(function(){
-			$(':mobile-pagecontainer').pagecontainer("change", "userprofile.html");
-		},function(){
-			$(':mobile-pagecontainer').pagecontainer("change", "login.html");
-		});
-		// 下拉刷新用户信息
+		if (this.isLogin){
+			$(':mobile-pagecontainer').pagecontainer("change", userProfilePage);
+		}else{
+			if (this.config.userid == "default"){
+				$(':mobile-pagecontainer').pagecontainer("change", loginPage);
+			}else{
+				// 尝试自动登陆
+				VBookService.login(this.config.userid, this.config.password, function(){
+					$(':mobile-pagecontainer').pagecontainer("change", userProfilePage);
+				},function(){
+					showTip("用户名或密码与服务器不一致，请重新登陆.");
+					$(':mobile-pagecontainer').pagecontainer("change", loginPage);
+				});
+				
+			}
+		}
+		
 	}
 	
 	vReader.loadUserConfig = function(successCallback, errorCallback){
 		readConfigFile("config.json", function(data){
 			// 读取用户信息
 			var newconfig = JSON.parse(data);
-			if (newconfig != null && newconfig.userID != null){
+			if (newconfig != null && newconfig.userid != null){
 				vReader.config = newconfig;
 				if (successCallback) successCallback();
 			}else{
@@ -616,17 +684,17 @@ var VBOOK = (function(){
 		});
 	}
 	
-	vReader.loadUserBook = function(bookList){
-		var userID = this.config.userID;
-		// 先加载现有的书籍
-		readUserDataFile(userID, "vbook_books.json", function(data){
-			this.books = JSON.parse(data);
-			vReader.refreshBookList(bookList);
-			vReader.syncCloudBook(userID, bookList);
-		}, function(){});
+	/**
+	 * 加载用户书籍
+	 */
+	vReader.refreshUserBookshelf = function(bookList){
+		console.log("refresh bookshelf....");
+		this.refreshBookList(bookList);
+		this.syncCloudBook(this.config.userid, bookList);
 	}
 	
-	vReader.syncCloudBook = function(userID, bookList){
+	vReader.syncCloudBook = function(userid, bookList){
+		if (!this.deviceReady) return;
 		// 同步云端书籍
 		var books = this.books;
 		$.ajax({
@@ -654,13 +722,13 @@ var VBOOK = (function(){
 							// 下载书籍图片
 							// IIFE 技术把参数传递到函数中
 							(function(bookID, remotefile,booktitle,bookuri){
-								createDir(getExternalDir() + userID + "/", bookID, function(){
+								createDir(getExternalDir() + userid + "/", bookID, function(){
 									var extname = /[.](jpg|jpeg|gif|png)/.exec(remotefile);
 									if (extname.length > 1){
 										extname = extname[1];
 									}
 									remotefile = "http://101.200.73.55/" + remotefile;
-									var localfile = getExternalDir() + userID + "/" + bookID + "_corver." + extname;
+									var localfile = getExternalDir() + userid + "/" + bookID + "_corver." + extname;
 									fileUtil_Download(localfile, remotefile, 
 										function(){
 											var book = {};
@@ -676,7 +744,7 @@ var VBOOK = (function(){
 											books.push(book);
 											
 											// 保存书籍信息
-											writeUserDataFile(userID, "vbook_books.json", JSON.stringify(books), 
+											writeUserDataFile(userid, "vbook_books.json", JSON.stringify(books), 
 												function(){
 													showTip("云书库同步成功");
 													vReader.refreshBookList(bookList);
@@ -702,10 +770,92 @@ var VBOOK = (function(){
 			}
 		});
 	}
+	///////////////////////////////////////////
+	// 阅历数据接口
+	// bookid: 书籍ID[后台相关]
+	// book_corver: 书籍封面
+	// last_reading_time: 最后一次阅读时间[云储存]
+	// reading_user_number: 本书在读用户数量[后台提供]
+	// total_reading_time:本书总阅读时间[云储存]
+	// finished_reading_time:本书完成阅读时长[云储存]
+	// finished_reading_rank:本书阅读时长排名[后台提供]
+	
+	// 开始阅读
+	vReader.startReading = function(){
+		// 找到当前阅读profile
+		this.profile = null;
+		this.startReadingTime = new Date();
+		if (this.readerProfiles == null){
+			this.readerProfiles = [];
+		}
+		for (var i = 0; i < this.readerProfiles.length; i++){
+			if (this.readerProfiles[i].bookid == this.config.bookid){
+				this.profile = this.readerProfiles[i];
+			}
+		}
+		if (this.profile == null){
+			var book_corver;
+			for (var i = 0; i < this.books.length; i++){
+				if (this.books[i].bookid == this.config.bookid){
+					book_corver = this.books[i].bookimg;
+				}
+			}
+			this.profile = {bookid:this.config.bookid,
+				last_reading_time:formatDate(this.startReadingTime, 'yyyy-M-d'),
+				reading_user_number:1, total_reading_time:0,finished_reading_time:"未读完",
+				finished_reading_rank:1,
+				book_corver:book_corver};
+			this.readerProfiles.push(this.profile);
+		}else{
+			this.profile.last_reading_time = formatDate(new Date(), 'yyyy-M-d');
+		}
+		writeUserDataFile(this.config.userid, "vbook_reader_profile.json", JSON.stringify(this.readerProfiles),
+			function(){console.log("write vbook_reader_profile.json success for start reading.");}, 
+			function(){"write vbook_reader_profile.json failed for start reading"});
+	}
+	
+	vReader.pauseReading = function(){
+		if (this.startReadingTime != null){
+			this.stopReading();
+			this.pauseReadingStatus = true;
+		}else{
+			this.pauseReadingStatus = false;
+		}
+	}
+	
+	vReader.resumeReading = function(){
+		if (this.pauseReadingStatus){
+			this.startReading();
+		}
+	}
+	
+	// 结束阅读
+	vReader.stopReading = function(){
+		if (this.startReadingTime != null){
+			var curtime = new Date();
+			var readseconds = parseInt((curtime - this.startReadingTime) / 1000);
+			this.profile.total_reading_time += readseconds;
+			this.profile.last_reading_time = formatDate(new Date(), 'yyyy-M-d');
+			this.startReadingTime = null;
+			writeUserDataFile(this.config.userid, "vbook_reader_profile.json", JSON.stringify(this.readerProfiles),
+				function(){console.log("write vbook_reader_profile.json success for stop reading");}, 
+				function(){"write vbook_reader_profile.json failed for stop reading"});
+		}
+	}
+	// 第一次完成阅读
+	vReader.finishedReading = function(){
+		if (this.profile.finished_reading_time == '未读完'){
+			this.profile.finished_reading_time = formatDate(new Date(), 'yyyy-M-d');
+			writeUserDataFile(this.config.userid, "vbook_reader_profile.json", JSON.stringify(this.readerProfiles),
+				function(){console.log("write vbook_reader_profile.json success for finished read");}, 
+				function(){"write vbook_reader_profile.json failed for finished read"});
+		}
+	}
 	
 	// 刷新书架列表
 	vReader.refreshBookList = function(bookList){
 		var books = this.books;
+		console.log("refresh book list:" + (books?books.length:0));
 		$('#'+bookList).empty();
 		books.forEach(function(book) {
 			// 通过页面定义的模版，用json对象替换生成html页面
@@ -715,10 +865,24 @@ var VBOOK = (function(){
 		});
 	}
 	
+	// 刷新阅历列表
+	vReader.readerProfileList = function(profileList){
+		var profiles = this.readerProfiles;
+		if (profiles && profiles.length > 0){
+			$('#'+profileList).empty();
+			profiles.forEach(function(profile) {
+				// 通过页面定义的模版，用json对象替换生成html页面
+				var itemhtml = template('reader-profile-template', profile);
+				$('#'+profileList).append(itemhtml);
+				$('#'+profileList).listview('refresh');
+			});
+		}
+	}
+	
 	vReader.downloadBook = function(bookid, srvpath, bookList){
 		var books = this.books;
-		var userID = this.config.userID;
-		var localfile = getExternalDir() + userID + "/" + bookid + ".epub";
+		var userid = this.config.userid;
+		var localfile = getExternalDir() + userid + "/" + bookid + ".epub";
 		var remotefile = "http://101.200.73.55/" + srvpath;
 		console.log("download file from " + remotefile + " to " + localfile);
 		$('#testbook-download-progress-' + bookid).removeClass('download-progress-none').addClass('download-progress');
@@ -732,7 +896,8 @@ var VBOOK = (function(){
 							
 							vReader.refreshBookList(bookList);
 							// 保存书籍信息
-							writeUserDataFile(userID, "vbook_books.json", JSON.stringify(books), 
+							console.log("save books for download status:" + JSON.stringify(books));
+							writeUserDataFile(userid, "vbook_books.json", JSON.stringify(books), 
 								function(){
 									showTip("书籍下载成功");
 									vReader.refreshBookList(bookList);
@@ -756,10 +921,12 @@ var VBOOK = (function(){
 	// 更新和保存用户配置信息
 	// 主要保存当前登录的用户信息（ID和加密信息）
 	vReader.update_user_config = function(userKeyInfo, successCallback, errorCallback){
-		this.config.userID = userKeyInfo.userID;
-		this.config.publicKey = userKeyInfo.publicKey;
-		this.config.privateKey = userKeyInfo.privateKey;
-		this.config.nonce = userKeyInfo.nonce;
+		this.isLogin = true;
+		// TODO: [WARRING]Instead of crypto
+		this.config.userid = userKeyInfo.userid;
+		//this.config.publicKey = userKeyInfo.publicKey;
+		//this.config.privateKey = userKeyInfo.privateKey;
+		//this.config.nonce = userKeyInfo.nonce;
 		this.config.password = userKeyInfo.password;
 		
 		writeConfigFile("config.json", JSON.stringify(this.config),
@@ -771,7 +938,7 @@ var VBOOK = (function(){
 		}else{
 			targetDir = cordova.file.dataDirectory;
 		}
-		createDir(targetDir, this.config.userID, successCallback, errorCallback);
+		createDir(targetDir, this.config.userid, successCallback, errorCallback);
 	}
 	
 	////////////////////////////////////////////
@@ -1179,14 +1346,15 @@ var VBOOK = (function(){
 	}
 	
 	// 读用户目录下文件
-	function readUserDataFile(userID, filename, successCallback, errorCallback){
+	function readUserDataFile(userid, filename, successCallback, errorCallback){
 		if (window.resolveLocalFileSystemURL == undefined){
 			console.log("Cannot support local file system:" + filename);
+			if (errorCallback) errorCallback();
 			return;
 		}
 		
 		window.resolveLocalFileSystemURL(getExternalDir(), function(dir){
-				dir.getDirectory(userID, {create:true}, 
+				dir.getDirectory(userid, {create:true}, 
 					function(dirEntry){								
 						console.log("build user directory ok:" + dirEntry.nativeURL);						
 						window.resolveLocalFileSystemURL(dirEntry.nativeURL + filename, function(fileEntry){
@@ -1219,15 +1387,16 @@ var VBOOK = (function(){
 	}
 	
 	// 写数据到用户目录下文件
-	function writeUserDataFile(userID, filename, data, successCallback, errorCallback){
+	function writeUserDataFile(userid, filename, data, successCallback, errorCallback){
 		if (window.resolveLocalFileSystemURL == undefined){
 			console.log("Cannot support local file system:" + filename);
 			console.log((data));
 			return;
 		}
+		console.log("Write " + filename + " data:" + data);
 		
 		window.resolveLocalFileSystemURL(getExternalDir(), function(dir){
-				dir.getDirectory(userID, {create:true}, 
+				dir.getDirectory(userid, {create:true}, 
 					function(dirEntry){								
 						console.log("build user directory ok:" + dirEntry.nativeURL);
 						dirEntry.getFile(filename, {create:true, exclusive:false}, function(fileEntry){
@@ -1235,11 +1404,14 @@ var VBOOK = (function(){
 								var rewrite = false;
 								writer.onwrite = function(evt){
 									if (rewrite){
+										// truncate success
 										writer.write(data);
 										rewrite = false;
+									}else{
+										// write success
+										console.log("Write " + filename + " file success.");
+										if (successCallback) successCallback();
 									}
-									console.log("Write " + filename + " file success.");
-									if (successCallback) successCallback();
 								};
 								
 								if (writer.length > 0){
