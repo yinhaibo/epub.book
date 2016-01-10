@@ -690,11 +690,13 @@ var VBOOK = (function(){
 	vReader.refreshUserBookshelf = function(bookList){
 		console.log("refresh bookshelf....");
 		this.refreshBookList(bookList);
-		this.syncCloudBook(this.config.userid, bookList);
+		this.syncCloudBook(bookList);
 	}
 	
-	vReader.syncCloudBook = function(userid, bookList){
+	vReader.syncCloudBook = function(bookList){
 		if (!this.deviceReady) return;
+		var userid = this.config.userid;
+		var pwd = this.config.password;
 		// 同步云端书籍
 		var books = this.books;
 		$.ajax({
@@ -705,12 +707,15 @@ var VBOOK = (function(){
 			success  : function(data) {
 				console.log("----------loadUserBook--------");
 				console.log(data);
-				var found = 0;
+				
 				if (data && (data.ret == "1")){
 					// 用户没有登录，可以看演示书籍
+					// 尝试登陆
+					VBookService.login(userid, pwd, function(){vReader.syncCloudBook(bookList)});
 				}else if(data && (data.ret == "2")){
 					// 显示用户书籍和演示书籍
 					for (var i = 0; i < data.good_list.length; i++){
+						var found = 0;
 						for (var j = 0; j < books.length; j++){
 							var book = books[j];
 							// 下载书籍加”DL“前缀

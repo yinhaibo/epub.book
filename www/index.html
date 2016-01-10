@@ -23,6 +23,7 @@
 	<link rel="stylesheet" href="css/reader.css">
 	<link rel="stylesheet" href="css/readernote.css">
 	<link rel="stylesheet" href="css/readerprofile.css">
+	<link rel="stylesheet" href="css/pullrefresh.css">
 	
 	<script type="text/javascript" src="cordova.js"></script>
 	
@@ -73,6 +74,8 @@
 	<script src="libs/photoswipe/photoswipe-ui-default.js"></script> 
 	<!-- 模版引擎 -->
 	<script src="libs/template.js"></script>
+	
+	<script src="js/iscroll.js"></script>
 	<!-- VBOOK reader-->
 	<script src="js/utils.js"></script> 
 	<script src="js/fileutils.js"></script> 
@@ -316,7 +319,67 @@
 			</div>
 		</div>
 		-->
-		
+		<script type="text/javascript">
+			var myScroll,
+				pullDownEl, pullDownOffset,
+				generatedCount = 0;
+			/**
+				* 下拉刷新 （自定义实现此方法）
+				* myScroll.refresh();		// 数据加载完成后，调用界面更新方法
+				*/
+			function pullDownAction () {
+				setTimeout(function () {
+				console.log("下拉刷新...");
+				VBOOK.syncCloudBook("bookListView");
+					myScroll.refresh();		//数据加载完成后，调用界面更新方法   Remember to refresh when contents are loaded (ie: on ajax completion)
+				}, 1000);
+			}
+			/**
+				* 初始化iScroll控件
+				*/
+			$(function(){
+				pullDownEl = document.getElementById('pullDown');
+				pullDownOffset = pullDownEl.offsetHeight;
+				
+				var id='vbook-shelf-main';
+				var yLen=80;
+				
+				var hei=document.getElementById(id).maxScrollY;
+				
+				myScroll = new iScroll(id, {
+					useTransition: false,
+					topOffset: pullDownOffset,
+					onRefresh: function () {
+						if (pullDownEl.className.match('loading')) {
+							pullDownEl.className = '';
+							pullDownEl.querySelector('.pullDownLabel').innerHTML = '下拉刷新...';
+						}
+					},
+					onScrollMove: function () {
+						if (this.y >= yLen && !pullDownEl.className.match('flip')) {
+							pullDownEl.className = 'flip';
+							pullDownEl.querySelector('.pullDownLabel').innerHTML = '松手开始更新...';
+							this.minScrollY = 0;
+						} else if (this.y < yLen && pullDownEl.className.match('flip')) {
+							pullDownEl.className = '';
+							pullDownEl.querySelector('.pullDownLabel').innerHTML = '下拉刷新...';
+							this.minScrollY = -pullDownOffset;
+						}
+						
+					},
+					onScrollEnd: function () {
+						if (pullDownEl.className.match('flip')) {
+							pullDownEl.className = 'loading';
+							pullDownEl.querySelector('.pullDownLabel').innerHTML = '加载中...';				
+							pullDownAction();	// Execute custom function (ajax call?)
+						}
+						
+					}
+				});
+				
+				setTimeout(function () { document.getElementById(id).style.left = '0'; }, 800);
+			});
+		</script>
 		<div data-role="popup" id="vbook-menu-group"
 			class="vbook-menu-popup ui-popup-container ui-popup-active ui-popup ui-corner-all">
 			<ul data-role="listview" data-inset="true">
@@ -333,9 +396,15 @@
 			</div>
 		</div>
 		<div role="main" id="vbook-shelf-main" class="ui-content vbook-shelf">
+			<div>
+			<div id="pullDown">
+				<span class="pullDownIcon"></span>
+				<span class="pullDownLabel">下拉刷新...</span>
+			</div>
     		<ul data-role="listview" id="bookListView" data-inset="true" data-filter="true" data-input="#vbook-books-search">
             	
-              </ul>
+		    </ul>
+			</div>
 		</div><!-- /content -->
 		<div data-role="popup" id="exitAppPopup">
 		<p>再按一次退出程序</p>
