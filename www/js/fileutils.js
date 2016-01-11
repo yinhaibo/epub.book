@@ -28,6 +28,27 @@ function createDir(path, dirname, successCallback, errorCallback)
 	});
 }
 
+function moveFile(oldfilename, newfilename, successCallback, errorCallback){
+	window.resolveLocalFileSystemURL(oldfilename, function(a){
+		var parentDir = newfilename.substring(0, newfilename.lastIndexOf('/')+1);
+		var newfile = newfilename.substring(newfilename.lastIndexOf('/')+1);
+		window.resolveLocalFileSystemURL(parentDir, 
+			function(d){
+				a.moveTo(d, newfile, successCallback, errorCallback);
+			},
+			errorCallback
+		);
+	},errorCallback);
+
+	 
+}
+function fileIsExist(filename, successCallback, errorCallback){
+	window.resolveLocalFileSystemURL(filename, function(fileEntry){
+		if (successCallback) successCallback();
+	},function(e){
+		if (errorCallback) errorCallback(e);
+	});
+}
 ////////////////////////////////////////////////////////////////
 // File transfer
 

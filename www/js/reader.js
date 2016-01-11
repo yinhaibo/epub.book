@@ -10,7 +10,8 @@ var VBOOK = (function(){
 			books:[{"bookid":"ZL001","booktitle":"ProGit","bookuri":"books/progit.epub","bookauthor":"Scott Chacon and Ben Straub","bookbrief":"Pro Git second edition, an open source book on Git.","newbook":"visible","bookimg":"./books/progit.png","needdownload":"none","downloadprogress":"none"}],
 			profile:null,
 			isLogin:false,
-			deviceReady:false
+			deviceReady:false,
+			downloading:[]
 		};
 	var Book = null;
 	var bookURL = null; // EPUB unzip file directory path
@@ -733,6 +734,7 @@ var VBOOK = (function(){
 										extname = extname[1];
 									}
 									remotefile = "http://101.200.73.55/" + remotefile;
+									// 下载时加download后缀，成功后改名
 									var localfile = getExternalDir() + userid + "/" + bookID + "_corver." + extname;
 									fileUtil_Download(localfile, remotefile, 
 										function(){
@@ -888,30 +890,53 @@ var VBOOK = (function(){
 		var books = this.books;
 		var userid = this.config.userid;
 		var localfile = getExternalDir() + userid + "/" + bookid + ".epub";
+		var localfiletemp = getExternalDir() + userid + "/" + bookid + ".epub.download";
 		var remotefile = "http://101.200.73.55/" + srvpath;
-		console.log("download file from " + remotefile + " to " + localfile);
+		var found = false;
+		for (var i = 0; i < this.downloading.length; i++){
+			if (this.downloading[i] == bookid){
+				found = true;
+				break;
+			}
+		}
+		if (found){
+			console.log(bookid + " downloading process....");
+			return;
+		}
+		this.downloading.push(bookid);
+		
+		console.log("download file from " + remotefile + " to " + localfiletemp);
 		$('#testbook-download-progress-' + bookid).removeClass('download-progress-none').addClass('download-progress');
-		fileUtil_Download(localfile, remotefile, 
+		fileUtil_Download(localfiletemp, remotefile, 
 				function(){
-					
-					for(var i = 0; i < books.length; i++){
-						if (books[i].bookid == bookid){
-							books[i].bookuri = localfile;
-							books[i].needdownload = "none";
-							
-							vReader.refreshBookList(bookList);
-							// 保存书籍信息
-							console.log("save books for download status:" + JSON.stringify(books));
-							writeUserDataFile(userid, "vbook_books.json", JSON.stringify(books), 
-								function(){
-									showTip("书籍下载成功");
-									vReader.refreshBookList(bookList);
-								},
-								function(){}
-							);
-							break;
+					moveFile(localfiletemp, localfile, function(){
+						for(var i = 0; i < books.length; i++){
+							if (books[i].bookid == bookid){
+								books[i].bookuri = localfile;
+								books[i].needdownload = "none";
+								
+								vReader.refreshBookList(bookList);
+								// 保存书籍信息
+								console.log("save books for download status:" + JSON.stringify(books));
+								writeUserDataFile(userid, "vbook_books.json", JSON.stringify(books), 
+									function(){
+										showTip("书籍下载成功");
+										for (var i = 0; i < vReader.downloading.length; i++){
+											if (vReader.downloading[i] == bookid){
+												vReader.downloading.splice(i, 1);
+											}
+										}
+										vReader.refreshBookList(bookList);
+									},
+									function(){}
+								);
+								break;
+							}
 						}
-					}
+					},function(){
+						console.log("书籍不能重命名？");
+					});
+					
 				},
 				function(){showTip("书籍下载失败");},
 				function(precent){
@@ -1272,7 +1297,7 @@ var VBOOK = (function(){
 		var bookName = getBookName(bookURL);
 		window.resolveLocalFileSystemURL(destDirEntry.nativeURL + bookName + ".epub", function(rs){
 			// epub file exist, check unzip directory
-			window.resolveLocalFileSystemURL(destDirEntry.nativeURL + bookName + "/", function(rs){
+			window.resolveLocalFileSystemURL(destDirEntry.nativeURL + bookName + "/META-INF/", function(rs){
 				openEPUBBook(destDirEntry.nativeURL + bookName + "/");
 			}, function(e){
 				entryUnzipProcess(destDirEntry.nativeURL + bookName + ".epub", 
