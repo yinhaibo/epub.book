@@ -1220,6 +1220,23 @@ var VBOOK = (function(){
 		}
 	}
 	
+	// 获取登录书城的URL，如果有用户名和密码，采用直接登陆的方式，否则直接用index.php页面
+	vReader.getBookstoreURL = function(){
+		if (this.config.userid && this.config.password){
+			return "http://101.200.73.55/mobile/redir.php?username=" + this.config.userid 
+				+ "&password=" + this.config.password;
+		}else{
+			return "http://101.200.73.55/mobile/index.php";
+		}
+	}
+	
+	vReader.loginSuccess = function(message){
+		var userKeyInfo = {};
+		userKeyInfo.userid = message.username;
+		userKeyInfo.password = message.password;
+		this.update_user_config(userKeyInfo);
+	}
+	
 	///////////////////////////////////////////////////////
 	// Note
 	

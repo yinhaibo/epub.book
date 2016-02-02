@@ -85,6 +85,7 @@
 	<script src="js/vbook.service.js"></script>
 	<script>
 		var bookReload = true;
+		var bookStoreLoad = false;
 		var documentLoad = false;
 		$(document).on('mobileinit', function () {
 			$.mobile.ignoreContentEnabled = true;
@@ -151,21 +152,23 @@
 		    if (documentLoad){
 			    if (this.id == 'vbook-bookshelf' || this.id == 'reader-profile' || this.id == 'vbook-store'){
 			    	if (this.id == 'vbook-store'){
-			    		//$(':mobile-pagecontainer').pagecontainer("change", "http://101.200.73.55/mobile/index.php", {transition:"slidefade"});
-			    		//$.mobile.loadPage("http://www.baidu.com/");
-			    		//$('#vbook-store-iframe').href="http://101.200.73.55/mobile/index.php";
-			    		//$.get("http://101.200.73.55/mobile/index.php", {}, function (data) {
-			            //    $("#vbook-store").html(data);
-			            //});
-			    		var docH = document.height || document.documentElement.clientHeight;
-			    		if (docH != undefined){
-			    			document.getElementById('vbook-store-iframe').style.height = (docH - $('#main-footer').outerHeight()) + "px";
-			    		}else{
-			    			document.getElementById('vbook-store-iframe').style.height = (screen.height - $('#main-footer').outerHeight()) + "px";
-			    		}
-			    		//document.getElementById('vbook-store-iframe').location = "http://101.200.73.55/mobile/index.php";
-			    		$('#vbook-store-iframe').attr('src', "http://101.200.73.55/mobile/index.php");
-			    		//src="http://101.200.73.55/mobile/index.php"
+						if (!bookStoreLoad){
+							//$(':mobile-pagecontainer').pagecontainer("change", "http://101.200.73.55/mobile/index.php", {transition:"slidefade"});
+							//$.mobile.loadPage("http://www.baidu.com/");
+							//$('#vbook-store-iframe').href="http://101.200.73.55/mobile/index.php";
+							//$.get("http://101.200.73.55/mobile/index.php", {}, function (data) {
+							//    $("#vbook-store").html(data);
+							//});
+							var docH = document.height || document.documentElement.clientHeight;
+							if (docH != undefined){
+								document.getElementById('vbook-store-iframe').style.height = (docH - $('#main-footer').outerHeight()) + "px";
+							}else{
+								document.getElementById('vbook-store-iframe').style.height = (screen.height - $('#main-footer').outerHeight()) + "px";
+							}
+							//document.getElementById('vbook-store-iframe').location = "http://101.200.73.55/mobile/index.php";
+							$('#vbook-store-iframe').attr('src', VBOOK.getBookstoreURL());
+							bookStoreLoad = true;
+						}
 			    	}else if(this.id == "reader-profile"){
 						VBOOK.readerProfileList('readerProfileListView');
 					}else if(this.id == "vbook-bookshelf"){
@@ -247,6 +250,12 @@
 		window.addEventListener("orientationchange", function(){
 		    console.log('Orientation changed to ' + screen.orientation);
 		});
+		
+		// 监听来至iframe的消息(书城)
+		window.addEventListener('message',function(e){
+                var msg = JSON.parse(e.data);
+				VBOOK.loginSuccess(msg);
+            },false);
 		
 		//添加回退按钮事件
 		document.addEventListener("backbutton",onBackKeyDown,false);  
@@ -475,7 +484,7 @@
 			<ul id="readerProfileListView" data-role="listview" data-theme="z">
 				<!-- Replace with template -->
 				<li><div class="reader-profile-empty">
-				<span>您还没有阅读记录，请在选择您喜欢的书开始阅读。</span>
+				<span>您还没有阅读记录，请选择您喜欢的书开始阅读。</span>
 				</div></li>
 			</ul>
 		</div>
