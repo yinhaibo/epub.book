@@ -1,4 +1,4 @@
-VBook Project
+EPub Book Project
 -------------------------
 An electrical book reader and share app software for Android, iPhone, iPad and WindowsPhone devices.
 
