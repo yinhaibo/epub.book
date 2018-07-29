@@ -2,13 +2,6 @@ VBook Project
 -------------------------
 An electrical book reader and share app software for Android, iPhone, iPad and WindowsPhone devices.
 
-Create by Yinhaibo in data 2015.7
-Aliyun ECS 101.200.73.55 Centos7 
-ssh 22
-密码：root/Vbooks0825
-gitlab:http://101.200.73.55:2000/root/vbookapp
-gitlab:root/Vbooks0825
-阿里云 控制台密码：766605
 
 Features:
 1. Book list.
@@ -42,7 +35,6 @@ jarsigner -keystore cn.vbook -signedjar VBook_v0.03.apk .\platforms\android\buil
 cordova build android --release
 jarsigner -keystore cn.vbook -signedjar VBook_v0.05.apk ./platforms/android/build/outputs/apk/android-release-unsigned.apk cn.vbook
 
-密码：87654321
 
 Debug
 需要Andorid手机，并打开调试，并且，安装好驱动
